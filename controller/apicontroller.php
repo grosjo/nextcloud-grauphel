@@ -12,7 +12,12 @@
  * @link      http://cweiske.de/grauphel.htm
  */
 namespace OCA\Grauphel\Controller;
+
 use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\JSONResponse;
+
+use \OCA\Grauphel\Lib\OAuth;
+use \OCA\Grauphel\Lib\Dependencies;
 
 /**
  * Tomboy's REST API
@@ -29,26 +34,34 @@ class ApiController extends Controller
 {
     /**
      * /api/1.0
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
      */
     public function index()
     {
-        var_dump('asd');die();
+        $deps = Dependencies::get();
         $authenticated = false;
         $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        $urlGen = $this->deps->urlGen;
+        $oauth->setDeps($deps);
+        $urlGen = $deps->urlGen;
 
         try {
             $provider = new \OAuthProvider();
             $oauth->registerHandler($provider)
                 ->registerAccessTokenHandler($provider);
-            $provider->checkOAuthRequest($urlGen->fullPath());
+            $provider->checkOAuthRequest(
+                $urlGen->getAbsoluteURL(
+                    $urlGen->linkToRoute('grauphel.api.index')
+                )
+            );
             $authenticated = true;
-            $token = $this->deps->tokens->load('access', $provider->token);
+            $token = $deps->tokens->load('access', $provider->token);
             $username = $token->user;
 
-        } catch (OAuth_Exception $e) {
-            $this->deps->renderer->errorOut($e->getMessage());
+        } catch (\OAuth_Exception $e) {
+            $deps->renderer->errorOut($e->getMessage());
         } catch (\OAuthException $e) {
             if ($e->getCode() != OAUTH_PARAMETER_ABSENT) {
                 $oauth->error($e);
@@ -56,34 +69,50 @@ class ApiController extends Controller
         }
 
         $data = array(
-            'oauth_request_token_url' => $urlGen->oauthRequestToken(),
-            'oauth_authorize_url'     => $urlGen->oauthAuthorize(),
-            'oauth_access_token_url'  => $urlGen->oauthAccessToken(),
+            'oauth_request_token_url' => $urlGen->getAbsoluteURL(
+                $urlGen->linkToRoute('grauphel.oauth.requestToken')
+            ),
+            'oauth_authorize_url'     => $urlGen->getAbsoluteURL(
+                $urlGen->linkToRoute('grauphel.oauth.authorize')
+            ),
+            'oauth_access_token_url'  => $urlGen->getAbsoluteURL(
+                $urlGen->linkToRoute('grauphel.oauth.accessToken')
+            ),
             'api-version' => '1.0',
         );
 
         if ($authenticated) {
             $data['user-ref'] = array(
-                'api-ref' => $urlGen->user($username),
-                'href'    => $urlGen->userHtml($username),
+                'api-ref' => $urlGen->getAbsoluteURL(
+                    $urlGen->linkToRoute(
+                        'grauphel.api.user', array('user' => $username)
+                    )
+                ),
+                'href' => null,//FIXME
             );
         }
 
-        $this->deps->renderer->sendJson($data);
+        return new JSONResponse($data);
+        $deps->renderer->sendJson($data);
     }
 
     /**
      * GET /api/1.0/$user/notes/$noteguid
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
      */
     public function note()
     {
-        $username = $this->deps->urlGen->loadUsername();
-        $guid     = $this->deps->urlGen->loadGuid();
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        $oauth->verifyOAuthUser($username, $this->deps->urlGen->note($username, $guid));
+        $deps = Dependencies::get();
+        $username = $deps->urlGen->loadUsername();
+        $guid     = $deps->urlGen->loadGuid();
+        $oauth = new \OAuth();
+        $oauth->setDeps($deps);
+        $oauth->verifyOAuthUser($username, $deps->urlGen->note($username, $guid));
 
-        $note = $this->deps->notes->load($username, $guid, false);
+        $note = $deps->notes->load($username, $guid, false);
         if ($note === null) {
             header('HTTP/1.0 404 Not Found');
             header('Content-type: text/plain');
@@ -92,20 +121,25 @@ class ApiController extends Controller
         }
 
         $data = array('note' => array($note));
-        $this->deps->renderer->sendJson($data);
+        $deps->renderer->sendJson($data);
     }
 
     /**
      * GET|PUT /api/1.0/$user/notes
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
      */
     public function notes()
     {
-        $username = $this->deps->urlGen->loadUsername();
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        $oauth->verifyOAuthUser($username, $this->deps->urlGen->notes($username));
+        $deps = Dependencies::get();
+        $username = $deps->urlGen->loadUsername();
+        $oauth = new \OAuth();
+        $oauth->setDeps($deps);
+        $oauth->verifyOAuthUser($username, $deps->urlGen->notes($username));
 
-        $syncdata = $this->deps->notes->loadSyncData($username);
+        $syncdata = $deps->notes->loadSyncData($username);
 
         $this->handleNoteSave($username, $syncdata);
 
@@ -115,9 +149,9 @@ class ApiController extends Controller
         }
 
         if (isset($_GET['include_notes']) && $_GET['include_notes']) {
-            $notes = $this->deps->notes->loadNotesFull($username, $since);
+            $notes = $deps->notes->loadNotesFull($username, $since);
         } else {
-            $notes = $this->deps->notes->loadNotesOverview($username, $since);
+            $notes = $deps->notes->loadNotesOverview($username, $since);
         }
 
         //work around bug https://bugzilla.gnome.org/show_bug.cgi?id=734313
@@ -131,7 +165,7 @@ class ApiController extends Controller
             'latest-sync-revision' => $syncdata->latestSyncRevision,
             'notes' => $notes,
         );
-        $this->deps->renderer->sendJson($data);
+        $deps->renderer->sendJson($data);
     }
 
     protected function handleNoteSave($username, $syncdata)
@@ -167,47 +201,53 @@ class ApiController extends Controller
         }
 
         //update
+        $deps = Dependencies::get();
         ++$syncdata->latestSyncRevision;
         foreach ($putObj->{'note-changes'} as $noteUpdate) {
-            $note = $this->deps->notes->load($username, $noteUpdate->guid);
+            $note = $deps->notes->load($username, $noteUpdate->guid);
             if (isset($noteUpdate->command) && $noteUpdate->command == 'delete') {
-                $this->deps->notes->delete($username, $noteUpdate->guid);
+                $deps->notes->delete($username, $noteUpdate->guid);
             } else {
-                $this->deps->notes->update(
+                $deps->notes->update(
                     $note, $noteUpdate, $syncdata->latestSyncRevision
                 );
-                $this->deps->notes->save($username, $note);
+                $deps->notes->save($username, $note);
             }
         }
 
-        $this->deps->notes->saveSyncData($username, $syncdata);
+        $deps->notes->saveSyncData($username, $syncdata);
     }
 
     /**
      * GET /api/1.0/$user
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @PublicPage
      */
     public function user()
     {
-        $username = $this->deps->urlGen->loadUsername();
+        $deps = Dependencies::get();
+        $username = $deps->urlGen->loadUsername();
 
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        $oauth->verifyOAuthUser($username, $this->deps->urlGen->user($username));
+        $oauth = new \OAuth();
+        $oauth->setDeps($deps);
+        $oauth->verifyOAuthUser($username, $deps->urlGen->user($username));
 
-        $syncdata = $this->deps->notes->loadSyncData($username);
+        $syncdata = $deps->notes->loadSyncData($username);
 
         $data = array(
             'user-name'  => $username,
             'first-name' => null,
             'last-name'  => null,
             'notes-ref'  => array(
-                'api-ref' => $this->deps->urlGen->notes($username),
+                'api-ref' => $deps->urlGen->notes($username),
                 'href'    => null,
             ),
             'latest-sync-revision' => $syncdata->latestSyncRevision,
             'current-sync-guid'    => $syncdata->currentSyncGuid,
         );
-        $this->deps->renderer->sendJson($data);
+        $deps->renderer->sendJson($data);
     }
 }
 ?>

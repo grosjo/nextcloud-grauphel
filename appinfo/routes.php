@@ -14,13 +14,8 @@ $application->registerRoutes(
             array(
                 'url'  => '/authorize',
                 'name' => 'access#authorize',
-                'verb' => 'GET',
-            ),/*
-            array(
-                'url'  => '/authorize',
-                'name' => 'access#authorize',
                 'verb' => 'POST',
-                ),*/
+                ),
             array(
                 'url'  => '/login',
                 'name' => 'access#login',
@@ -36,6 +31,11 @@ $application->registerRoutes(
                 'url'  => '/oauth/authorize',
                 'name' => 'oauth#authorize',
                 'verb' => 'GET',
+            ),
+            array(
+                'url'  => '/oauth/confirm',
+                'name' => 'oauth#confirm',
+                'verb' => 'POST',
             ),
             array(
                 'url'  => '/oauth/request_token',
