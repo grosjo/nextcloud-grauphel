@@ -28,18 +28,8 @@ class Application extends App
                     = $c->query('ServerContainer')->getURLGenerator();
                 return new \OCA\Grauphel\Controller\ApiController(
                     $c->query('AppName'),
-                    $c->query('Request')
-                );
-            }
-        );
-        $container->registerService(
-            'AccessController',
-            function($c) {
-                Dependencies::get()->urlGen
-                    = $c->query('ServerContainer')->getURLGenerator();
-                 return new \OCA\Grauphel\Controller\AccessController(
-                    $c->query('AppName'),
-                    $c->query('Request')
+                    $c->query('Request'),
+                    $c->query('Session')->getUser()
                 );
             }
         );

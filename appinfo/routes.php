@@ -7,22 +7,6 @@ $application->registerRoutes(
     array(
         'routes' => array(
             array(
-                'url'  => '/test',
-                'name' => 'access#test',
-            ),
-
-            array(
-                'url'  => '/authorize',
-                'name' => 'access#authorize',
-                'verb' => 'POST',
-                ),
-            array(
-                'url'  => '/login',
-                'name' => 'access#login',
-                'verb' => 'GET',
-            ),
-
-            array(
                 'url'  => '/oauth/access_token',
                 'name' => 'oauth#accessToken',
                 'verb' => 'POST',
@@ -49,23 +33,28 @@ $application->registerRoutes(
                 'verb' => 'GET',
             ),
             array(
-                'url'  => '/api/1.0/{user}/note/{guid}',
-                'name' => 'api#note',
+                'url'  => '/api/1.0/',
+                'name' => 'api#indexSlash',
                 'verb' => 'GET',
             ),
             array(
-                'url'  => '/api/1.0/{user}/notes',
-                'name' => 'api#notes',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/api/1.0/{user}/notes',
-                'name' => 'api#notes',
-                'verb' => 'POST',
-            ),
-            array(
-                'url'  => '/api/1.0/{user}',
+                'url'  => '/api/1.0/{username}',
                 'name' => 'api#user',
+                'verb' => 'GET',
+            ),
+            array(
+                'url'  => '/api/1.0/{username}/notes',
+                'name' => 'api#notes',
+                'verb' => 'GET',
+            ),
+            array(
+                'url'  => '/api/1.0/{username}/notes',
+                'name' => 'api#notesSave',
+                'verb' => 'PUT',
+            ),
+            array(
+                'url'  => '/api/1.0/{username}/note/{guid}',
+                'name' => 'api#note',
                 'verb' => 'GET',
             ),
         )
