@@ -19,6 +19,7 @@ use \OCP\AppFramework\Http\JSONResponse;
 use \OCA\Grauphel\Lib\NoteStorage;
 use \OCA\Grauphel\Lib\OAuth;
 use \OCA\Grauphel\Lib\Dependencies;
+use \OCA\Grauphel\Lib\Response\ErrorResponse;
 
 /**
  * Tomboy's REST API
@@ -79,7 +80,7 @@ class ApiController extends Controller
             $username = $token->user;
 
         } catch (\OAuth_Exception $e) {
-            $deps->renderer->errorOut($e->getMessage());
+            return new ErrorResponse($e->getMessage());
         } catch (\OAuthException $e) {
             if ($e->getCode() != OAUTH_PARAMETER_ABSENT) {
                 $oauth->error($e);
@@ -138,7 +139,14 @@ class ApiController extends Controller
      */
     public function user($username)
     {
-        $this->verifyUser($username);
+        $this->verifyUser(
+            $username,
+            $this->deps->urlGen->getAbsoluteURL(
+                $this->deps->urlGen->linkToRoute(
+                    'grauphel.api.user', array('username' => $username)
+                )
+            )
+        );
         $syncdata = $this->notes->loadSyncData($username);
 
         $data = array(
@@ -193,13 +201,16 @@ class ApiController extends Controller
             $username,
             $this->deps->urlGen->getAbsoluteURL(
                 $this->deps->urlGen->linkToRoute(
-                    'grauphel.api.user', array('username' => $username)
+                    'grauphel.api.notesSave', array('username' => $username)
                 )
             )
         );
         $syncdata = $this->notes->loadSyncData($username);
         
-        $this->handleNoteSave($username, $syncdata);
+        $res = $this->handleNoteSave($username, $syncdata);
+        if ($res instanceof \OCP\AppFramework\Http\Response) {
+            return $res;
+        }
 
         return $this->fetchNotes($username, $syncdata);
     }
@@ -237,48 +248,52 @@ class ApiController extends Controller
             return;
         }
 
-        $data = file_get_contents('php://input');
-        $putObj = json_decode($data);
-        if ($putObj === NULL) {
-            errorOut('Invalid JSON data in PUT request');
-        }
+        //note that we have more data in $arPut than just our JSON
+        // request object merges it with other data
+        $arPut = $this->request->put;
 
         //structural validation
-        if (!isset($putObj->{'latest-sync-revision'})) {
-            errorOut('Missing "latest-sync-revision"');
+        if (!isset($arPut['latest-sync-revision'])) {
+            return new ErrorResponse('Missing "latest-sync-revision"');
         }
-        if (!isset($putObj->{'note-changes'})) {
-            errorOut('Missing "note-changes"');
+        if (!isset($arPut['note-changes'])) {
+            return new ErrorResponse('Missing "note-changes"');
         }
-        foreach ($putObj->{'note-changes'} as $note) {
+        foreach ($arPut['note-changes'] as $note) {
+            //owncloud converts object to array, so we reverse
+            $note = (object) $note;
             if (!isset($note->guid) || $note->guid == '') {
-                errorOut('Missing "guid" on note');
+                return new ErrorResponse('Missing "guid" on note');
             }
         }
 
         //content validation
-        if ($putObj->{'latest-sync-revision'} != $syncdata->latestSyncRevision +1
+        if ($arPut['latest-sync-revision'] != $syncdata->latestSyncRevision +1
             && $syncdata->latestSyncRevision != -1
         ) {
-            errorOut('Wrong "latest-sync-revision". You are not up to date.');
+            return new ErrorResponse(
+                'Wrong "latest-sync-revision". You are not up to date.'
+            );
         }
 
         //update
-        $deps = Dependencies::get();
         ++$syncdata->latestSyncRevision;
-        foreach ($putObj->{'note-changes'} as $noteUpdate) {
-            $note = $deps->notes->load($username, $noteUpdate->guid);
+        foreach ($arPut['note-changes'] as $noteUpdate) {
+            //owncloud converts object to array, so we reverse
+            $noteUpdate = (object) $noteUpdate;
+
+            $note = $this->notes->load($username, $noteUpdate->guid);
             if (isset($noteUpdate->command) && $noteUpdate->command == 'delete') {
-                $deps->notes->delete($username, $noteUpdate->guid);
+                $this->notes->delete($username, $noteUpdate->guid);
             } else {
-                $deps->notes->update(
+                $this->notes->update(
                     $note, $noteUpdate, $syncdata->latestSyncRevision
                 );
-                $deps->notes->save($username, $note);
+                $this->notes->save($username, $note);
             }
         }
 
-        $deps->notes->saveSyncData($username, $syncdata);
+        $this->notes->saveSyncData($username, $syncdata);
     }
 
     /**
@@ -298,7 +313,7 @@ class ApiController extends Controller
         $oauth->setDeps($deps);
         $oauth->verifyOAuthUser($username, $deps->urlGen->note($username, $guid));
 
-        $note = $deps->notes->load($username, $guid, false);
+        $note = $this->notes->load($username, $guid, false);
         if ($note === null) {
             header('HTTP/1.0 404 Not Found');
             header('Content-type: text/plain');
