@@ -48,8 +48,11 @@ class GuiController extends Controller
     /**
      * Main page /
      *
+     * Tomdroid wants this to be a public page. Sync fails otherwise.
+     *
      * @NoAdminRequired
      * @NoCSRFRequired
+     * @PublicPage
      */
     public function index()
     {
