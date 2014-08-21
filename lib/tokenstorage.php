@@ -58,7 +58,7 @@ class TokenStorage
      *
      * @return OAuth_Token Stored token
      *
-     * @throws OAuth_Exception When token does not exist
+     * @throws OAuthException When token does not exist
      */
     public function loadAndDelete($type, $tokenKey)
     {
@@ -84,7 +84,7 @@ class TokenStorage
      *
      * @return OAuth_Token Stored token
      *
-     * @throws OAuth_Exception When token does not exist or 
+     * @throws OAuthException When token does not exist or it is invalid
      */
     public function load($type, $tokenKey)
     {
