@@ -351,11 +351,11 @@ class NoteStorage
             'note-content'         => $row['note_content'],
             'note-content-version' => $row['note_content_version'],
 
-            'open-on-startup' => $row['note_open_on_startup'],
-            'pinned'          => $row['note_pinned'],
+            'open-on-startup' => (bool) $row['note_open_on_startup'],
+            'pinned'          => (bool) $row['note_pinned'],
             'tags'            => json_decode($row['note_tags']),
 
-            'last-sync-revision' => $row['note_last_sync_revision'],
+            'last-sync-revision' => (int) $row['note_last_sync_revision'],
         );
     }
 
