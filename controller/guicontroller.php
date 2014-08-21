@@ -61,11 +61,13 @@ class GuiController extends Controller
         $res = new TemplateResponse('grauphel', 'index');
         $res->setParams(
             array(
-                'apiurl' => $this->urlGen->getAbsoluteURL(
-                    $this->urlGen->linkToRoute(
-                        'grauphel.gui.index'
-                    )
-                ),
+                //we need to remove the trailing / for tomdroid
+                'apiurl' => rtrim(
+                    $this->urlGen->getAbsoluteURL(
+                        $this->urlGen->linkToRoute('grauphel.gui.index')
+                    ),
+                    '/'
+                )
             )
         );
         return $res;
