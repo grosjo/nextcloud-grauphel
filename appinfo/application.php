@@ -45,6 +45,17 @@ class Application extends App
                 );
             }
         );
+        $container->registerService(
+            'GuiController',
+            function($c) {
+                return new \OCA\Grauphel\Controller\GuiController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('Session')->getUser(),
+                    $c->query('ServerContainer')->getURLGenerator()
+                );
+            }
+        );
     }
 }
 ?>

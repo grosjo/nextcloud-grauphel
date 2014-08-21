@@ -57,6 +57,12 @@ $application->registerRoutes(
                 'name' => 'api#note',
                 'verb' => 'GET',
             ),
+
+            array(
+                'url'  => '/',
+                'name' => 'gui#index',
+                'verb' => 'GET',
+            ),
         )
     )
 );
