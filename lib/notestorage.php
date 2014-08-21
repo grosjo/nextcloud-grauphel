@@ -262,8 +262,8 @@ class NoteStorage
         \OC_DB::executeAudited(
             'DELETE FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
-			array($username, $guid)
-		);
+            array($username, $guid)
+        );
     }
 
     /**
@@ -277,15 +277,15 @@ class NoteStorage
      */
     public function loadNotesOverview($username, $since = null)
     {
-		$result = \OC_DB::executeAudited(
+        $result = \OC_DB::executeAudited(
             'SELECT `note_guid`, `note_title`, `note_last_sync_revision`'
             . ' FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
-			array($username)
-		);
+            array($username)
+        );
 
-		$notes = array();
-		while ($row = $result->fetchRow()) {
+        $notes = array();
+        while ($row = $result->fetchRow()) {
             if ($since !== null && $row['note_last_sync_revision'] <= $since) {
                 continue;
             }
@@ -305,7 +305,7 @@ class NoteStorage
                 ),
                 'title' => $row['note_title'],
             );
-		}
+        }
 
         return $notes;
     }
@@ -321,19 +321,19 @@ class NoteStorage
      */
     public function loadNotesFull($username, $since = null)
     {
-		$result = \OC_DB::executeAudited(
+        $result = \OC_DB::executeAudited(
             'SELECT * FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
-			array($username)
-		);
+            array($username)
+        );
 
-		$notes = array();
-		while ($row = $result->fetchRow()) {
+        $notes = array();
+        while ($row = $result->fetchRow()) {
             if ($since !== null && $row['note_last_sync_revision'] <= $since) {
                 continue;
             }
             $notes[] = $this->noteFromRow($row);
-		}
+        }
 
         return $notes;
     }

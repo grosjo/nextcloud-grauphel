@@ -29,13 +29,13 @@ use \OCP\AppFramework\Http\TemplateResponse;
  */
 class GuiController extends Controller
 {
-	/**
-	 * constructor of the controller
+    /**
+     * constructor of the controller
      *
-	 * @param string   $appName Name of the app
-	 * @param IRequest $request Instance of the request
-	 */
-	public function __construct($appName, \OCP\IRequest $request, $user, $urlGen)
+     * @param string   $appName Name of the app
+     * @param IRequest $request Instance of the request
+     */
+    public function __construct($appName, \OCP\IRequest $request, $user, $urlGen)
     {
         parent::__construct($appName, $request);
         $this->user   = $user;

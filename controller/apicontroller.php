@@ -34,13 +34,13 @@ use \OCA\Grauphel\Lib\Response\ErrorResponse;
  */
 class ApiController extends Controller
 {
-	/**
-	 * constructor of the controller
+    /**
+     * constructor of the controller
      *
-	 * @param string   $appName Name of the app
-	 * @param IRequest $request Instance of the request
-	 */
-	public function __construct($appName, \OCP\IRequest $request, $user)
+     * @param string   $appName Name of the app
+     * @param IRequest $request Instance of the request
+     */
+    public function __construct($appName, \OCP\IRequest $request, $user)
     {
         parent::__construct($appName, $request);
         $this->user  = $user;
