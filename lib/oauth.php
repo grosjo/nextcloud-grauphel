@@ -98,6 +98,11 @@ class OAuth
 
     public function accessTokenHandler(\OAuthProvider $provider)
     {
+        if ($provider->token == '') {
+            //conboy sends empty token when not authed yet
+            return OAUTH_PARAMETER_ABSENT;
+        }
+
         $token = $this->tokens->load('access', $provider->token);
         $provider->token_secret = $token->secret;
         return OAUTH_OK;

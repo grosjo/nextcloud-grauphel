@@ -18,6 +18,7 @@ use \OCP\AppFramework\Http\JSONResponse;
 
 use \OCA\Grauphel\Lib\NoteStorage;
 use \OCA\Grauphel\Lib\OAuth;
+use \OCA\Grauphel\Lib\OAuthException;
 use \OCA\Grauphel\Lib\Dependencies;
 use \OCA\Grauphel\Lib\Response\ErrorResponse;
 
@@ -79,7 +80,7 @@ class ApiController extends Controller
             $token = $deps->tokens->load('access', $provider->token);
             $username = $token->user;
 
-        } catch (\OAuth_Exception $e) {
+        } catch (OAuthException $e) {
             return new ErrorResponse($e->getMessage());
         } catch (\OAuthException $e) {
             if ($e->getCode() != OAUTH_PARAMETER_ABSENT) {
