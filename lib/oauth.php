@@ -140,7 +140,27 @@ class OAuth
      */
     public static function getProvider()
     {
-        return new \OAuthProvider();
+        //$_SERVER['REDIRECT_HTTP_AUTHORIZATION'] = $_SERVER['HTTP_AUTHORIZATION'];
+        //unset($_SERVER['HTTP_AUTHORIZATION']);
+
+        $params = array();
+        if (!isset($_SERVER['HTTP_AUTHORIZATION'])
+            && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])
+        ) {
+            //FastCgi puts the headers in REDIRECT_HTTP_AUTHORIZATION,
+            // but the oauth extension does not read that.
+            // we have to parse the parameters manually
+            $regex = "/(oauth_[a-z_-]*)=(?:\"([^\"]*)\"|([^,]*))/";
+            preg_match_all(
+                $regex, $_SERVER['REDIRECT_HTTP_AUTHORIZATION'], $matches
+            );
+
+            foreach ($matches[1] as $key => $paramName) {
+                $params[$paramName] = urldecode($matches[2][$key]);
+            }
+        }
+
+        return new \OAuthProvider($params);
     }
 }
 ?>
