@@ -72,7 +72,7 @@ class OauthController extends Controller
         $urlGen = $this->deps->urlGen;
 
         try {
-            $provider = new \OAuthProvider();
+            $provider = OAuth::getProvider();
             $oauth->registerHandler($provider)
                 ->registerVerificationTokenHandler($provider);
             $provider->checkOAuthRequest(
@@ -167,7 +167,7 @@ class OauthController extends Controller
         }
 
         //the user is logged in and authorized
-        $provider = new \OAuthProvider();
+        $provider = OAuth::getProvider();
 
         $newToken = new Token('verify');
         $newToken->tokenKey = $token->tokenKey;
@@ -230,7 +230,7 @@ class OauthController extends Controller
         $urlGen = $this->deps->urlGen;
 
         try {
-            $provider = new \OAuthProvider();
+            $provider = OAuth::getProvider();
             $oauth->registerHandler($provider);
             $provider->isRequestTokenEndpoint(true);
             $provider->checkOAuthRequest(

@@ -106,7 +106,7 @@ class OAuth
     public function verifyOAuthUser($username, $url)
     {
         try {
-            $provider = new \OAuthProvider();
+            $provider = OAuth::getProvider();
             $this->registerHandler($provider);
             $this->registerAccessTokenHandler($provider);
             //do not use "user" in signature
@@ -130,6 +130,17 @@ class OAuth
         echo \OAuthProvider::reportProblem($e);
         //var_dump($e);
         exit(1);
+    }
+
+    /**
+     * Get a new oauth provider instance.
+     * Used to work around the fastcgi bug in oauthprovider.
+     * 
+     * @return \OAuthProvider
+     */
+    public static function getProvider()
+    {
+        return new \OAuthProvider();
     }
 }
 ?>

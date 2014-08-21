@@ -67,7 +67,7 @@ class ApiController extends Controller
         $urlGen = $deps->urlGen;
 
         try {
-            $provider = new \OAuthProvider();
+            $provider = OAuth::getProvider();
             $oauth->registerHandler($provider)
                 ->registerAccessTokenHandler($provider);
             $provider->checkOAuthRequest(
