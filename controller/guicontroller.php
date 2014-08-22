@@ -61,6 +61,7 @@ class GuiController extends Controller
         $res = new TemplateResponse('grauphel', 'index');
         $res->setParams(array('apiurl' => $this->getApiUrl()));
         $this->addNavigation($res);
+        $this->addStats($res);
         return $res;
     }
 
@@ -71,6 +72,26 @@ class GuiController extends Controller
 
         $params = $res->getParams();
         $params['appNavigation'] = $nav;
+        $res->setParams($params);
+    }
+
+    protected function addStats(TemplateResponse $res)
+    {
+        if ($this->user === null) {
+            return;
+        }
+
+        $username = $this->user->getUid();
+        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->urlGen);
+        $tokens = new \OCA\Grauphel\Lib\TokenStorage();
+
+        $nav = new \OCP\Template('grauphel', 'indexStats', '');
+        $nav->assign('notes', count($notes->loadNotesOverview($username)));
+        $nav->assign('syncrev', $notes->loadSyncData($username)->latestSyncRevision);
+        $nav->assign('tokens', count($tokens->loadForUser($username, 'access')));
+
+        $params = $res->getParams();
+        $params['stats'] = $nav;
         $res->setParams($params);
     }
 

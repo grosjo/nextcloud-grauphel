@@ -106,6 +106,30 @@ class TokenStorage
         return $token;
     }
 
+    /**
+     * Load multiple tokens
+     *
+     * @param string $username User name
+     * @param string $type     Token type: temp, access, verify
+     *
+     * @return array Array of Token objects
+     */
+    public function loadForUser($username, $type)
+    {
+        $result = \OC_DB::executeAudited(
+            'SELECT * FROM `*PREFIX*grauphel_oauth_tokens`'
+            . ' WHERE `token_user` = ? AND `token_type` = ?',
+            array($username, $type)
+        );
+
+        $tokens = array();
+        while ($tokenRow = $result->fetchRow()) {
+            $tokens[] = $this->fromDb($tokenRow);
+        }
+
+        return $tokens;
+    }
+
     protected function fromDb($tokenRow)
     {
         $token = new Token();
