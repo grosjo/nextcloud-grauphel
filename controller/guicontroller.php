@@ -59,18 +59,19 @@ class GuiController extends Controller
         $this->checkDeps();
 
         $res = new TemplateResponse('grauphel', 'index');
-        $res->setParams(
-            array(
-                //we need to remove the trailing / for tomdroid
-                'apiurl' => rtrim(
-                    $this->urlGen->getAbsoluteURL(
-                        $this->urlGen->linkToRoute('grauphel.gui.index')
-                    ),
-                    '/'
-                )
-            )
-        );
+        $res->setParams(array('apiurl' => $this->getApiUrl()));
+        $this->addNavigation($res);
         return $res;
+    }
+
+    protected function addNavigation(TemplateResponse $res)
+    {
+        $nav = new \OCP\Template('grauphel', 'appnavigation', '');
+        $nav->assign('apiurl', $this->getApiUrl());
+
+        $params = $res->getParams();
+        $params['appNavigation'] = $nav;
+        $res->setParams($params);
     }
 
     protected function checkDeps()
@@ -78,6 +79,17 @@ class GuiController extends Controller
         if (!class_exists('OAuthProvider')) {
             throw new \Exception('PHP extension "oauth" is required');
         }
+    }
+
+    protected function getApiUrl()
+    {
+        //we need to remove the trailing / for tomdroid and conboy
+        return rtrim(
+            $this->urlGen->getAbsoluteURL(
+                $this->urlGen->linkToRoute('grauphel.gui.index')
+            ),
+            '/'
+        );
     }
 }
 ?>

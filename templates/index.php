@@ -1,6 +1,5 @@
-<div id="app">
-  <div id="app-navigation">
-</div>
+<?php /** @var $l OC_L10N */ ?>
+<?php $_['appNavigation']->printPage(); ?>
 
 <div id="app-content">
   <div style="margin: 1ex">
@@ -10,4 +9,5 @@
     </p>
     <pre style="margin: 1em; background-color: #DDD; padding: 1ex; font-family: monospace"><?php p($_['apiurl']); ?></pre>
   </div>
+
 </div>
