@@ -148,7 +148,7 @@ class ApiController extends Controller
                 )
             )
         );
-        $syncdata = $this->notes->loadSyncData($username);
+        $syncdata = $this->notes->loadSyncData();
 
         $data = array(
             'user-name'  => $username,
@@ -185,8 +185,8 @@ class ApiController extends Controller
                 )
             )
         );
-        $syncdata = $this->notes->loadSyncData($username);
-        return $this->fetchNotes($username, $syncdata);
+        $syncdata = $this->notes->loadSyncData();
+        return $this->fetchNotes($syncdata);
     }
 
     /**
@@ -206,17 +206,17 @@ class ApiController extends Controller
                 )
             )
         );
-        $syncdata = $this->notes->loadSyncData($username);
+        $syncdata = $this->notes->loadSyncData();
         
         $res = $this->handleNoteSave($username, $syncdata);
         if ($res instanceof \OCP\AppFramework\Http\Response) {
             return $res;
         }
 
-        return $this->fetchNotes($username, $syncdata);
+        return $this->fetchNotes($syncdata);
     }
 
-    protected function fetchNotes($username, $syncdata)
+    protected function fetchNotes($syncdata)
     {
         $since = null;
         if (isset($_GET['since'])) {
@@ -224,9 +224,9 @@ class ApiController extends Controller
         }
 
         if (isset($_GET['include_notes']) && $_GET['include_notes']) {
-            $notes = $this->notes->loadNotesFull($username, $since);
+            $notes = $this->notes->loadNotesFull($since);
         } else {
-            $notes = $this->notes->loadNotesOverview($username, $since);
+            $notes = $this->notes->loadNotesOverview($since);
         }
 
         //work around bug https://bugzilla.gnome.org/show_bug.cgi?id=734313
@@ -283,18 +283,18 @@ class ApiController extends Controller
             //owncloud converts object to array, so we reverse
             $noteUpdate = (object) $noteUpdate;
 
-            $note = $this->notes->load($username, $noteUpdate->guid);
+            $note = $this->notes->load($noteUpdate->guid);
             if (isset($noteUpdate->command) && $noteUpdate->command == 'delete') {
-                $this->notes->delete($username, $noteUpdate->guid);
+                $this->notes->delete($noteUpdate->guid);
             } else {
                 $this->notes->update(
                     $note, $noteUpdate, $syncdata->latestSyncRevision
                 );
-                $this->notes->save($username, $note);
+                $this->notes->save($note);
             }
         }
 
-        $this->notes->saveSyncData($username, $syncdata);
+        $this->notes->saveSyncData($syncdata);
     }
 
     /**
@@ -304,17 +304,19 @@ class ApiController extends Controller
      * @NoCSRFRequired
      * @PublicPage
      */
-    public function note()
+    public function note($username, $guid)
     {
-        //FIXME
-        $deps = Dependencies::get();
-        $username = $deps->urlGen->loadUsername();
-        $guid     = $deps->urlGen->loadGuid();
-        $oauth = new \OAuth();
-        $oauth->setDeps($deps);
-        $oauth->verifyOAuthUser($username, $deps->urlGen->note($username, $guid));
+        $this->verifyUser(
+            $username,
+            $this->deps->urlGen->getAbsoluteURL(
+                $this->deps->urlGen->linkToRoute(
+                    'grauphel.api.note',
+                    array('username' => $username, 'guid' => $guid)
+                )
+            )
+        );
 
-        $note = $this->notes->load($username, $guid, false);
+        $note = $this->notes->load($guid, false);
         if ($note === null) {
             header('HTTP/1.0 404 Not Found');
             header('Content-type: text/plain');
@@ -322,8 +324,7 @@ class ApiController extends Controller
             exit(1);
         }
 
-        $data = array('note' => array($note));
-        $deps->renderer->sendJson($data);
+        return new JSONResponse($note);
     }
 
     /**
@@ -335,13 +336,17 @@ class ApiController extends Controller
      */
     protected function verifyUser($username, $curUrl)
     {
-        if ($this->user !== null && $this->user->getUID() == $username) {
+        if ($this->user !== null && $this->user->getUid() == $username) {
+            $this->notes->setUsername($username);
             return true;
         }
 
         $oauth = new OAuth();
         $oauth->setDeps($this->deps);
         $oauth->verifyOAuthUser($username, $curUrl);
+
+        $this->notes->setUsername($username);
+        return true;
     }
 }
 ?>

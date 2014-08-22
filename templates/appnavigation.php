@@ -12,7 +12,7 @@
     <div id="app-settings-content" style="display: none;">
       <h2><?php p($l->t('Tomboy note server'));?></h2>
       <em><?php print_unescaped($l->t('Use the following sync server URL with tomboy/conboy/tomdroid:')); ?></em>
-      <div><input id="resturl" type="text" readonly="readonly" value="<?php p($_['apiurl']); ?>" /></div>
+      <div><input id="resturl" type="text" readonly="readonly" value="<?php p($_['apiroot']); ?>" /></div>
     </div>
   </div>
 </div>

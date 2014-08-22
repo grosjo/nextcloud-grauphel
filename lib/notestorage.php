@@ -27,24 +27,33 @@ namespace OCA\Grauphel\Lib;
 class NoteStorage
 {
     protected $urlGen;
+    protected $username;
 
     public function __construct($urlGen)
     {
-        $this->urlGen = $urlGen;
+        $this->urlGen   = $urlGen;
     }
+
+    public function setUsername($username)
+    {
+        $this->username = $username;
+    }
+
     /**
      * Create a new sync data object for fresh users.
      * Used by loadSyncData()
      *
-     * @param string $username User name
-     *
      * @return SyncData New synchronization statistics
      */
-    protected function getNewSyncData($username)
+    protected function getNewSyncData()
     {
         $syncdata = new SyncData();
-        $syncdata->initNew($username);
+        $syncdata->initNew($this->username);
         return $syncdata;
+    }
+
+    public function getTags()
+    {
     }
 
     /**
@@ -107,21 +116,19 @@ class NoteStorage
      * Loads synchronization data for the given user.
      * Creates fresh sync data if there are none for the user.
      *
-     * @param string $username User name
-     *
      * @return SyncData Synchronization statistics (revision, sync guid)
      */
-    public function loadSyncData($username)
+    public function loadSyncData()
     {
         $row = \OC_DB::executeAudited(
             'SELECT * FROM `*PREFIX*grauphel_syncdata`'
             . ' WHERE `syncdata_user` = ?',
-            array($username)
+            array($this->username)
         )->fetchRow();
 
         if ($row === false) {
-            $syncdata = $this->getNewSyncData($username);
-            $this->saveSyncData($username, $syncdata);
+            $syncdata = $this->getNewSyncData($this->username);
+            $this->saveSyncData($this->username, $syncdata);
         } else {
             $syncdata = new SyncData();
             $syncdata->latestSyncRevision = (int) $row['syncdata_latest_sync_revision'];
@@ -134,17 +141,16 @@ class NoteStorage
     /**
      * Save synchronization data for the given user.
      *
-     * @param string   $username User name
      * @param SyncData $syncdata Synchronization data object
      *
      * @return void
      */
-    public function saveSyncData($username, SyncData $syncdata)
+    public function saveSyncData(SyncData $syncdata)
     {
         $row = \OC_DB::executeAudited(
             'SELECT * FROM `*PREFIX*grauphel_syncdata`'
             . ' WHERE `syncdata_user` = ?',
-            array($username)
+            array($this->username)
         )->fetchRow();
 
         if ($row === false) {
@@ -153,7 +159,7 @@ class NoteStorage
                 . '(`syncdata_user`, `syncdata_latest_sync_revision`, `syncdata_current_sync_guid`)'
                 . ' VALUES(?, ?, ?)';
             $params = array(
-                $username,
+                $this->username,
                 $syncdata->latestSyncRevision,
                 $syncdata->currentSyncGuid
             );
@@ -167,7 +173,7 @@ class NoteStorage
                 . ' `' . implode('` = ?, `', array_keys($data)) . '` = ?'
                 . ' WHERE `syncdata_user` = ?';
             $params = array_values($data);
-            $params[] = $username;
+            $params[] = $this->username;
         }
         \OC_DB::executeAudited($sql, $params);
     }
@@ -175,18 +181,17 @@ class NoteStorage
     /**
      * Load a note from the storage.
      *
-     * @param string  $username  User name
      * @param string  $guid      Note identifier
      * @param boolean $createNew Create a new note if it does not exist
      *
      * @return object Note object, NULL if !$createNew and note does not exist
      */
-    public function load($username, $guid, $createNew = true)
+    public function load($guid, $createNew = true)
     {
         $row = \OC_DB::executeAudited(
             'SELECT * FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
-            array($username, $guid)
+            array($this->username, $guid)
         )->fetchRow();
 
         if ($row === false) {
@@ -216,23 +221,22 @@ class NoteStorage
     /**
      * Save a note into storage.
      *
-     * @param string $username User name
-     * @param object $note     Note to save
+     * @param object $note Note to save
      *
      * @return void
      */
-    public function save($username, $note)
+    public function save($note)
     {
         $row = \OC_DB::executeAudited(
             'SELECT * FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
-            array($username, $note->guid)
+            array($this->username, $note->guid)
         )->fetchRow();
 
         $data = $this->rowFromNote($note);
         if ($row === false) {
             //INSERT
-            $data['note_user'] = $username;
+            $data['note_user'] = $this->username;
             $sql = 'INSERT INTO `*PREFIX*grauphel_notes`'
                 . ' (`' . implode('`, `', array_keys($data)) . '`)'
                 . ' VALUES(' . implode(', ', array_fill(0, count($data), '?')) . ')';
@@ -243,7 +247,7 @@ class NoteStorage
                 . '`' . implode('` = ?, `', array_keys($data)) . '` = ?'
                 . ' WHERE `note_user` = ? AND `note_guid` = ?';
             $params = array_values($data);
-            $params[] = $username;
+            $params[] = $this->username;
             $params[] = $note->guid;
         }
         \OC_DB::executeAudited($sql, $params);
@@ -252,17 +256,16 @@ class NoteStorage
     /**
      * Delete a note from storage.
      *
-     * @param string $username User name
-     * @param object $guid     ID of the note
+     * @param object $guid ID of the note
      *
      * @return void
      */
-    public function delete($username, $guid)
+    public function delete($guid)
     {
         \OC_DB::executeAudited(
             'DELETE FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
-            array($username, $guid)
+            array($this->username, $guid)
         );
     }
 
@@ -270,18 +273,17 @@ class NoteStorage
      * Load notes for the given user in short form.
      * Optionally only those changed after $since revision
      *
-     * @param string  $username User name
-     * @param integer $since    Revision number after which the notes changed
+     * @param integer $since Revision number after which the notes changed
      *
      * @return array Array of short note objects
      */
-    public function loadNotesOverview($username, $since = null)
+    public function loadNotesOverview($since = null)
     {
         $result = \OC_DB::executeAudited(
             'SELECT `note_guid`, `note_title`, `note_last_sync_revision`'
             . ' FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
-            array($username)
+            array($this->username)
         );
 
         $notes = array();
@@ -296,7 +298,7 @@ class NoteStorage
                         $this->urlGen->linkToRoute(
                             'grauphel.api.note',
                             array(
-                                'username' => $username,
+                                'username' => $this->username,
                                 'guid' => $row['note_guid']
                             )
                         )
@@ -314,17 +316,16 @@ class NoteStorage
      * Load notes for the given user in full form.
      * Optionally only those changed after $since revision
      *
-     * @param string  $username User name
-     * @param integer $since    Revision number after which the notes changed
+     * @param integer $since Revision number after which the notes changed
      *
      * @return array Array of full note objects
      */
-    public function loadNotesFull($username, $since = null)
+    public function loadNotesFull($since = null)
     {
         $result = \OC_DB::executeAudited(
             'SELECT * FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
-            array($username)
+            array($this->username)
         );
 
         $notes = array();

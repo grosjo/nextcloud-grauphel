@@ -59,7 +59,12 @@ class GuiController extends Controller
         $this->checkDeps();
 
         $res = new TemplateResponse('grauphel', 'index');
-        $res->setParams(array('apiurl' => $this->getApiUrl()));
+        $res->setParams(
+            array(
+                'apiroot' => $this->getApiRootUrl(),
+                'apiurl'  => $this->urlGen->linkToRoute('grauphel.api.index')
+            )
+        );
         $this->addNavigation($res);
         $this->addStats($res);
         return $res;
@@ -68,7 +73,7 @@ class GuiController extends Controller
     protected function addNavigation(TemplateResponse $res)
     {
         $nav = new \OCP\Template('grauphel', 'appnavigation', '');
-        $nav->assign('apiurl', $this->getApiUrl());
+        $nav->assign('apiroot', $this->getApiRootUrl());
 
         $params = $res->getParams();
         $params['appNavigation'] = $nav;
@@ -83,11 +88,12 @@ class GuiController extends Controller
 
         $username = $this->user->getUid();
         $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->urlGen);
+        $notes->setUsername($username);
         $tokens = new \OCA\Grauphel\Lib\TokenStorage();
 
         $nav = new \OCP\Template('grauphel', 'indexStats', '');
-        $nav->assign('notes', count($notes->loadNotesOverview($username)));
-        $nav->assign('syncrev', $notes->loadSyncData($username)->latestSyncRevision);
+        $nav->assign('notes', count($notes->loadNotesOverview()));
+        $nav->assign('syncrev', $notes->loadSyncData()->latestSyncRevision);
         $nav->assign('tokens', count($tokens->loadForUser($username, 'access')));
 
         $params = $res->getParams();
@@ -102,7 +108,7 @@ class GuiController extends Controller
         }
     }
 
-    protected function getApiUrl()
+    protected function getApiRootUrl()
     {
         //we need to remove the trailing / for tomdroid and conboy
         return rtrim(
