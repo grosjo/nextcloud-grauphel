@@ -54,6 +54,17 @@ class NoteStorage
 
     public function getTags()
     {
+        $result = \OC_DB::executeAudited(
+            'SELECT `note_tags` FROM `*PREFIX*grauphel_notes`'
+            . ' WHERE note_user = ?',
+            array($this->username)
+        );
+
+        $tags = array();
+        while ($row = $result->fetchRow()) {
+            $tags = array_merge($tags, json_decode($row['note_tags']));
+        }
+        return array_unique($tags);
     }
 
     /**
@@ -273,22 +284,27 @@ class NoteStorage
      * Load notes for the given user in short form.
      * Optionally only those changed after $since revision
      *
-     * @param integer $since Revision number after which the notes changed
+     * @param integer $since  Revision number after which the notes changed
+     * @param string  $rawtag Filter by tags
      *
      * @return array Array of short note objects
      */
-    public function loadNotesOverview($since = null)
+    public function loadNotesOverview($since = null, $rawtag = null)
     {
         $result = \OC_DB::executeAudited(
-            'SELECT `note_guid`, `note_title`, `note_last_sync_revision`'
+            'SELECT `note_guid`, `note_title`, `note_last_sync_revision`, `note_tags`'
             . ' FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
             array($this->username)
         );
 
         $notes = array();
+        $jsRawtag = json_encode($rawtag);
         while ($row = $result->fetchRow()) {
             if ($since !== null && $row['note_last_sync_revision'] <= $since) {
+                continue;
+            }
+            if ($rawtag !== null && strpos($row['note_tags'], $jsRawtag) === false) {
                 continue;
             }
             $notes[] = array(

@@ -63,6 +63,11 @@ $application->registerRoutes(
                 'name' => 'gui#index',
                 'verb' => 'GET',
             ),
+            array(
+                'url'  => '/tag/{rawtag}',
+                'name' => 'gui#tag',
+                'verb' => 'GET',
+            ),
         )
     )
 );

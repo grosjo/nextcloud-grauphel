@@ -70,7 +70,30 @@ class GuiController extends Controller
         return $res;
     }
 
-    protected function addNavigation(TemplateResponse $res)
+    /**
+     * Show all notes of a tag
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function tag($rawtag)
+    {
+        $notes = $this->getNotes()->loadNotesOverview(null, $rawtag);
+
+        $res = new TemplateResponse('grauphel', 'tag');
+        $res->setParams(
+            array(
+                'tag'    => substr($rawtag, 16),
+                'rawtag' => $rawtag,
+                'notes'  => $notes,
+            )
+        );
+        $this->addNavigation($res, $rawtag);
+
+        return $res;
+    }
+
+    protected function addNavigation(TemplateResponse $res, $selectedRawtag = null)
     {
         $nav = new \OCP\Template('grauphel', 'appnavigation', '');
         $nav->assign('apiroot', $this->getApiRootUrl());
@@ -78,6 +101,26 @@ class GuiController extends Controller
         $params = $res->getParams();
         $params['appNavigation'] = $nav;
         $res->setParams($params);
+
+        if ($this->user === null) {
+            return;
+        }
+
+        $rawtags = $this->getNotes()->getTags();
+        sort($rawtags);
+        $tags = array();
+        foreach ($rawtags as $rawtag) {
+            if (substr($rawtag, 0, 16) == 'system:notebook:') {
+                $tags[] = array(
+                    'name' => substr($rawtag, 16),
+                    'id'   => $rawtag,
+                    'href' => $this->urlGen->linkToRoute(
+                        'grauphel.gui.tag', array('tag' => $rawtag)
+                    ),
+                );
+            }
+        }
+        $nav->assign('tags', $tags);
     }
 
     protected function addStats(TemplateResponse $res)
@@ -87,8 +130,7 @@ class GuiController extends Controller
         }
 
         $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->urlGen);
-        $notes->setUsername($username);
+        $notes  = $this->getNotes();
         $tokens = new \OCA\Grauphel\Lib\TokenStorage();
 
         $nav = new \OCP\Template('grauphel', 'indexStats', '');
@@ -117,6 +159,14 @@ class GuiController extends Controller
             ),
             '/'
         );
+    }
+
+    protected function getNotes()
+    {
+        $username = $this->user->getUid();
+        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->urlGen);
+        $notes->setUsername($username);
+        return $notes;
     }
 }
 ?>
