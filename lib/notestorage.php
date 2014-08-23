@@ -138,8 +138,8 @@ class NoteStorage
         )->fetchRow();
 
         if ($row === false) {
-            $syncdata = $this->getNewSyncData($this->username);
-            $this->saveSyncData($this->username, $syncdata);
+            $syncdata = $this->getNewSyncData();
+            $this->saveSyncData($syncdata);
         } else {
             $syncdata = new SyncData();
             $syncdata->latestSyncRevision = (int) $row['syncdata_latest_sync_revision'];

@@ -115,7 +115,7 @@ class GuiController extends Controller
                     'name' => substr($rawtag, 16),
                     'id'   => $rawtag,
                     'href' => $this->urlGen->linkToRoute(
-                        'grauphel.gui.tag', array('tag' => $rawtag)
+                        'grauphel.gui.tag', array('rawtag' => $rawtag)
                     ),
                 );
             }
