@@ -83,7 +83,7 @@ class GuiController extends Controller
         $res = new TemplateResponse('grauphel', 'tag');
         $res->setParams(
             array(
-                'tag'    => substr($rawtag, 16),
+                'tag'    => $this->getPrettyTagName($rawtag),
                 'rawtag' => $rawtag,
                 'notes'  => $notes,
             )
@@ -108,11 +108,17 @@ class GuiController extends Controller
 
         $rawtags = $this->getNotes()->getTags();
         sort($rawtags);
+        array_unshift(
+            $rawtags,
+            'grauphel:special:all', 'grauphel:special:untagged'
+        );
+
         $tags = array();
         foreach ($rawtags as $rawtag) {
-            if (substr($rawtag, 0, 16) == 'system:notebook:') {
+            $name = $this->getPrettyTagName($rawtag);
+            if ($name !== false) {
                 $tags[] = array(
-                    'name' => substr($rawtag, 16),
+                    'name' => $name,
                     'id'   => $rawtag,
                     'href' => $this->urlGen->linkToRoute(
                         'grauphel.gui.tag', array('rawtag' => $rawtag)
@@ -167,6 +173,16 @@ class GuiController extends Controller
         $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->urlGen);
         $notes->setUsername($username);
         return $notes;
+    }
+
+    protected function getPrettyTagName($rawtag)
+    {
+        if (substr($rawtag, 0, 16) == 'system:notebook:') {
+            return substr($rawtag, 16);
+        } else if (substr($rawtag, 0, 17) == 'grauphel:special:') {
+            return '*' . substr($rawtag, 17) . '*';
+        }
+        return false;
     }
 }
 ?>

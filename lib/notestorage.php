@@ -285,7 +285,9 @@ class NoteStorage
      * Optionally only those changed after $since revision
      *
      * @param integer $since  Revision number after which the notes changed
-     * @param string  $rawtag Filter by tags
+     * @param string  $rawtag Filter by tag. Special tags:
+     *                        - grauphel:special:all
+     *                        - grauphel:special:untagged
      *
      * @return array Array of short note objects
      */
@@ -299,7 +301,13 @@ class NoteStorage
         );
 
         $notes = array();
-        $jsRawtag = json_encode($rawtag);
+        if ($rawtag == 'grauphel:special:all') {
+            $rawtag = null;
+        } else if ($rawtag == 'grauphel:special:untagged') {
+            $jsRawtag = json_encode(array());
+        } else {
+            $jsRawtag = json_encode($rawtag);
+        }
         while ($row = $result->fetchRow()) {
             if ($since !== null && $row['note_last_sync_revision'] <= $since) {
                 continue;
