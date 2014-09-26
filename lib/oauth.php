@@ -103,7 +103,14 @@ class OAuth
             return OAUTH_PARAMETER_ABSENT;
         }
 
-        $token = $this->tokens->load('access', $provider->token);
+        try {
+            $token = $this->tokens->load('access', $provider->token);
+        } catch (OAuthException $e) {
+            if ($e->getCode() == OAUTH_TOKEN_REJECTED) {
+                return OAUTH_TOKEN_REJECTED;
+            }
+            throw $e;
+        }
         $provider->token_secret = $token->secret;
         return OAUTH_OK;
     }

@@ -95,12 +95,15 @@ class TokenStorage
         )->fetchRow();
 
         if ($tokenRow === false) {
-            throw new OAuthException('Unknown token: ' . $type . ' / ' . $tokenKey);
+            throw new OAuthException(
+                'Unknown token: ' . $type . ' / ' . $tokenKey,
+                OAUTH_TOKEN_REJECTED
+            );
         }
 
         $token = $this->fromDb($tokenRow);
         if ($token->tokenKey != $tokenKey) {
-            throw new OAuthException('Invalid token');
+            throw new OAuthException('Invalid token', OAUTH_TOKEN_REJECTED);
         }
 
         return $token;
