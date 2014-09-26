@@ -3,4 +3,4 @@
 	* Fix oauth verification with tomdroid
 	* Fix database date field lengths
 	* Tomdroid sync works now
-
+	* Fix bug #3: Inserting notes on PostgreSQL

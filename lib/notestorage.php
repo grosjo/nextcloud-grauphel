@@ -407,8 +407,8 @@ class NoteStorage
             'note_last_change_date'          => $note->{'last-change-date'},
             'note_last_metadata_change_date' => $note->{'last-metadata-change-date'},
             
-            'note_open_on_startup' => $note->{'open-on-startup'},
-            'note_pinned'          => $note->pinned,
+            'note_open_on_startup' => (int) $note->{'open-on-startup'},
+            'note_pinned'          => (int) $note->pinned,
             'note_tags'            => json_encode($note->tags),
 
             'note_last_sync_revision' => $note->{'last-sync-revision'},
