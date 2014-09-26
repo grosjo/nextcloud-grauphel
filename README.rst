@@ -21,13 +21,13 @@ __ https://wiki.gnome.org/Apps/Tomboy/Synchronization/REST/1.0
 =================
 Supported clients
 =================
-* Conboy__
-* Tomboy__
+* Conboy__ (Nokia N900 Maemo)
+* Tomboy__ (Linux)
+* Tomdroid__ (Android)
 
 __ http://conboy.garage.maemo.org/
 __ https://wiki.gnome.org/Apps/Tomboy
-
-Tomdroid does not work yet.
+__ https://launchpad.net/tomdroid
 
 
 ============
