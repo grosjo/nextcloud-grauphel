@@ -90,19 +90,19 @@
 				<name>note_create_date</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>32</length>
+				<length>33</length>
 			</field>
 			<field>
 				<name>note_last_change_date</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>32</length>
+				<length>33</length>
 			</field>
 			<field>
 				<name>note_last_metadata_change_date</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>32</length>
+				<length>33</length>
 			</field>
 
 			<field>

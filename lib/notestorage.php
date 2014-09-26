@@ -363,14 +363,24 @@ class NoteStorage
         return $notes;
     }
 
+    protected function fixDate($date)
+    {
+        if (strlen($date) == 32) {
+            //Bug in grauphel 0.1.1; date fields in DB had only 32 instead of 33
+            // characters. The last digit of the time zone was missing
+            $date .= '0';
+        }
+        return $date;
+    }
+
     protected function noteFromRow($row)
     {
         return (object) array(
             'guid'  => $row['note_guid'],
 
-            'create-date'               => $row['note_create_date'],
-            'last-change-date'          => $row['note_last_change_date'],
-            'last-metadata-change-date' => $row['note_last_metadata_change_date'],
+            'create-date'               => $this->fixDate($row['note_create_date']),
+            'last-change-date'          => $this->fixDate($row['note_last_change_date']),
+            'last-metadata-change-date' => $this->fixDate($row['note_last_metadata_change_date']),
 
             'title'                => $row['note_title'],
             'note-content'         => $row['note_content'],
