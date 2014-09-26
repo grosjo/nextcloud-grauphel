@@ -251,7 +251,7 @@ class OauthController extends Controller
                 array(
                     'oauth_token'              => $token->tokenKey,
                     'oauth_token_secret'       => $token->secret,
-                    'oauth_callback_confirmed' => 'TRUE'
+                    'oauth_callback_confirmed' => 'true'
                 )
             );
         } catch (OAuthException $e) {
