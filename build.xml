@@ -4,7 +4,13 @@
     grauphel phing build file. Used to create releases.
   -->
 
-  <loadfile property="version" file="appinfo/version"/>
+  <loadfile property="version" file="appinfo/version">
+    <filterchain>
+      <replaceregexp>
+       <regexp pattern="\r?\n" replace=""/>
+      </replaceregexp>
+    </filterchain>
+  </loadfile>
   <property name="zipfile"  value="${phing.project.name}-${version}.zip" />
   <property name="distfile" value="dist/${zipfile}" />
 
