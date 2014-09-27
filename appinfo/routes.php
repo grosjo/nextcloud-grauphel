@@ -68,6 +68,11 @@ $application->registerRoutes(
                 'name' => 'gui#tag',
                 'verb' => 'GET',
             ),
+            array(
+                'url'  => '/tokens',
+                'name' => 'gui#tokens',
+                'verb' => 'GET',
+            ),
         )
     )
 );

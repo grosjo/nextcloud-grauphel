@@ -15,6 +15,7 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCA\Grauphel\Lib\TokenStorage;
 
 /**
  * Owncloud frontend
@@ -86,6 +87,28 @@ class GuiController extends Controller
                 'tag'    => $this->getPrettyTagName($rawtag),
                 'rawtag' => $rawtag,
                 'notes'  => $notes,
+            )
+        );
+        $this->addNavigation($res, $rawtag);
+
+        return $res;
+    }
+
+    /**
+     * Show access tokens
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function tokens()
+    {
+        $tokens = new TokenStorage();
+        $res = new TemplateResponse('grauphel', 'tokens');
+        $res->setParams(
+            array(
+                'tokens' => $tokens->loadForUser(
+                    $this->user->getUid(), 'access'
+                )
             )
         );
         $this->addNavigation($res, $rawtag);
