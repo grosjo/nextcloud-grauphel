@@ -1,3 +1,9 @@
+2014-09-27  Christian Weiske  <cweiske@cweiske.de>
+
+	* phing build file
+	* access token page
+	* Version 0.2.0
+
 2014-09-26  Christian Weiske  <cweiske@cweiske.de>
 
 	* Fix oauth verification with tomdroid
