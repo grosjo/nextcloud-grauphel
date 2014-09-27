@@ -43,3 +43,15 @@ __ http://pecl.php.net/package/oauth
 Author
 ======
 Christian Weiske, cweiske@cweiske.de, http://cweiske.de/
+
+
+=========
+Home page
+=========
+- `grauphel on apps.owncloud.com`__
+- `Source code repository`__
+- `Github source code mirror`__
+
+__ http://apps.owncloud.com/content/show.php?action=content&content=166654
+__ http://git.cweiske.de/grauphel.git/
+__ https://github.com/cweiske/grauphel
