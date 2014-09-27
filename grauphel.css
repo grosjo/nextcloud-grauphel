@@ -26,3 +26,14 @@
     padding: 1ex;
     font-family: monospace;
 }
+
+.app-grauphel #app-content ul {
+    list-style-type: disc;
+    margin-bottom: 1ex;
+}
+.app-grauphel #app-content li {
+    margin-left: 4ex;
+}
+.app-grauphel #app-content a.lined {
+    text-decoration: underline;
+}

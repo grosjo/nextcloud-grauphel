@@ -1,4 +1,4 @@
-<h2>Stats</h2>
+<h2>Statistics</h2>
 <dl>
  <dt>Number of notes</dt>
  <dd><?php p($_['notes']); ?></dd>

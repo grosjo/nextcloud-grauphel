@@ -10,9 +10,12 @@
       <button class="settings-button" data-apps-slide-toggle="#app-settings-content"></button>
     </div>
     <div id="app-settings-content" style="display: none;">
-      <h2><?php p($l->t('Tomboy note server'));?></h2>
-      <em><?php print_unescaped($l->t('Use the following sync server URL with tomboy/conboy/tomdroid:')); ?></em>
-      <div><input id="resturl" type="text" readonly="readonly" value="<?php p($_['apiroot']); ?>" /></div>
+      <ul>
+        <li><a href="<?php p(OCP\Util::linkToRoute('grauphel.gui.index')); ?>">Info and stats</a></li>
+      <?php if (OCP\User::isLoggedIn()) { ?>
+        <li><a href="<?php p(OCP\Util::linkToRoute('grauphel.gui.tokens')); ?>">Manage access tokens</a></li>
+      <?php } ?>
+      </ul>
     </div>
   </div>
 </div>
