@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="grauphel" default="zip" basedir=".">
+  <!--
+    grauphel phing build file. Used to create releases.
+  -->
+
+  <loadfile property="version" file="appinfo/version"/>
+  <property name="zipfile"  value="${phing.project.name}-${version}.zip" />
+  <property name="distfile" value="dist/${zipfile}" />
+
+  <fileset id="fs.zip" dir=".">
+   <include name="**"/>
+   <exclude name="dist/"/>
+   <exclude name=".git"/>
+   <exclude name="**/.gitignore"/>
+   <exclude name="**/build.xml"/>
+   <exclude name="**/README.html"/>
+  </fileset>
+
+  <target name="zip" description="Create zip file for release">
+    <mkdir dir="dist"/>
+    <if>
+     <available file='${distfile}' type='file' />
+     <then>
+       <echo>Error: Release zip file already exists: ${distfile}</echo>
+       <fail>Zip file already exists</fail>
+     </then>
+    </if>
+    <!--<delete file="${distfile}" failonerror="false"/>-->
+    <zip destfile="${distfile}" prefix="grauphel/">
+      <fileset refid="fs.zip"/>
+    </zip>
+  </target>
+
+</project>
