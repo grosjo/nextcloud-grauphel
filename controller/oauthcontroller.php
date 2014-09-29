@@ -118,10 +118,16 @@ class OauthController extends Controller
             return $token;
         }
 
+        $client = 'unknown';
+        if (isset($_GET['client'])) {
+            $client = $_GET['client'];
+        }
+
         $res = new TemplateResponse('grauphel', 'oauthAuthorize');
         $res->setParams(
             array(
                 'oauth_token' => $token->tokenKey,
+                'client'      => $client,
                 'formaction'  => $this->deps->urlGen->linkToRoute(
                     'grauphel.oauth.confirm'
                 ),

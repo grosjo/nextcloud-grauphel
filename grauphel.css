@@ -37,3 +37,15 @@
 .app-grauphel #app-content a.lined {
     text-decoration: underline;
 }
+
+.app-grauphel .oauth-authorize {
+    margin: 2ex;
+    text-align: center;
+}
+.app-grauphel .msg {
+    padding: 2ex;
+}
+.app-grauphel .buttons {
+    margin-top: 2ex;
+    text-align: center;
+}
