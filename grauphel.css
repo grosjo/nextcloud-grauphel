@@ -1,5 +1,7 @@
 .app-grauphel #app-content {
     box-sizing: border-box;
+}
+.app-grauphel #app-content.content {
     padding: 2ex;
 }
 
@@ -8,6 +10,10 @@
     font-size: 2em;
     margin-bottom: 1ex;
 }
+.app-grauphel #app-content.list h1 {
+    padding: 1ex;
+}
+
 .app-grauphel #app-content h2 {
     font-weight: bold;
     font-size: 150%;
@@ -48,4 +54,64 @@
 .app-grauphel .buttons {
     margin-top: 2ex;
     text-align: center;
+}
+
+
+/* table style */
+
+table.table {
+    position: relative;
+    width: 100%;
+}
+
+/* make sure there's enough room for the file actions */
+#body-user table.table {
+	min-width: 688px; /* 768 (mobile break) - 80 (nav width) */
+}
+
+table.table tbody tr { background-color:#fff; height:51px; }
+
+/* fit app list view heights */
+/*
+.app-files #app-content>.viewcontainer {
+	min-height: 100%;
+}*/
+
+table.table tbody tr { background-color:#fff; height:40px; }
+table.table tbody tr:hover, tbody tr:active {
+	background-color: rgb(240,240,240);
+}
+table.table tbody tr.selected {
+	background-color: rgb(230,230,230);
+}
+table.table tbody tr.searchresult {
+	background-color: rgb(240,240,240);
+}
+table.table tbody a { color:#000; }
+
+table.table tr.mouseOver td {
+	background-color: #eee;
+}
+table.table th, table th a {
+	color: #999;
+}
+table.table thead th {
+    background-color: white;
+    padding: 15px;
+    height: 50px;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+table.table th, table.table td {
+    border-bottom:1px solid #ddd;
+    text-align:left;
+    font-weight:normal;
+}
+table.table td {
+    padding: 0 15px;
+    border-bottom: 1px solid #eee;
+    font-style: normal;
+    background-position: 8px center;
+    background-repeat: no-repeat;
 }

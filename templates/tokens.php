@@ -3,11 +3,26 @@
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
 
-<div id="app-content">
+<div id="app-content" class="list">
   <h1>Manage access tokens</h1>
-  <ul>
+  <table class="table">
+   <thead>
+    <tr>
+     <th>Token</th>
+     <th>Client</th>
+     <th>Last use</th>
+     <th>Actions</th>
+    </tr>
+   </thead>
+   <tbody>
     <?php foreach ($_['tokens'] as $token) { ?>
-      <li data-id="<?php p($token->tokenKey); ?>"><a href="#"><?php p($token->tokenKey); ?></a></li>
+      <tr>
+       <td><?php p($token->tokenKey); ?></td>
+       <td></td>
+       <td></td>
+       <td>Disable Delete</td>
+      </tr>
     <?php } ?>
-  </ul>
+   </tbody>
+ </table>
 </div>

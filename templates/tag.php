@@ -3,7 +3,7 @@
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
 
-<div id="app-content">
+<div id="app-content" class="content">
   <h1>Notebook: <?php p($_['tag']); ?></h1>
   <ul>
     <?php foreach ($_['notes'] as $note) { ?>

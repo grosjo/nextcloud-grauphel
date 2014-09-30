@@ -3,7 +3,7 @@
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
 
-<div id="app-content">
+<div id="app-content" class="content">
   <div>
     <h1>grauphel - Tomboy notes server</h1>
     <p>
