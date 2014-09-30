@@ -111,7 +111,7 @@ class GuiController extends Controller
                 )
             )
         );
-        $this->addNavigation($res, $rawtag);
+        $this->addNavigation($res, null);
 
         return $res;
     }

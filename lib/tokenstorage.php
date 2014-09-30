@@ -29,11 +29,11 @@ class TokenStorage
     /**
      * Store the given token
      *
-     * @param OAuth_Token $token Token object to store
+     * @param Token $token Token object to store
      *
      * @return void
      */
-    public function store(OAuth_Token $token)
+    public function store(Token $token)
     {
         \OC_DB::executeAudited(
             'INSERT INTO `*PREFIX*grauphel_oauth_tokens`'
