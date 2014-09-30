@@ -111,6 +111,12 @@ class OAuth
             }
             throw $e;
         }
+
+        if (time() - $token->lastuse > 60) {
+            //time to update lastuse after at least a minute
+            $this->tokens->updateLastUse($token->tokenKey);
+        }
+
         $provider->token_secret = $token->secret;
         return OAUTH_OK;
     }
@@ -147,7 +153,7 @@ class OAuth
     /**
      * Get a new oauth provider instance.
      * Used to work around the fastcgi bug in oauthprovider.
-     * 
+     *
      * @return \OAuthProvider
      */
     public static function getProvider()

@@ -69,6 +69,20 @@ class Token
      */
     public $callback;
 
+    /**
+     * Client name/identifier (user agent)
+     *
+     * @var string
+     */
+    public $client;
+
+    /**
+     * Unix timestamp when the token was used last
+     *
+     * @var integer
+     */
+    public $lastuse;
+
     public function __construct($type = null)
     {
         $this->type = $type;

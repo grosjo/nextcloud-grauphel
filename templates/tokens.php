@@ -18,8 +18,8 @@
     <?php foreach ($_['tokens'] as $token) { ?>
       <tr>
        <td><?php p($token->tokenKey); ?></td>
-       <td></td>
-       <td></td>
+       <td title="<?php p($token->client); ?>"><?php p($_['client']->getNiceName($token->client)); ?></td>
+       <td><?php p(\OCP\Util::formatDate($token->lastuse)); ?></td>
        <td>Disable Delete</td>
       </tr>
     <?php } ?>

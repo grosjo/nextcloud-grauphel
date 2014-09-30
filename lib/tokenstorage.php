@@ -37,15 +37,17 @@ class TokenStorage
     {
         \OC_DB::executeAudited(
             'INSERT INTO `*PREFIX*grauphel_oauth_tokens`'
-            . '(`token_user`, `token_type`, `token_key`, `token_secret`, `token_verifier`, `token_callback`)'
-            . ' VALUES(?, ?, ?, ?, ?, ?)',
+            . '(`token_user`, `token_type`, `token_key`, `token_secret`, `token_verifier`, `token_callback`, `token_client`, `token_lastuse`)'
+            . ' VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
             array(
                 $token->user,
                 $token->type,
                 $token->tokenKey,
                 (string) $token->secret,
                 (string) $token->verifier,
-                (string) $token->callback
+                (string) $token->callback,
+                (string) $token->client,
+                (string) date('c'),
             )
         );
     }
@@ -133,6 +135,25 @@ class TokenStorage
         return $tokens;
     }
 
+    /**
+     * Update the "last use" field of a token
+     *
+     * @param string $tokenKey Random token string to load
+     *
+     * @return void
+     */
+    public function updateLastUse($tokenKey)
+    {
+        \OC_DB::executeAudited(
+            'UPDATE `*PREFIX*grauphel_oauth_tokens`'
+            . ' SET `token_lastuse` = ? WHERE `token_key` = ?',
+            array(
+                (string) date('c'),
+                $tokenKey,
+            )
+        );
+    }
+
     protected function fromDb($tokenRow)
     {
         $token = new Token();
@@ -142,6 +163,8 @@ class TokenStorage
         $token->user     = $tokenRow['token_user'];
         $token->verifier = $tokenRow['token_verifier'];
         $token->callback = $tokenRow['token_callback'];
+        $token->client   = $tokenRow['token_client'];
+        $token->lastuse  = \strtotime($tokenRow['token_lastuse']);
         return $token;
     }
 }

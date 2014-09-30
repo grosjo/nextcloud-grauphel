@@ -16,6 +16,7 @@ namespace OCA\Grauphel\Controller;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 
+use \OCA\Grauphel\Lib\Client;
 use \OCA\Grauphel\Lib\NoteStorage;
 use \OCA\Grauphel\Lib\OAuth;
 use \OCA\Grauphel\Lib\OAuthException;
@@ -105,10 +106,10 @@ class ApiController extends Controller
             'api-version' => '1.0',
         );
 
-        $client = $this->getClient();
+        $cl = new Client();
+        $client = $cl->getClient();
         if ($client !== false) {
-            $data['oauth_authorize_url'] .= '?client='
-                . urlencode($this->getNiceClientName($client));
+            $data['oauth_authorize_url'] .= '?client=' . urlencode($client);
         }
 
         if ($authenticated) {
@@ -331,31 +332,6 @@ class ApiController extends Controller
         }
 
         return new JSONResponse($note);
-    }
-
-    protected function getClient()
-    {
-        if (isset($_SERVER['HTTP_X_TOMBOY_CLIENT'])) {
-            $client = $_SERVER['HTTP_X_TOMBOY_CLIENT'];
-            $doublepos = strpos($client, ', org.tomdroid');
-            if ($doublepos !== false) {
-                //https://bugs.launchpad.net/tomdroid/+bug/1375436
-                //X-Tomboy-Client header is sent twice
-                $client = substr($client, 0, $doublepos);
-            }
-            return $client;
-        }
-
-        return false;
-    }
-
-    protected function getNiceClientName($client)
-    {
-        if (substr($client, 0, 12) == 'org.tomdroid') {
-            //org.tomdroid v0.7.5, build 14, Android v4.4.2, innotek GmbH/VirtualBox
-            return 'Tomdroid';
-        }
-        return $client;
     }
 
     /**

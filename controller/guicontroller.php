@@ -15,6 +15,7 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCA\Grauphel\Lib\Client;
 use \OCA\Grauphel\Lib\TokenStorage;
 
 /**
@@ -108,7 +109,8 @@ class GuiController extends Controller
             array(
                 'tokens' => $tokens->loadForUser(
                     $this->user->getUid(), 'access'
-                )
+                ),
+                'client' => new Client(),
             )
         );
         $this->addNavigation($res, null);

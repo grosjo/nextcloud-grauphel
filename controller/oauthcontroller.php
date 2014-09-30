@@ -18,6 +18,7 @@ use \OCP\AppFramework\Http;
 use \OCP\AppFramework\Http\RedirectResponse;
 use \OCP\AppFramework\Http\TemplateResponse;
 
+use \OCA\Grauphel\Lib\Client;
 use \OCA\Grauphel\Lib\Token;
 use \OCA\Grauphel\Lib\OAuth;
 use \OCA\Grauphel\Lib\Dependencies;
@@ -87,6 +88,7 @@ class OauthController extends Controller
             $newToken->tokenKey = 'a' . bin2hex($provider->generateToken(8));
             $newToken->secret   = 's' . bin2hex($provider->generateToken(8));
             $newToken->user     = $token->user;
+            $newToken->client   = $token->client;
             $this->deps->tokens->store($newToken);
 
             return new FormResponse(
@@ -118,19 +120,22 @@ class OauthController extends Controller
             return $token;
         }
 
-        $client = 'unknown';
+        $clientTitle = 'unknown';
+        $clientAgent = '';
         if (isset($_GET['client'])) {
-            $client = $_GET['client'];
+            $clientAgent = $_GET['client'];
+            $cl = new Client();
+            $clientTitle = $cl->getNiceName($clientAgent);
         }
 
         $res = new TemplateResponse('grauphel', 'oauthAuthorize');
         $res->setParams(
             array(
                 'oauth_token' => $token->tokenKey,
-                'client'      => $client,
+                'client'      => $clientTitle,
                 'formaction'  => $this->deps->urlGen->linkToRoute(
                     'grauphel.oauth.confirm'
-                ),
+                ) . '?client=' . urlencode($clientAgent),
             )
         );
         return $res;
@@ -172,6 +177,11 @@ class OauthController extends Controller
             return $res;
         }
 
+        $clientAgent = '';
+        if (isset($_GET['client'])) {
+            $clientAgent = $_GET['client'];
+        }
+
         //the user is logged in and authorized
         $provider = OAuth::getProvider();
 
@@ -180,6 +190,7 @@ class OauthController extends Controller
         $newToken->secret   = $token->secret;
         $newToken->verifier = 'v' . bin2hex($provider->generateToken(8));
         $newToken->user     = $this->user->getUID();
+        $newToken->client   = $clientAgent;
 
         $this->deps->tokens->store($newToken);
 

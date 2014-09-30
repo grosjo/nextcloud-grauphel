@@ -51,6 +51,17 @@
 				<notnull>true</notnull>
 				<length>2048</length>
 			</field>
+			<field>
+				<name>token_client</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>256</length>
+			</field>
+			<field>
+				<name>token_lastuse</name>
+				<type>timestamp</type>
+				<notnull>true</notnull>
+			</field>
 		</declaration>
 	</table>
 
