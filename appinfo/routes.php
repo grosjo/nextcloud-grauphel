@@ -73,6 +73,12 @@ $application->registerRoutes(
                 'name' => 'gui#tokens',
                 'verb' => 'GET',
             ),
+
+            array(
+                'url'  => '/tokens/{username}/{tokenKey}',
+                'name' => 'token#delete',
+                'verb' => 'DELETE',
+            ),
         )
     )
 );

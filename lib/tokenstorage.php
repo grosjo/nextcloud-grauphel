@@ -27,6 +27,25 @@ namespace OCA\Grauphel\Lib;
 class TokenStorage
 {
     /**
+     * Delete token
+     *
+     * @param string $type     Token type: temp, access, verify
+     * @param string $tokenKey Random token string to load
+     *
+     * @return void
+     *
+     * @throws OAuthException When token does not exist
+     */
+    public function delete($type, $tokenKey)
+    {
+        \OC_DB::executeAudited(
+            'DELETE FROM `*PREFIX*grauphel_oauth_tokens`'
+            . ' WHERE `token_key` = ? AND `token_type` = ?',
+            array($tokenKey, $type)
+        );
+    }
+
+    /**
      * Store the given token
      *
      * @param Token $token Token object to store
@@ -66,11 +85,7 @@ class TokenStorage
     {
         try {
             $token = $this->load($type, $tokenKey);
-            \OC_DB::executeAudited(
-                'DELETE FROM `*PREFIX*grauphel_oauth_tokens`'
-                . ' WHERE `token_key` = ? AND `token_type` = ?',
-                array($tokenKey, $type)
-            );
+            $this->delete($type, $tokenKey);
             return $token;
         } catch (OAuthException $e) {
             throw $e;

@@ -56,6 +56,16 @@ class Application extends App
                 );
             }
         );
+        $container->registerService(
+            'TokenController',
+            function($c) {
+                return new \OCA\Grauphel\Controller\TokenController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('Session')->getUser()
+                );
+            }
+        );
     }
 }
 ?>
