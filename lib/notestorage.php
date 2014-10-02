@@ -225,7 +225,7 @@ class NoteStorage
                 'tags'            => array(),
             );
         }
-        
+
         return $this->noteFromRow($row);
     }
 
@@ -398,15 +398,15 @@ class NoteStorage
     {
         return array(
             'note_guid'  => $note->guid,
-            'note_title' => $note->title,
+            'note_title' => (string) $note->title,
 
-            'note_content'         => $note->{'note-content'},
-            'note_content_version' => $note->{'note-content-version'},
+            'note_content'         => (string) $note->{'note-content'},
+            'note_content_version' => (string) $note->{'note-content-version'},
 
             'note_create_date'               => $note->{'create-date'},
             'note_last_change_date'          => $note->{'last-change-date'},
             'note_last_metadata_change_date' => $note->{'last-metadata-change-date'},
-            
+
             'note_open_on_startup' => (int) $note->{'open-on-startup'},
             'note_pinned'          => (int) $note->pinned,
             'note_tags'            => json_encode($note->tags),
