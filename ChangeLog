@@ -1,3 +1,8 @@
+2014-10-03  Christian Weiske  <cweiske@cweiske.de>
+
+	* Fix bug #8: Titled blank notes cause SQL error
+	* Version 0.2.1
+
 2014-09-27  Christian Weiske  <cweiske@cweiske.de>
 
 	* phing build file
