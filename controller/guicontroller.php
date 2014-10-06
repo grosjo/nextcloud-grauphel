@@ -122,6 +122,7 @@ class GuiController extends Controller
     {
         $nav = new \OCP\Template('grauphel', 'appnavigation', '');
         $nav->assign('apiroot', $this->getApiRootUrl());
+        $nav->assign('tags', array());
 
         $params = $res->getParams();
         $params['appNavigation'] = $nav;
