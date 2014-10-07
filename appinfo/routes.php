@@ -79,6 +79,11 @@ $application->registerRoutes(
                 'name' => 'token#delete',
                 'verb' => 'DELETE',
             ),
+            array(
+                'url'  => '/tokens/{username}/{tokenKey}',
+                'name' => 'token#deletePost',
+                'verb' => 'POST',
+            ),
         )
     )
 );

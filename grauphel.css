@@ -115,3 +115,20 @@ table.table td {
     background-position: 8px center;
     background-repeat: no-repeat;
 }
+
+a.action.delete, table.table form button.action.delete {
+    position: absolute;
+    right: 0px;
+    padding: 17px 14px;
+    padding: 3px 14px;
+}
+a.action {
+    line-height: 30px;
+}
+table.table form {
+    display: inline;
+}
+table.table form button.action {
+    border: none;
+    background-color: transparent;
+}

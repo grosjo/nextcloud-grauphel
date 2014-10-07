@@ -14,6 +14,7 @@
 namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\RedirectResponse;
 use \OCA\Grauphel\Lib\Dependencies;
 use \OCA\Grauphel\Lib\OAuthException;
 use \OCA\Grauphel\Lib\Response\ErrorResponse;
@@ -41,7 +42,8 @@ class TokenController extends Controller
     public function __construct($appName, \OCP\IRequest $request, $user)
     {
         parent::__construct($appName, $request);
-        $this->user   = $user;
+        $this->user = $user;
+        $this->deps = Dependencies::get();
 
         //default http header: we assume something is broken
         header('HTTP/1.0 500 Internal Server Error');
@@ -49,7 +51,7 @@ class TokenController extends Controller
 
 
     /**
-     * Delete access tokens
+     * Delete an access token
      * DELETE /tokens/$username/$tokenKey
      *
      * @NoAdminRequired
@@ -82,6 +84,28 @@ class TokenController extends Controller
 
         $res = new \OCP\AppFramework\Http\Response();
         $res->setStatus(\OCP\AppFramework\Http::STATUS_NO_CONTENT);
+        return $res;
+    }
+
+    /**
+     * Delete an access token via POST
+     * POST /tokens/$username/$tokenKey
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function deletePost($username, $tokenKey)
+    {
+        if (isset($_POST['delete']) && $_POST['delete'] == 1) {
+            $this->delete($username, $tokenKey);
+        }
+
+        $res = new RedirectResponse(
+            $this->deps->urlGen->getAbsoluteURL(
+                $this->deps->urlGen->linkToRoute('grauphel.gui.tokens')
+            )
+        );
+        $res->setStatus(\OCP\AppFramework\Http::STATUS_FOUND);
         return $res;
     }
 }

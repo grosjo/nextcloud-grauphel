@@ -111,6 +111,7 @@ class GuiController extends Controller
                     $this->user->getUid(), 'access'
                 ),
                 'client' => new Client(),
+                'username' => $this->user->getUid(),
             )
         );
         $this->addNavigation($res, null);

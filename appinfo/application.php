@@ -59,6 +59,8 @@ class Application extends App
         $container->registerService(
             'TokenController',
             function($c) {
+                Dependencies::get()->urlGen
+                    = $c->query('ServerContainer')->getURLGenerator();
                 return new \OCA\Grauphel\Controller\TokenController(
                     $c->query('AppName'),
                     $c->query('Request'),
