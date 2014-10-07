@@ -13,6 +13,9 @@
 .app-grauphel #app-content.list h1 {
     padding: 1ex;
 }
+.app-grauphel #app-content.list > p {
+    margin: 2ex;
+}
 
 .app-grauphel #app-content h2 {
     font-weight: bold;

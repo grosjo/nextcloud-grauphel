@@ -5,6 +5,11 @@
 
 <div id="app-content" class="list">
   <h1>Manage access tokens</h1>
+  <p>
+    Here you see which applications have access to the notes.
+    You can permanently revoke access by clicking the "delete" icon on the right
+    side of each token row.
+  </p>
   <table class="table">
    <thead>
     <tr>
