@@ -30,6 +30,15 @@ __ https://wiki.gnome.org/Apps/Tomboy
 __ https://launchpad.net/tomdroid
 
 
+Known working versions
+======================
+grauphel 0.2.1 is known to work with:
+
+* Tomboy 1.15.2, Linux
+* Tomboy 1.15.1, Windows
+* Tomdroid 0.7.5, Android 4.4.1
+
+
 ============
 Dependencies
 ============
