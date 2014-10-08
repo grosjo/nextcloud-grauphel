@@ -158,23 +158,18 @@ class OAuth
      */
     public static function getProvider()
     {
+        $params = array();
         //$_SERVER['REDIRECT_HTTP_AUTHORIZATION'] = $_SERVER['HTTP_AUTHORIZATION'];
-        //unset($_SERVER['HTTP_AUTHORIZATION']);
-        if ((isset($_SERVER['HTTP_AUTHORIZATION'])
-                && strlen($_SERVER['HTTP_AUTHORIZATION'])
-                && strtolower(substr($_SERVER['HTTP_AUTHORIZATION'], 0, 5)) != 'oauth')
-            || (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])
-                && strlen($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])
-                && strtolower(substr($_SERVER['REDIRECT_HTTP_AUTHORIZATION'], 0, 5)) != 'oauth')
+
+        if (isset($_SERVER['HTTP_AUTHORIZATION'])
+            && $_SERVER['HTTP_AUTHORIZATION'] == ''
         ) {
             //work around bug https://bugs.php.net/bug.php?id=68168
-            //#68168: HTTP Basic auth reported as "signature_method_rejected"
-            throw new \OAuthException(
-                'No oauth auth header', OAUTH_PARAMETER_ABSENT
-            );
+            //#68168: HTTP Basic auth and empty auth header reported
+            //        as "signature_method_rejected"
+            $params['oauth_signature_method'] = OAUTH_SIG_METHOD_PLAINTEXT;
         }
 
-        $params = array();
         if (!isset($_SERVER['HTTP_AUTHORIZATION'])
             && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])
         ) {
