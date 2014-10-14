@@ -4,8 +4,15 @@
  <input type="hidden" value="<?php p($_['oauth_token']); ?>" name="oauth_token" />
  <p class="msg">
   Shall application
-  <strong><?php p($_['client']); ?></strong>
+  <strong><?php p($_['clientTitle']); ?></strong>
   get full access to the notes?
+ </p>
+ <p>
+  <label>
+   Application/computer name:
+   <input type="text" name="client" value="<?php p($_['clientAgent']); ?>"/>
+  </label>
+  (e.g. <tt>home pc</tt>)
  </p>
  <div class="buttons">
   <button type="submit" name="auth" value="ok">Yes, authorize</button>

@@ -132,10 +132,11 @@ class OauthController extends Controller
         $res->setParams(
             array(
                 'oauth_token' => $token->tokenKey,
-                'client'      => $clientTitle,
+                'clientTitle' => $clientTitle,
+                'clientAgent' => $clientAgent,
                 'formaction'  => $this->deps->urlGen->linkToRoute(
                     'grauphel.oauth.confirm'
-                ) . '?client=' . urlencode($clientAgent),
+                ),
             )
         );
         return $res;
@@ -178,8 +179,8 @@ class OauthController extends Controller
         }
 
         $clientAgent = '';
-        if (isset($_GET['client'])) {
-            $clientAgent = $_GET['client'];
+        if (isset($_POST['client'])) {
+            $clientAgent = $_POST['client'];
         }
 
         //the user is logged in and authorized
