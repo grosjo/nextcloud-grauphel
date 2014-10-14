@@ -5,6 +5,9 @@
 
 <div id="app-content" class="content">
   <h1>Notebook: <?php p($_['tag']); ?></h1>
+  <p class="error">
+     Work in progress: You can't do anything here.
+  </p>
   <ul>
     <?php foreach ($_['notes'] as $note) { ?>
       <li data-id="<?php p($note['guid']); ?>"><a href="#"><?php p($note['title']); ?></a></li>
