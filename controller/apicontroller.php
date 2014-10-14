@@ -214,7 +214,7 @@ class ApiController extends Controller
             )
         );
         $syncdata = $this->notes->loadSyncData();
-        
+
         $res = $this->handleNoteSave($username, $syncdata);
         if ($res instanceof \OCP\AppFramework\Http\Response) {
             return $res;
@@ -256,8 +256,8 @@ class ApiController extends Controller
             return;
         }
 
-        //note that we have more data in $arPut than just our JSON
-        // request object merges it with other data
+        //Note that we have more data in $arPut than just our JSON.
+        // The request object merges it with other data.
         $arPut = $this->request->put;
 
         //structural validation
@@ -285,23 +285,30 @@ class ApiController extends Controller
         }
 
         //update
-        ++$syncdata->latestSyncRevision;
-        foreach ($arPut['note-changes'] as $noteUpdate) {
-            //owncloud converts object to array, so we reverse
-            $noteUpdate = (object) $noteUpdate;
+        \OC_DB::beginTransaction();
+        try {
+            ++$syncdata->latestSyncRevision;
+            foreach ($arPut['note-changes'] as $noteUpdate) {
+                //owncloud converts object to array, so we reverse
+                $noteUpdate = (object) $noteUpdate;
 
-            $note = $this->notes->load($noteUpdate->guid);
-            if (isset($noteUpdate->command) && $noteUpdate->command == 'delete') {
-                $this->notes->delete($noteUpdate->guid);
-            } else {
-                $this->notes->update(
-                    $note, $noteUpdate, $syncdata->latestSyncRevision
-                );
-                $this->notes->save($note);
+                $note = $this->notes->load($noteUpdate->guid);
+                if (isset($noteUpdate->command) && $noteUpdate->command == 'delete') {
+                    $this->notes->delete($noteUpdate->guid);
+                } else {
+                    $this->notes->update(
+                        $note, $noteUpdate, $syncdata->latestSyncRevision
+                    );
+                    $this->notes->save($note);
+                }
             }
-        }
 
-        $this->notes->saveSyncData($syncdata);
+            $this->notes->saveSyncData($syncdata);
+            \OC_DB::commit();
+        } catch (\DatabaseException $e) {
+            \OC_DB::getConnection()->rollBack();
+            throw $e;
+        }
     }
 
     /**
