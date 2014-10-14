@@ -47,6 +47,13 @@
     text-decoration: underline;
 }
 
+.app-grauphel #app-content .error {
+    color: red;
+}
+.app-grauphel #app-content .success {
+    color: green;
+}
+
 .app-grauphel .oauth-authorize {
     margin: 2ex;
     text-align: center;

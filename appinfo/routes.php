@@ -73,6 +73,16 @@ $application->registerRoutes(
                 'name' => 'gui#tokens',
                 'verb' => 'GET',
             ),
+            array(
+                'url'  => '/database',
+                'name' => 'gui#database',
+                'verb' => 'GET',
+            ),
+            array(
+                'url'  => '/database',
+                'name' => 'gui#databaseReset',
+                'verb' => 'POST',
+            ),
 
             array(
                 'url'  => '/tokens/{username}/{tokenKey}',

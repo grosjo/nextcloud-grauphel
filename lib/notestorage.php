@@ -190,6 +190,22 @@ class NoteStorage
     }
 
     /**
+     * Delete synchronization data for the given user.
+     *
+     * @param SyncData $syncdata Synchronization data object
+     *
+     * @return void
+     */
+    public function deleteSyncData()
+    {
+        \OC_DB::executeAudited(
+            'DELETE FROM `*PREFIX*grauphel_syncdata`'
+            . ' WHERE `syncdata_user` = ?',
+            array($this->username)
+        );
+    }
+
+    /**
      * Load a note from the storage.
      *
      * @param string  $guid      Note identifier
@@ -277,6 +293,20 @@ class NoteStorage
             'DELETE FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
             array($this->username, $guid)
+        );
+    }
+
+    /**
+     * Delete all notes from storage.
+     *
+     * @return void
+     */
+    public function deleteAll()
+    {
+        \OC_DB::executeAudited(
+            'DELETE FROM `*PREFIX*grauphel_notes`'
+            . ' WHERE `note_user` = ?',
+            array($this->username)
         );
     }
 

@@ -119,6 +119,41 @@ class GuiController extends Controller
         return $res;
     }
 
+    /**
+     * Allow the user to clear his database
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function database($reset = null)
+    {
+        $res = new TemplateResponse('grauphel', 'gui-database');
+        $res->setParams(array('reset' => $reset));
+        $this->addNavigation($res, null);
+        $this->addStats($res);
+
+        return $res;
+    }
+
+    /**
+     * Resets the database by deleting all notes and deleting the user's
+     * sync data.
+     *
+     * @NoAdminRequired
+     */
+    public function databaseReset()
+    {
+        $reset = false;
+        if ($_POST['username'] != '' && $_POST['username'] == $this->user->getUid()) {
+            $notes = $this->getNotes();
+            $notes->deleteAll();
+            $notes->deleteSyncData();
+            $reset = true;
+        }
+
+        return $this->database($reset);
+    }
+
     protected function addNavigation(TemplateResponse $res, $selectedRawtag = null)
     {
         $nav = new \OCP\Template('grauphel', 'appnavigation', '');
