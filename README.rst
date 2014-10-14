@@ -5,17 +5,25 @@ ownCloud__ application implementing the `Tomboy`__ `REST API`__ for syncing note
 
 Work in progress.
 
-======
-Status
-======
-- Authentication works
-- Note synchronization works
-- Web interface to view notes is missing
-- OAuth token interface is missing
-
 __ http://owncloud.org/
 __ https://wiki.gnome.org/Apps/Tomboy
 __ https://wiki.gnome.org/Apps/Tomboy/Synchronization/REST/1.0
+
+
+======
+Status
+======
+
+What works
+==========
+- Authentication works
+- Note synchronization works
+- OAuth token management interface works
+- Database management interface (reset) works
+
+What is missing
+===============
+- Web interface to view notes is missing
 
 
 =================
