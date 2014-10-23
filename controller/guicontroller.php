@@ -17,6 +17,7 @@ use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCA\Grauphel\Lib\Client;
 use \OCA\Grauphel\Lib\TokenStorage;
+use \OCA\Grauphel\Lib\Response\ErrorResponse;
 
 /**
  * Owncloud frontend
@@ -73,6 +74,47 @@ class GuiController extends Controller
     }
 
     /**
+     * Show contents of a note
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function note($guid)
+    {
+        $res = new TemplateResponse('grauphel', 'gui-note');
+
+        $note = $this->getNotes()->load($guid, false);
+        if ($note === null) {
+            return new ErrorResponse('Note does not exist');
+        }
+
+        $converter = new \OCA\Grauphel\Lib\Converter\Html();
+        $converter->internalLinkHandler = array($this, 'noteLinkHandler');
+        $res->setParams(
+            array(
+                'note' => $note,
+                'note-content' => $converter->convert(
+                    $note->{'note-content'}
+                ),
+            )
+        );
+
+        $this->addNavigation($res);
+        return $res;
+    }
+
+    public function noteLinkHandler($noteTitle)
+    {
+        $guid = $this->getNotes()->loadGuidByTitle($noteTitle);
+        if ($guid === null) {
+            return '#';
+        }
+        return $this->urlGen->linkToRoute(
+            'grauphel.gui.note', array('guid' => $guid)
+        );
+    }
+
+    /**
      * Show all notes of a tag
      *
      * @NoAdminRequired
@@ -81,6 +123,12 @@ class GuiController extends Controller
     public function tag($rawtag)
     {
         $notes = $this->getNotes()->loadNotesOverview(null, $rawtag);
+        usort(
+            $notes,
+            function($noteA, $noteB) {
+                return strcmp($noteA['title'], $noteB['title']);
+            }
+        );
 
         $res = new TemplateResponse('grauphel', 'tag');
         $res->setParams(

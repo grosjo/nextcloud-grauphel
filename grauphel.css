@@ -135,10 +135,40 @@ a.action.delete, table.table form button.action.delete {
 a.action {
     line-height: 30px;
 }
+a.cellclick {
+    display: block;
+}
 table.table form {
     display: inline;
 }
 table.table form button.action {
     border: none;
     background-color: transparent;
+}
+
+.muted {
+    color: #999;
+}
+
+.note-content {
+    padding-top: 2ex;
+}
+
+.note-content .strikethrough {
+    text-decoration: line-through;
+}
+.note-content .highlight {
+    background-color: yellow;
+}
+.note-content .small {
+    font-size: 80%;
+}
+.note-content .large {
+    font-size: 150%;
+}
+.note-content .huge {
+    font-size: 200%;
+}
+.note-content a {
+    text-decoration: underline;
 }

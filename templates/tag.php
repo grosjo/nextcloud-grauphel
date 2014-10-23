@@ -3,14 +3,28 @@
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
 
-<div id="app-content" class="content">
+<div id="app-content" class="list">
   <h1>Notebook: <?php p($_['tag']); ?></h1>
-  <p class="error">
-     Work in progress: You can't do anything here.
-  </p>
-  <ul>
+
+  <table class="table" id="grauphel-notes">
+   <thead>
+    <tr>
+     <th>Title</th>
+     <th>Last change</th>
+    </tr>
+   </thead>
+   <tbody>
+
     <?php foreach ($_['notes'] as $note) { ?>
-      <li data-id="<?php p($note['guid']); ?>"><a href="#"><?php p($note['title']); ?></a></li>
+     <tr id="note-<?php p($note['guid']); ?>">
+      <td>
+       <a class="cellclick" href="<?php p(OCP\Util::linkToRoute('grauphel.gui.note', array('guid' => $note['guid']))); ?>"><?php p($note['title']); ?></a>
+      </td>
+      <td>
+      </td>
+     </tr>
     <?php } ?>
-  </ul>
+
+   </tbody>
+  </table>
 </div>

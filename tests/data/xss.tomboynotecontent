@@ -1,0 +1,11 @@
+&lt;h1&gt;Hallo!&lt;/h1&gt;
+Was ist denn &lt;a href="foo"&gt;bar
+
+Link mit fett drin: <link:internal>Format<bold>te</bold></link:internal><link:internal>st</link:internal>.
+<list><list-item dir="ltr">Liste
+</list-item><list-item dir="ltr">ein <bold>bisschen</bold> fett
+</list-item><list-item dir="ltr">mo<monospace>nospac</monospace>ed
+</list-item><list-item dir="ltr">&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</list-item></list>
+
+Link zum <highlight><link:internal>Form</link:internal></highlight><link:internal>a<monospace>tt</monospace></link:internal><link:internal>e<size:huge>st</size:huge></link:internal>.
+Link mit <link:internal>Sonder"&gt;zeichen</link:internal>.

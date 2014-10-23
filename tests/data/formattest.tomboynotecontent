@@ -1,0 +1,36 @@
+Eine Zeile Text.
+Zeilenumbruch.
+Noch ein Zeilenumbruch.
+
+Eine Leerzeile obendrüber.
+
+Jetzt kommt eine Liste:
+<list><list-item dir="ltr">eins
+</list-item><list-item dir="ltr">zwei
+<list><list-item dir="ltr">zwei-eins
+<list><list-item dir="ltr">zwei-eins-eins
+</list-item><list-item dir="ltr">zwei-eins-zwei
+</list-item></list></list-item><list-item dir="ltr">zwei-zwei
+</list-item></list></list-item><list-item dir="ltr">drei
+<list><list-item dir="ltr">drei-eins
+<list><list-item dir="ltr">drei-eins-eins
+<list><list-item dir="ltr">drei-eins-eins-eins</list-item></list></list-item></list></list-item></list></list-item></list>
+Formatierungen:
+<bold>Fetter Text</bold>
+<italic>Kursiver Text</italic>
+<strikethrough>Durchgestrichener Text</strikethrough>
+<highlight>Hervorgehobener Text</highlight>
+<monospace>Feste Breite</monospace>
+
+Schriftgrößen:
+<size:small>klein</size:small>
+normal
+<size:large>groß</size:large>
+<size:huge>riesig</size:huge>
+
+Links:
+<list><list-item dir="ltr"><link:internal>Test</link:internal>
+</list-item><list-item dir="ltr"><link:url>http://cweiske.de/?foo#bar</link:url>
+</list-item><list-item dir="ltr"><link:url>/home/cweiske/fam.jpg</link:url></list-item></list>
+
+Ende.

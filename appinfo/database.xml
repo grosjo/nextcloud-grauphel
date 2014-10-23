@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <database>
+ <!-- http://www.wiltonhotel.com/_ext/pear/docs/MDB2/docs/xml_schema_documentation.html -->
 	 <name>*dbname*</name>
 	 <create>true</create>
 	 <overwrite>false</overwrite>
