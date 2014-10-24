@@ -272,6 +272,29 @@ class NoteStorage
     }
 
     /**
+     * Search for a note
+     *
+     * @param string $query Query string
+     *
+     * @return array Database rows with note_guid and note_title
+     */
+    public function search($query)
+    {
+        $result = \OC_DB::executeAudited(
+            'SELECT `note_guid`, `note_title`'
+            . ' FROM `*PREFIX*grauphel_notes`'
+            . ' WHERE note_user = ? AND note_title LIKE ?',
+            array($this->username, '%' . $query . '%')
+        );
+
+        $notes = array();
+        while ($row = $result->fetchRow()) {
+            $notes[] = $row;
+        }
+        return $notes;
+    }
+
+    /**
      * Save a note into storage.
      *
      * @param object $note Note to save

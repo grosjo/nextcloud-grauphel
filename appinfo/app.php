@@ -10,4 +10,6 @@ OCP\App::addNavigationEntry(
         'name' => 'Tomboy notes'
     )
 );
+\OC_Search::registerProvider('OCA\Grauphel\Search\Provider');
+\OCP\Util::addscript('grauphel', 'loader');
 ?>
