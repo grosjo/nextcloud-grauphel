@@ -274,17 +274,27 @@ class NoteStorage
     /**
      * Search for a note
      *
-     * @param string $query Query string
+     * @param string $keywords AND-concatenated query strings
      *
      * @return array Database rows with note_guid and note_title
      */
-    public function search($query)
+    public function search($keywords)
     {
+        $sqlWhere = ' AND (note_title LIKE ? OR note_tags LIKE ? OR note_content LIKE ?)';
+        $arData = array(
+            $this->username
+        );
+        foreach ($keywords as $keyword) {
+            $arData[] = '%' . $keyword . '%';//title
+            $arData[] = '%' . $keyword . '%';//tags
+            $arData[] = '%' . $keyword . '%';//content
+        }
         $result = \OC_DB::executeAudited(
             'SELECT `note_guid`, `note_title`'
             . ' FROM `*PREFIX*grauphel_notes`'
-            . ' WHERE note_user = ? AND note_title LIKE ?',
-            array($this->username, '%' . $query . '%')
+            . ' WHERE note_user = ?'
+            . str_repeat($sqlWhere, count($keywords)),
+            $arData
         );
 
         $notes = array();
