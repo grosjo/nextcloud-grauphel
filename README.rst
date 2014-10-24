@@ -72,3 +72,14 @@ Home page
 __ http://apps.owncloud.com/content/show.php?action=content&content=166654
 __ http://git.cweiske.de/grauphel.git/
 __ https://github.com/cweiske/grauphel
+
+
+=================
+Development hints
+=================
+* JSON coming from Tomboy: Title is html-escaped already
+  (e.g. ``>`` is ``&gt;``).
+  We store it that way in the database, so there is no need to escape the
+  output.
+* ``latest-sync-revision`` sent from Tomboy during PUT sync is already
+  incremented by 1.

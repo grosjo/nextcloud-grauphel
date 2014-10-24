@@ -6,7 +6,7 @@
 <script type="text/javascript" src="<?php p(OCP\Util::linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <div id="app-content" class="content">
- <h1><?php p($_['note']->title); ?></h1>
+ <h1><?php echo ($_['note']->title); ?></h1>
  <p class="muted">
   Last modified:
   <?php p(\OCP\Util::formatDate(strtotime($_['note']->{'last-change-date'}))); ?>

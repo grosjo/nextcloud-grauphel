@@ -246,9 +246,13 @@ class NoteStorage
     }
 
     /**
-     * Load a GUID of a note by the note title
+     * Load a GUID of a note by the note title.
      *
-     * @param string  $title Note title
+     * The note title is stored html-escaped in the database because we
+     * get it that way from tomboy. Thus we have to escape the search
+     * input, too.
+     *
+     * @param string $title Note title.
      *
      * @return string GUID, NULL if note could not be found
      */
@@ -257,7 +261,7 @@ class NoteStorage
         $row = \OC_DB::executeAudited(
             'SELECT note_guid FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_title` = ?',
-            array($this->username, $title)
+            array($this->username, htmlspecialchars($title))
         )->fetchRow();
 
         if ($row === false) {

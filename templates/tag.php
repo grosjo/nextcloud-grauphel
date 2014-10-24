@@ -18,7 +18,7 @@
     <?php foreach ($_['notes'] as $note) { ?>
      <tr id="note-<?php p($note['guid']); ?>">
       <td>
-       <a class="cellclick" href="<?php p(OCP\Util::linkToRoute('grauphel.gui.note', array('guid' => $note['guid']))); ?>"><?php p($note['title']); ?></a>
+       <a class="cellclick" href="<?php p(OCP\Util::linkToRoute('grauphel.gui.note', array('guid' => $note['guid']))); ?>"><?php echo ($note['title']); ?></a>
       </td>
       <td>
       </td>
