@@ -274,26 +274,39 @@ class NoteStorage
     /**
      * Search for a note
      *
-     * @param string $keywords AND-concatenated query strings
+     * @param array $keywords arrays of query strings within keys AND and NOT
      *
      * @return array Database rows with note_guid and note_title
      */
-    public function search($keywords)
+    public function search($keywordGroups)
     {
-        $sqlWhere = ' AND (note_title LIKE ? OR note_tags LIKE ? OR note_content LIKE ?)';
+        if (!isset($keywordGroups['AND'])) {
+            $keywordGroups['AND'] = array();
+        }
+        if (!isset($keywordGroups['NOT'])) {
+            $keywordGroups['NOT'] = array();
+        }
+
+        $sqlTplAnd = ' AND (note_title LIKE ? OR note_tags LIKE ? OR note_content LIKE ?)';
+        $sqlTplNot = ' AND NOT (note_title LIKE ? OR note_tags LIKE ? OR note_content LIKE ?)';
         $arData = array(
             $this->username
         );
-        foreach ($keywords as $keyword) {
-            $arData[] = '%' . $keyword . '%';//title
-            $arData[] = '%' . $keyword . '%';//tags
-            $arData[] = '%' . $keyword . '%';//content
+        foreach (array('AND', 'NOT') as $group) {
+            $keywords = $keywordGroups[$group];
+            foreach ($keywords as $keyword) {
+                $arData[] = '%' . $keyword . '%';//title
+                $arData[] = '%' . $keyword . '%';//tags
+                $arData[] = '%' . $keyword . '%';//content
+            }
         }
+
         $result = \OC_DB::executeAudited(
             'SELECT `note_guid`, `note_title`'
             . ' FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?'
-            . str_repeat($sqlWhere, count($keywords)),
+            . str_repeat($sqlTplAnd, count($keywordGroups['AND']))
+            . str_repeat($sqlTplNot, count($keywordGroups['NOT'])),
             $arData
         );
 
