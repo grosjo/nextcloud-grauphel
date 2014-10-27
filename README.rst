@@ -20,10 +20,13 @@ What works
 - Note synchronization works
 - OAuth token management interface works
 - Database management interface (reset) works
+- Viewing notes
+- Searching notes
 
 What is missing
 ===============
-- Web interface to view notes is missing
+- Web interface to edit notes. I will probably not implement this.
+  Patches welcome :-)
 
 
 =================
@@ -45,6 +48,28 @@ grauphel 0.2.1 is known to work with:
 * Tomboy 1.15.2, Linux
 * Tomboy 1.15.1, Windows
 * Tomdroid 0.7.5, Android 4.4.1
+
+
+=============
+Functionality
+=============
+
+Search
+======
+You can use ownCloud's global search on the top right.
+
+During search, the note's titles, tags and content are searched.
+
+Search syntax:
+
+``foo``
+  Search for notes containing "foo"
+``foo bar``
+  Search for notes containing "foo" and "bar"
+``"foo bar" baz``
+  Search for notes containing "foo bar" and "baz"
+``foo -bar``
+  Search for notes containing "foo" but not "bar"
 
 
 ============
