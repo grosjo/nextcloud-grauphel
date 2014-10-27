@@ -6,6 +6,10 @@
 <script type="text/javascript" src="<?php p(OCP\Util::linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <div id="app-content" class="content">
+ <div class="actions">
+  <a class="button" href="<?php echo p($_['links']['json']); ?>">JSON</a>
+  <a class="button" href="<?php echo p($_['links']['xml']); ?>">XML</a>
+ </div>
  <h1><?php echo ($_['note']->title); ?></h1>
  <p class="muted">
   Last modified:

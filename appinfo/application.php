@@ -57,6 +57,16 @@ class Application extends App
             }
         );
         $container->registerService(
+            'NotesController',
+            function($c) {
+                return new \OCA\Grauphel\Controller\NotesController(
+                    $c->query('AppName'),
+                    $c->query('Request'),
+                    $c->query('Session')->getUser()
+                );
+            }
+        );
+        $container->registerService(
             'TokenController',
             function($c) {
                 Dependencies::get()->urlGen

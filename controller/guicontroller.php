@@ -96,6 +96,16 @@ class GuiController extends Controller
                 'note-content' => $converter->convert(
                     $note->{'note-content'}
                 ),
+                'links' => array(
+                    'json' => $this->urlGen->linkToRoute(
+                        'grauphel.api.note', array(
+                            'guid' => $guid, 'username' => $this->user->getUid()
+                        )
+                    ),
+                    'xml' => $this->urlGen->linkToRoute(
+                        'grauphel.notes.xml', array('guid' => $guid)
+                    ),
+                )
             )
         );
 

@@ -54,6 +54,19 @@
     color: green;
 }
 
+.app-grauphel #app-content .actions {
+    float: right;
+}
+.app-grauphel #app-content .actions a {
+    color: #555;
+    padding: 14px 10px;
+    position: relative;
+    top: 7px;
+    min-width: 25px;
+    padding: 5px;
+    background-color: rgba(240,240,240,.9);
+}
+
 .app-grauphel .oauth-authorize {
     margin: 2ex;
     text-align: center;
