@@ -1,7 +1,7 @@
 <div id="app-navigation">
   <ul>
     <?php foreach ($_['tags'] as $tag) { ?>
-      <li data-id="<?php p($tag['id']) ?>"><a href="<?php p(isset($tag['href']) ? $tag['href'] : '#') ?>"><?php p($tag['name']);?></a></li>
+      <li data-id="<?php p($tag['id']) ?>" <?php $tag['selected'] && print ' class="selected"'; ?>><a href="<?php p(isset($tag['href']) ? $tag['href'] : '#') ?>"><?php p($tag['name']);?></a></li>
     <?php } ?>
   </ul>
 

@@ -99,7 +99,12 @@ class GuiController extends Controller
             )
         );
 
-        $this->addNavigation($res);
+        $selectedRawtag = null;
+        if (count($note->tags) > 0) {
+            $selectedRawtag = $note->tags[0];
+        }
+
+        $this->addNavigation($res, $selectedRawtag);
         return $res;
     }
 
@@ -233,6 +238,7 @@ class GuiController extends Controller
                     'href' => $this->urlGen->linkToRoute(
                         'grauphel.gui.tag', array('rawtag' => $rawtag)
                     ),
+                    'selected' => $rawtag == $selectedRawtag,
                 );
             }
         }
