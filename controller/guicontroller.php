@@ -88,14 +88,26 @@ class GuiController extends Controller
             return new ErrorResponse('Note does not exist');
         }
 
-        $converter = new \OCA\Grauphel\Lib\Converter\Html();
+        $converter = new \OCA\Grauphel\Converter\Html();
         $converter->internalLinkHandler = array($this, 'noteLinkHandler');
+
+        try {
+            $contentHtml = $converter->convert($note->{'note-content'});
+        } catch (\OCA\Grauphel\Converter\Exception $e) {
+            $contentHtml = '<div class="error">'
+                . '<p>There was an error converting the note to HTML:</p>'
+                . '<blockquote><tt>' . htmlspecialchars($e->getMessage()) . '</tt></blockquote>'
+                . '<p>Please open a bug report at'
+                . ' <a class="lined" href="http://github.com/cweiske/grauphel/issues">'
+                . 'github.com/cweiske/grauphel/issues</a>'
+                . ' and attach the XML version of the note.'
+                . '</div>';
+        }
+
         $res->setParams(
             array(
                 'note' => $note,
-                'note-content' => $converter->convert(
-                    $note->{'note-content'}
-                ),
+                'note-content' => $contentHtml,
                 'links' => array(
                     'json' => $this->urlGen->linkToRoute(
                         'grauphel.api.note', array(

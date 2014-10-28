@@ -35,6 +35,9 @@
     padding: 1ex;
     font-family: monospace;
 }
+.app-grauphel #app-content blockquote {
+    margin-left: 2ex;
+}
 
 .app-grauphel #app-content ul {
     list-style-type: disc;
@@ -52,6 +55,9 @@
 }
 .app-grauphel #app-content .success {
     color: green;
+}
+.app-grauphel #app-content .error a {
+    color: red !important;
 }
 
 .app-grauphel #app-content .actions {

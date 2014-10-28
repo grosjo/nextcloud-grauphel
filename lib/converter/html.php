@@ -11,7 +11,7 @@
  * @license   http://www.gnu.org/licenses/agpl.html GNU AGPL v3
  * @link      http://cweiske.de/grauphel.htm
  */
-namespace OCA\Grauphel\Lib\Converter;
+namespace OCA\Grauphel\Converter;
 use \XMLReader;
 
 /**
@@ -121,7 +121,7 @@ class Html
                 $store .= nl2br(htmlspecialchars($reader->value));
                 break;
             default:
-                throw new \Exception(
+                throw new Exception(
                     'Unsupported XML node type: ' . $reader->nodeType
                 );
             }
