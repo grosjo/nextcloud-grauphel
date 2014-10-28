@@ -21,6 +21,7 @@
        <a class="cellclick" href="<?php p(OCP\Util::linkToRoute('grauphel.gui.note', array('guid' => $note['guid']))); ?>"><?php echo ($note['title']); ?></a>
       </td>
       <td>
+       <?php p(\OCP\Util::formatDate(strtotime($note['last-change-date']))); ?>
       </td>
      </tr>
     <?php } ?>

@@ -149,7 +149,7 @@ class GuiController extends Controller
      */
     public function tag($rawtag)
     {
-        $notes = $this->getNotes()->loadNotesOverview(null, $rawtag);
+        $notes = $this->getNotes()->loadNotesOverview(null, $rawtag, true);
         usort(
             $notes,
             function($noteA, $noteB) {

@@ -386,17 +386,20 @@ class NoteStorage
      * Load notes for the given user in short form.
      * Optionally only those changed after $since revision
      *
-     * @param integer $since  Revision number after which the notes changed
-     * @param string  $rawtag Filter by tag. Special tags:
-     *                        - grauphel:special:all
-     *                        - grauphel:special:untagged
+     * @param integer $since       Revision number after which the notes changed
+     * @param string  $rawtag      Filter by tag. Special tags:
+     *                             - grauphel:special:all
+     *                             - grauphel:special:untagged
+     * @param boolean $includeDate Load the last modification date or not
      *
      * @return array Array of short note objects
      */
-    public function loadNotesOverview($since = null, $rawtag = null)
-    {
+    public function loadNotesOverview(
+        $since = null, $rawtag = null, $includeDate = false
+    ) {
         $result = \OC_DB::executeAudited(
             'SELECT `note_guid`, `note_title`, `note_last_sync_revision`, `note_tags`'
+            . ', `note_last_change_date`'
             . ' FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
             array($this->username)
@@ -417,7 +420,7 @@ class NoteStorage
             if ($rawtag !== null && strpos($row['note_tags'], $jsRawtag) === false) {
                 continue;
             }
-            $notes[] = array(
+            $note = array(
                 'guid' => $row['note_guid'],
                 'ref'  => array(
                     'api-ref' => $this->urlGen->getAbsoluteURL(
@@ -433,6 +436,10 @@ class NoteStorage
                 ),
                 'title' => $row['note_title'],
             );
+            if ($includeDate) {
+                $note['last-change-date'] = $row['note_last_change_date'];
+            }
+            $notes[] = $note;
         }
 
         return $notes;
