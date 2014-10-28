@@ -9,8 +9,8 @@
   <table class="table" id="grauphel-notes">
    <thead>
     <tr>
-     <th>Title</th>
-     <th>Last change</th>
+     <th id="headerTitle">Title</th>
+     <th>Modified</th>
     </tr>
    </thead>
    <tbody>
@@ -20,7 +20,7 @@
       <td>
        <a class="cellclick" href="<?php p(OCP\Util::linkToRoute('grauphel.gui.note', array('guid' => $note['guid']))); ?>"><?php echo ($note['title']); ?></a>
       </td>
-      <td>
+      <td style="color: <?php echo p($note['dateColor']); ?>">
        <?php p(\OCP\Util::formatDate(strtotime($note['last-change-date']))); ?>
       </td>
      </tr>

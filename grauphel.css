@@ -144,6 +144,10 @@ table.table td {
     background-position: 8px center;
     background-repeat: no-repeat;
 }
+#headerTitle {
+    /* let it take all available space */
+    width: 9999px;
+}
 
 a.action.delete, table.table form button.action.delete {
     position: absolute;

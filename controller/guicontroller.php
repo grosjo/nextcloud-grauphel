@@ -157,6 +157,17 @@ class GuiController extends Controller
             }
         );
 
+        foreach ($notes as &$note) {
+            $diffInDays = intval(
+                (time() - strtotime($note['last-change-date'])) / 86400
+            );
+            $value = 0 + $diffInDays;
+            if ($value > 160) {
+                $value = 160;
+            }
+            $note['dateColor'] = '#' . str_repeat(sprintf('%02X', $value), 3);
+        }
+
         $res = new TemplateResponse('grauphel', 'tag');
         $res->setParams(
             array(
