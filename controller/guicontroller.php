@@ -121,7 +121,7 @@ class GuiController extends Controller
             )
         );
 
-        $selectedRawtag = null;
+        $selectedRawtag = 'grauphel:special:untagged';
         if (count($note->tags) > 0) {
             $selectedRawtag = $note->tags[0];
         }
