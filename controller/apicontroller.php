@@ -119,7 +119,7 @@ class ApiController extends Controller
                         'grauphel.api.user', array('username' => $username)
                     )
                 ),
-                'href' => null,//FIXME
+                'href' => null,
             );
         }
 
@@ -167,7 +167,9 @@ class ApiController extends Controller
                         'grauphel.api.notes', array('username' => $username)
                     )
                 ),
-                'href'    => null,
+                'href'    => $this->deps->urlGen->getAbsoluteURL(
+                    $this->deps->urlGen->linkToRoute('grauphel.gui.index')
+                ),
             ),
             'latest-sync-revision' => $syncdata->latestSyncRevision,
             'current-sync-guid'    => $syncdata->currentSyncGuid,

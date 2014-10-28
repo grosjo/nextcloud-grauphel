@@ -432,7 +432,14 @@ class NoteStorage
                             )
                         )
                     ),
-                    'href' => null,//FIXME
+                    'href' => $this->urlGen->getAbsoluteURL(
+                        $this->urlGen->linkToRoute(
+                            'grauphel.gui.note',
+                            array(
+                                'guid' => $row['note_guid']
+                            )
+                        )
+                    ),
                 ),
                 'title' => $row['note_title'],
             );
