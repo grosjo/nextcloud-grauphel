@@ -6,7 +6,7 @@ OCP\App::addNavigationEntry(
         'id' => 'grauphel',
         'order' => 2342,
         'href' => \OCP\Util::linkToRoute('grauphel.gui.index'),
-        'icon' => OCP\Util::imagePath('grauphel', 'notes.png'),
+        'icon' => OCP\Util::imagePath('grauphel', 'tomboy-grey.png'),
         'name' => 'Tomboy notes'
     )
 );
