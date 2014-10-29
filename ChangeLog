@@ -1,3 +1,13 @@
+2014-10-29  Christian Weiske  <cweiske@cweiske.de>
+
+	* Implement note preview
+	* Implement note search
+	* Implement note download (JSON + XML)
+	* Add note modification date display to list
+	* Add highlighting of current notebook in list
+	* Add custom icon
+	* Version 0.4.0
+
 2014-10-14  Christian Weiske  <cweiske@cweiske.de>
 
 	* Implement token management
