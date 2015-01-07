@@ -80,6 +80,41 @@ Dependencies
 __ http://pecl.php.net/package/oauth
 
 
+============
+Installation
+============
+
+Manual installation
+===================
+
+#. SSH onto your web server
+#. Navigate to the owncloud ``apps`` directory, often in ``/var/www/owncloud/apps``
+#. Download the latest release from http://cweiske.de/grauphel.htm and extract it.
+   For example::
+
+     $ wget http://www.bogo/download/grauphel/grauphel-0.4.0.tar.bz2
+     $ tar xjvf grauphel-0.4.0.tar.bz2
+     $ rm grauphel-0.4.0.tar.bz2
+
+   You do have a directory ``/var/www/owncloud/apps/grauphel`` now.
+#. Using your browser, login as administrator into ownCloud and click
+   the "Apps" icon in the main menu ("+" icon).
+#. Click on "Grauphel: Tomboy note server" and then on the "Enable" button.
+#. In the main menu, click the "Tomboy notes" icon.
+
+It may be that grauphel now shows you an error message::
+
+  PHP extension "oauth" is required
+
+You have to install the PHP PECL oauth extension now.
+On Debian, do the following::
+
+  $ apt-get install php5-oauth
+  $ /etc/init.d/apache2 restart
+
+Reload the ownCloud page in your browser now.
+
+
 ======
 Author
 ======
