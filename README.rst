@@ -92,7 +92,7 @@ Manual installation
 #. Download the latest release from http://cweiske.de/grauphel.htm and extract it.
    For example::
 
-     $ wget http://www.bogo/download/grauphel/grauphel-0.4.0.tar.bz2
+     $ wget http://cweiske.de/download/grauphel/grauphel-0.4.0.tar.bz2
      $ tar xjvf grauphel-0.4.0.tar.bz2
      $ rm grauphel-0.4.0.tar.bz2
 
