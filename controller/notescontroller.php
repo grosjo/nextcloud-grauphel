@@ -124,7 +124,7 @@ class NotesController extends Controller
         } catch (\OCA\Grauphel\Converter\Exception $e) {
             $res = new ErrorResponse(
                 'Error converting note to HTML.'
-                . ' Please repport a bug to the grauphel developers.'
+                . ' Please report a bug to the grauphel developers.'
             );
             $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
             return $res;
@@ -139,6 +139,44 @@ class NotesController extends Controller
     public function htmlNoteLinkHandler($noteTitle)
     {
         return urlencode($noteTitle) . '.html';
+    }
+
+    /**
+     * Output a note as a standalone text file
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function text($guid)
+    {
+        $note = $this->getNotes()->load($guid, false);
+        if ($note === null) {
+            $res = new ErrorResponse('Note does not exist');
+            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            return $res;
+        }
+
+        $converter = new \OCA\Grauphel\Converter\ReStructuredText();
+        $converter->internalLinkHandler = array($this, 'textNoteLinkHandler');
+        try {
+            $text = $note->title . "\n"
+                . str_repeat('*', strlen($note->title)) . "\n"
+                . "\n";
+            $text .= $converter->convert($note->{'note-content'});
+            return new \OCA\Grauphel\Response\TextResponse($text);
+        } catch (\OCA\Grauphel\Converter\Exception $e) {
+            $res = new ErrorResponse(
+                'Error converting note to reStructuredText.'
+                . ' Please report a bug to the grauphel developers.'
+            );
+            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            return $res;
+        }
+    }
+
+    public function textNoteLinkHandler($noteTitle)
+    {
+        return $noteTitle;
     }
 
     /**

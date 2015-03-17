@@ -15,12 +15,8 @@ namespace OCA\Grauphel\Converter;
 use \XMLReader;
 
 /**
- * Convert Tomboy note XML to HTML
- *
- * Tomboy already ships with a converter:
- * https://git.gnome.org/browse/tomboy/tree/Tomboy/Addins/ExportToHtml/ExportToHtml.xsl
- * We cannot use it since we want nice callbacks, and we do not want to rely
- * on the PHP XSL extension, and we have to fix the links.
+ * Convert Tomboy note XML to reStructuredText.
+ * Mainly used to paste the content of a note into an e-mail
  *
  * @category  Tools
  * @package   Grauphel
@@ -30,22 +26,14 @@ use \XMLReader;
  * @version   Release: @package_version@
  * @link      http://cweiske.de/grauphel.htm
  */
-class Html extends Base
+class ReStructuredText extends Base
 {
-    protected static $tagMap = array(
-        'list'      => 'ul',
-        'list-item' => 'li',
-        'bold'      => 'b',
-        'italic'    => 'i',
-        'monospace' => 'tt',
-    );
-
-    protected static $styleClassMap = array(
-        'strikethrough' => 'strikethrough',
-        'highlight'  => 'highlight',
-        'size:small' => 'small',
-        'size:large' => 'large',
-        'size:huge'  => 'huge',
+    protected static $simpleMap = array(
+        'bold'      => '**',
+        'italic'    => '*',
+        'monospace' => '``',
+        'strikethrough' => '-',
+        'highlight'  => '**',
     );
 
     public $internalLinkHandler;
@@ -58,11 +46,11 @@ class Html extends Base
     }
 
     /**
-     * Converts the tomboy note XML into HTML
+     * Converts the tomboy note XML into reStructuredText
      *
      * @param string $xmlContent Tomboy note content
      *
-     * @return string HTML
+     * @return string Plain text
      */
     public function convert($xmlContent)
     {
@@ -70,7 +58,7 @@ class Html extends Base
             $xmlContent = $this->fixNastyLinks($xmlContent);
         }
 
-        $html = '';
+        $rst = '';
         $reader = new XMLReader();
         $reader->xml(
             '<?xml version="1.0" encoding="utf-8"?>' . "\n"
@@ -80,17 +68,33 @@ class Html extends Base
         );
 
         $withinLink = false;
-        $store = &$html;
+        $store = &$rst;
+        $listLevel  = -1;
+        $listPrefix = '';
+        $listItemCount = 0;
+        $heading = false;
+        $headingLength = 0;
         while ($reader->read()) {
             switch ($reader->nodeType) {
             case XMLReader::ELEMENT:
                 //echo $reader->name . "\n";
-                if (isset(static::$tagMap[$reader->name])) {
-                    $store .= '<' . static::$tagMap[$reader->name] . '>';
-                } else if (isset(static::$styleClassMap[$reader->name])) {
-                    $store .= '<span class="'
-                        . static::$styleClassMap[$reader->name]
-                        . '">';
+                if (isset(static::$simpleMap[$reader->name])) {
+                    $store .= static::$simpleMap[$reader->name];
+                } else if ($reader->name == 'list') {
+                    ++$listLevel;
+                    $listItemCount = 0;
+                    $listPrefix = str_repeat('  ', $listLevel);
+                } else if ($reader->name == 'list-item') {
+                    ++$listItemCount;
+                    if ($listItemCount == 1) {
+                        $store .= "\n";
+                    }
+                    $store .= $listPrefix . '- ';
+                } else if ($reader->name == 'size:large'
+                    || $reader->name == 'size:huge'
+                ) {
+                    $store .= "\n";
+                    $heading = true;
                 } else if (substr($reader->name, 0, 5) == 'link:') {
                     $withinLink = true;
                     $linkText    = '';
@@ -98,27 +102,50 @@ class Html extends Base
                 }
                 break;
             case XMLReader::END_ELEMENT:
-                if (isset(static::$tagMap[$reader->name])) {
-                    $store .= '</' . static::$tagMap[$reader->name] . '>';
-                } else if (isset(static::$styleClassMap[$reader->name])) {
-                    $store .= '</span>';
+                if (isset(static::$simpleMap[$reader->name])) {
+                    $store .= static::$simpleMap[$reader->name];
+                } else if ($reader->name == 'list') {
+                    --$listLevel;
+                    $listPrefix = str_repeat('  ', $listLevel);
+                    if ($listLevel == -1) {
+                        $store .= "\n";
+                    }
+                } else if ($reader->name == 'size:large') {
+                    $store .= "\n" . str_repeat('-', $headingLength);
+                    $heading = false;
+                } else if ($reader->name == 'size:huge') {
+                    $store .= "\n" . str_repeat('=', $headingLength);
+                    $heading = false;
                 } else if (substr($reader->name, 0, 5) == 'link:') {
                     $withinLink = false;
-                    $store      = &$html;
+                    $store      = &$rst;
                     $linkUrl = htmlspecialchars_decode(strip_tags($linkText));
                     if ($reader->name == 'link:internal') {
                         $linkUrl = call_user_func($this->internalLinkHandler, $linkUrl);
                     } else {
                         $linkUrl = $this->fixLinkUrl($linkUrl);
                     }
-                    $store .= '<a href="' . htmlspecialchars($linkUrl) . '">'
-                        . $linkText
-                        . '</a>';
+                    $store .= $linkUrl;
                 }
                 break;
             case XMLReader::TEXT:
             case XMLReader::SIGNIFICANT_WHITESPACE:
-                $store .= nl2br(htmlspecialchars($reader->value));
+                if ($heading) {
+                    $headingLength = strlen(trim($reader->value));
+                    $store .= trim($reader->value);
+                } else {
+                    $text = wordwrap($reader->value, 72 - 2 * $listLevel, "\n", true);
+                    $parts = explode("\n", $text);
+                    foreach ($parts as $k => $v) {
+                        if ($k == 0) {
+                            continue;
+                        }
+                        if ($v != '') {
+                            $parts[$k] = str_repeat(' ', $listLevel * 2 + 2) . $v;
+                        }
+                    }
+                    $store .= implode("\n", $parts);
+                }
                 break;
             default:
                 throw new Exception(
@@ -127,9 +154,7 @@ class Html extends Base
             }
         }
 
-        $html = str_replace("</ul><br />\n", "</ul>\n", $html);
-
-        return $html;
+        return $rst;
     }
 
     /**

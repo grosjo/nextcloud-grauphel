@@ -130,6 +130,9 @@ class GuiController extends Controller
                             'guid' => $guid, 'username' => $this->user->getUid()
                         )
                     ),
+                    'text' => $this->urlGen->linkToRoute(
+                        'grauphel.notes.text', array('guid' => $guid)
+                    ),
                     'xml' => $this->urlGen->linkToRoute(
                         'grauphel.notes.xml', array('guid' => $guid)
                     ),
