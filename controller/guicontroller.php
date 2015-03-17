@@ -59,7 +59,18 @@ class GuiController extends Controller
      */
     public function index()
     {
-        $this->checkDeps();
+        try {
+            $this->checkDeps();
+        } catch (\Exception $e) {
+            $res = new TemplateResponse('grauphel', 'error');
+            $res->setParams(
+                array(
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                )
+            );
+            return $res;
+        }
 
         $res = new TemplateResponse('grauphel', 'index');
         $res->setParams(
@@ -301,7 +312,7 @@ class GuiController extends Controller
     protected function checkDeps()
     {
         if (!class_exists('OAuthProvider')) {
-            throw new \Exception('PHP extension "oauth" is required');
+            throw new \Exception('PHP extension "oauth" is required', 1001);
         }
     }
 
