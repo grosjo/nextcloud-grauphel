@@ -7,6 +7,7 @@
 
 <div id="app-content" class="content">
  <div class="actions">
+  <a class="button" href="<?php echo p($_['links']['html']); ?>">HTML</a>
   <a class="button" href="<?php echo p($_['links']['json']); ?>">JSON</a>
   <a class="button" href="<?php echo p($_['links']['xml']); ?>">XML</a>
  </div>

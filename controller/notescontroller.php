@@ -48,6 +48,100 @@ class NotesController extends Controller
     }
 
     /**
+     * Output a note as a standalone HTML file
+     *
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function html($guid)
+    {
+        $note = $this->getNotes()->load($guid, false);
+        if ($note === null) {
+            $res = new ErrorResponse('Note does not exist');
+            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            return $res;
+        }
+
+        $xw = new \XMLWriter();
+        $xw->openMemory();
+        $xw->setIndent(true);
+        $xw->setIndentString(' ');
+        $xw->startDocument('1.0', 'utf-8');
+        $xw->writeRaw(
+            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'
+            . ' "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+            . "\n"
+        );
+
+        $xw->startElementNS(null, 'html', 'http://www.w3.org/1999/xhtml');
+
+        //head
+        $xw->startElement('head');
+        $xw->writeElement('title', $note->title);
+
+        $xw->startElement('meta');
+        $xw->writeAttribute('name', 'author');
+        $xw->writeAttribute('content', $this->user->getDisplayName());
+        $xw->endElement();
+
+        $xw->startElement('meta');
+        $xw->writeAttribute('http-equiv', 'Content-Type');
+        $xw->writeAttribute('content', 'text/html; charset=utf-8');
+        $xw->endElement();
+
+        $xw->startElement('link');
+        $xw->writeAttribute('rel', 'schema.DC');
+        $xw->writeAttribute('href', 'http://purl.org/dc/elements/1.1/');
+        $xw->endElement();
+
+        $xw->startElement('meta');
+        $xw->writeAttribute('name', 'DC.date.created');
+        $xw->writeAttribute(
+            'content', date('c', strtotime($note->{'create-date'}))
+        );
+        $xw->endElement();
+
+        $xw->startElement('meta');
+        $xw->writeAttribute('name', 'DC.date.modified');
+        $xw->writeAttribute(
+            'content', date('c', strtotime($note->{'last-change-date'}))
+        );
+        $xw->endElement();
+
+        $xw->endElement();//head
+
+        //body
+        $xw->startElement('body');
+
+        $xw->writeElement('h1', $note->title);
+
+        $converter = new \OCA\Grauphel\Converter\CleanHtml();
+        $converter->internalLinkHandler = array($this, 'htmlNoteLinkHandler');
+        try {
+            $xw->writeRaw(
+                $converter->convert($note->{'note-content'})
+            );
+        } catch (\OCA\Grauphel\Converter\Exception $e) {
+            $res = new ErrorResponse(
+                'Error converting note to HTML.'
+                . ' Please repport a bug to the grauphel developers.'
+            );
+            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            return $res;
+        }
+
+        $xw->endElement();//body
+
+        $xw->endElement();//html
+        return new \OCA\Grauphel\Response\XmlResponse($xw->outputMemory());
+    }
+
+    public function htmlNoteLinkHandler($noteTitle)
+    {
+        return urlencode($noteTitle) . '.html';
+    }
+
+    /**
      * Output a note in tomboy XML format
      *
      * @link https://wiki.gnome.org/Apps/Tomboy/NoteXmlFormat

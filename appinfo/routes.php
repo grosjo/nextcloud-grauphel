@@ -69,6 +69,11 @@ $application->registerRoutes(
                 'verb' => 'GET',
             ),
             array(
+                'url'  => '/note/{guid}.html',
+                'name' => 'notes#html',
+                'verb' => 'GET',
+            ),
+            array(
                 'url'  => '/note/{guid}.xml',
                 'name' => 'notes#xml',
                 'verb' => 'GET',
