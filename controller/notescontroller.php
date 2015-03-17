@@ -58,6 +58,11 @@ class NotesController extends Controller
     public function xml($guid)
     {
         $note = $this->getNotes()->load($guid, false);
+        if ($note === null) {
+            $res = new ErrorResponse('Note does not exist');
+            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            return $res;
+        }
 
         $xw = new \XMLWriter();
         $xw->openMemory();

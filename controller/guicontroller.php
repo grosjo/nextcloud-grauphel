@@ -96,7 +96,9 @@ class GuiController extends Controller
 
         $note = $this->getNotes()->load($guid, false);
         if ($note === null) {
-            return new ErrorResponse('Note does not exist');
+            $res = new ErrorResponse('Note does not exist');
+            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            return $res;
         }
 
         $converter = new \OCA\Grauphel\Converter\Html();
