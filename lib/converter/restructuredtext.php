@@ -134,7 +134,7 @@ class ReStructuredText extends Base
                     $headingLength = strlen(trim($reader->value));
                     $store .= trim($reader->value);
                 } else {
-                    $text = wordwrap($reader->value, 72 - 2 * $listLevel, "\n", true);
+                    $text = wordwrap($reader->value, 72 - 2 * $listLevel, "\n");
                     $parts = explode("\n", $text);
                     foreach ($parts as $k => $v) {
                         if ($k == 0) {
