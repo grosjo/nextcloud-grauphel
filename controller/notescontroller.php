@@ -77,7 +77,10 @@ class NotesController extends Controller
 
         //head
         $xw->startElement('head');
-        $xw->writeElement('title', $note->title);
+        $xw->writeElement(
+            'title',
+            htmlspecialchars_decode($note->title, ENT_QUOTES | ENT_HTML5)
+        );
 
         $xw->startElement('meta');
         $xw->writeAttribute('name', 'author');
@@ -112,8 +115,9 @@ class NotesController extends Controller
 
         //body
         $xw->startElement('body');
-
-        $xw->writeElement('h1', $note->title);
+        $xw->writeElement(
+            'h1', htmlspecialchars_decode($note->title, ENT_QUOTES | ENT_HTML5)
+        );
 
         $converter = new \OCA\Grauphel\Converter\CleanHtml();
         $converter->internalLinkHandler = array($this, 'htmlNoteLinkHandler');
@@ -159,8 +163,9 @@ class NotesController extends Controller
         $converter = new \OCA\Grauphel\Converter\ReStructuredText();
         $converter->internalLinkHandler = array($this, 'textNoteLinkHandler');
         try {
-            $text = $note->title . "\n"
-                . str_repeat('*', strlen($note->title)) . "\n"
+            $title = htmlspecialchars_decode($note->title, ENT_QUOTES | ENT_HTML5);
+            $text = $title . "\n"
+                . str_repeat('*', strlen($title)) . "\n"
                 . "\n";
             $text .= $converter->convert($note->{'note-content'});
             return new \OCA\Grauphel\Response\TextResponse($text);
