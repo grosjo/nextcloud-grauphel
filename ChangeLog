@@ -1,3 +1,11 @@
+2015-03-17  Christian Weiske  <cweiske@cweiske.de>
+
+	* Implement standalone HTML mode for notes
+	* Implement reStrucuredText rendering for notes
+	* Show error page when OAuth extension is not installed
+	* Search is case-insensitive now
+	* Version 0.5.0
+
 2014-10-29  Christian Weiske  <cweiske@cweiske.de>
 
 	* Implement note preview
