@@ -287,8 +287,8 @@ class NoteStorage
             $keywordGroups['NOT'] = array();
         }
 
-        $sqlTplAnd = ' AND (note_title LIKE ? OR note_tags LIKE ? OR note_content LIKE ?)';
-        $sqlTplNot = ' AND NOT (note_title LIKE ? OR note_tags LIKE ? OR note_content LIKE ?)';
+        $sqlTplAnd = ' AND (note_title ILIKE ? OR note_tags ILIKE ? OR note_content ILIKE ?)';
+        $sqlTplNot = ' AND NOT (note_title ILIKE ? OR note_tags ILIKE ? OR note_content ILIKE ?)';
         $arData = array(
             $this->username
         );
