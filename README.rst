@@ -108,9 +108,11 @@ It may be that grauphel now shows you an error message::
   PHP extension "oauth" is required
 
 You have to install the PHP PECL oauth extension now.
-On Debian, do the following::
+On Debian 7, do the following::
 
-  $ apt-get install php5-oauth
+  $ apt-get install libpcre3-dev php-pear php5-dev
+  $ pecl install oauth
+  $ echo 'extension=oauth.so' > /etc/php5/conf.d/oauth.ini
   $ /etc/init.d/apache2 restart
 
 Reload the ownCloud page in your browser now.
