@@ -37,7 +37,6 @@ class Html extends Base
         'list-item' => 'li',
         'bold'      => 'b',
         'italic'    => 'i',
-        'monospace' => 'tt',
     );
 
     protected static $styleClassMap = array(
@@ -46,6 +45,10 @@ class Html extends Base
         'size:small' => 'small',
         'size:large' => 'large',
         'size:huge'  => 'huge',
+    );
+
+    protected static $styleMap = array(
+        'monospace' => 'font-family:monospace; white-space: pre-wrap'
     );
 
     public $internalLinkHandler;
@@ -80,16 +83,22 @@ class Html extends Base
         );
 
         $withinLink = false;
+        $nesting = array();
         $store = &$html;
         while ($reader->read()) {
             switch ($reader->nodeType) {
             case XMLReader::ELEMENT:
                 //echo $reader->name . "\n";
+                array_unshift($nesting, $reader->name);
                 if (isset(static::$tagMap[$reader->name])) {
                     $store .= '<' . static::$tagMap[$reader->name] . '>';
                 } else if (isset(static::$styleClassMap[$reader->name])) {
                     $store .= '<span class="'
                         . static::$styleClassMap[$reader->name]
+                        . '">';
+                } else if (isset(static::$styleMap[$reader->name])) {
+                    $store .= '<span style="'
+                        . static::$styleMap[$reader->name]
                         . '">';
                 } else if (substr($reader->name, 0, 5) == 'link:') {
                     $withinLink = true;
@@ -98,9 +107,12 @@ class Html extends Base
                 }
                 break;
             case XMLReader::END_ELEMENT:
+                array_shift($nesting, $reader->name);
                 if (isset(static::$tagMap[$reader->name])) {
                     $store .= '</' . static::$tagMap[$reader->name] . '>';
                 } else if (isset(static::$styleClassMap[$reader->name])) {
+                    $store .= '</span>';
+                } else if (isset(static::$styleMap[$reader->name])) {
                     $store .= '</span>';
                 } else if (substr($reader->name, 0, 5) == 'link:') {
                     $withinLink = false;
@@ -118,7 +130,11 @@ class Html extends Base
                 break;
             case XMLReader::TEXT:
             case XMLReader::SIGNIFICANT_WHITESPACE:
-                $store .= nl2br(htmlspecialchars($reader->value));
+                $text = htmlspecialchars($reader->value);
+                if ($nesting[0] != 'monospace') {
+                    $text = nl2br($text);
+                }
+                $store .= $text;
                 break;
             default:
                 throw new Exception(

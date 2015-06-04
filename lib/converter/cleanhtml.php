@@ -34,7 +34,6 @@ class CleanHtml extends Html
         'list-item' => 'li',
         'bold'      => 'b',
         'italic'    => 'i',
-        'monospace' => 'tt',
 
         'size:large' => 'h3',
         'size:huge'  => 'h2',
@@ -45,6 +44,10 @@ class CleanHtml extends Html
 
     protected static $styleClassMap = array(
         'size:small' => 'small',
+    );
+
+    protected static $styleMap = array(
+        'monospace' => 'font-family:monospace; white-space: pre-wrap'
     );
 
     /**
