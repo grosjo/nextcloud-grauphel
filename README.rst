@@ -3,12 +3,14 @@ grauphel - tomboy REST server
 *****************************
 ownCloud__ application implementing the `Tomboy`__ `REST API`__ for syncing notes.
 
-Work in progress.
+Pretty stable.
 
 __ http://owncloud.org/
 __ https://wiki.gnome.org/Apps/Tomboy
 __ https://wiki.gnome.org/Apps/Tomboy/Synchronization/REST/1.0
 
+
+.. contents::
 
 ======
 Status
@@ -48,6 +50,10 @@ grauphel 0.2.1 is known to work with:
 * Tomboy 1.15.2, Linux
 * Tomboy 1.15.1, Windows
 * Tomdroid 0.7.5, Android 4.4.1
+
+See the HowTo__ document for client-specific configuration instructions.
+
+__ docs/howto.rst
 
 
 =============
@@ -147,3 +153,22 @@ Development hints
   output.
 * ``latest-sync-revision`` sent from Tomboy during PUT sync is already
   incremented by 1.
+
+
+Releasing grauphel
+==================
+To release a new version, do the following:
+
+#. Increase version number in ``appinfo/version`` and ``appinfo/info.xml``.
+#. Fill the ``ChangeLog`` file with the changes since the last release,
+   mention the new version number.
+#. Update ``README.rst`` and increase the version number
+#. Create the grauphel release file with::
+
+     $ phing
+
+   The file will be in ``dist/``
+#. Test the release on a server
+#. Tag the release in git
+#. Upload the release to http://cweiske.de/grauphel.htm
+#. Link the new release on https://apps.owncloud.com/content/show.php?content=166654
