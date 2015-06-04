@@ -3,7 +3,7 @@
 	<id>grauphel</id>
 	<name>Grauphel: Tomboy note server</name>
 	<description>Tomboy REST API server to sync notes between devices</description>
-	<version>0.5.0</version>
+	<version>0.5.1</version>
 	<licence>AGPL3 or later</licence>
 	<author>Christian Weiske</author>
 	<requiremin>7</requiremin>

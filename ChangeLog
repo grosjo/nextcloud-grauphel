@@ -1,3 +1,8 @@
+2015-06-04  Christian Weiske  <cweiske@cweiske.de>
+
+	* Fix #19: Tabs ignored in HTML export
+	* Version 0.5.1
+
 2015-03-17  Christian Weiske  <cweiske@cweiske.de>
 
 	* Implement standalone HTML mode for notes
