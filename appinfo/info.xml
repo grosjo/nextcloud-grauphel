@@ -1,10 +1,29 @@
 <?xml version="1.0"?>
 <info>
-	<id>grauphel</id>
-	<name>Grauphel: Tomboy note server</name>
-	<description>Tomboy REST API server to sync notes between devices</description>
-	<version>0.5.1</version>
-	<licence>AGPL3 or later</licence>
-	<author>Christian Weiske</author>
-	<requiremin>7</requiremin>
+ <id>grauphel</id>
+ <name>Grauphel: Tomboy note server</name>
+ <description>
+  Tomboy REST API server to sync notes between devices.
+
+  Tomboy, Conboy and Tomdroid clients are supported.
+ </description>
+ <version>0.5.1</version>
+ <licence>AGPL3 or later</licence>
+ <author>Christian Weiske</author>
+
+ <requiremin>7</requiremin>
+ <namespace>Grauphel</namespace>
+ <dependencies>
+  <lib>OAuth</lib>
+ </dependencies>
+
+ <documentation>
+  <admin>http://www.bogo/grauphel.htm#installation</admin>
+ </documentation>
+ <website>http://cweiske.de/grauphel.htm</website>
+ <repository type="git">FIXME http://git.cweiske.de/grauphel.git</repository>
+ <bugs>https://github.com/cweiske/grauphel/issues</bugs>
+
+ <category>productivity</category>
+ <ocsid>166654</ocsid>
 </info>

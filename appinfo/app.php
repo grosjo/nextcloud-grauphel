@@ -1,12 +1,10 @@
 <?php
-//OCP\App::registerAdmin( 'apptemplate', 'settings' );
-
-OCP\App::addNavigationEntry(
+\OC::$server->getNavigationManager()->add(
     array( 
         'id' => 'grauphel',
         'order' => 2342,
         'href' => \OCP\Util::linkToRoute('grauphel.gui.index'),
-        'icon' => OCP\Util::imagePath('grauphel', 'tomboy-grey.png'),
+        'icon' => \OCP\Util::imagePath('grauphel', 'app.svg'),
         'name' => 'Tomboy notes'
     )
 );
