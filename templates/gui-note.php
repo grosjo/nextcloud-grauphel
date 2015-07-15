@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php p(OCP\Util::linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <div id="app-content" class="content">
+ <div id="searchresults" class="hidden"></div>
  <div class="actions">
   <a class="button" href="<?php echo p($_['links']['html']); ?>">HTML</a>
   <a class="button" href="<?php echo p($_['links']['text']); ?>">Text</a>

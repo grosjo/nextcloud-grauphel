@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php p(OCP\Util::linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <div id="app-content" class="list">
+  <div id="searchresults" class="hidden"></div>
   <h1>Manage access tokens</h1>
   <p>
     Here you see which applications have access to the notes.

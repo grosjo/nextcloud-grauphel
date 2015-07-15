@@ -4,6 +4,7 @@
 <?php $_['appNavigation']->printPage(); ?>
 
 <div id="app-content" class="content">
+  <div id="searchresults" class="hidden"></div>
   <div>
     <h1>grauphel - Tomboy notes server</h1>
     <p>

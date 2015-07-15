@@ -8,6 +8,10 @@
         'name' => 'Tomboy notes'
     )
 );
-\OC_Search::registerProvider('OCA\Grauphel\Search\Provider');
+
+\OC::$server->getSearch()->registerProvider(
+    'OCA\Grauphel\Search\Provider', array('apps' => array('grauphel'))
+);
+
 \OCP\Util::addscript('grauphel', 'loader');
 ?>

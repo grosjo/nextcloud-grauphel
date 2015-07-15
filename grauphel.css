@@ -132,7 +132,7 @@ table.table thead th {
     vertical-align: middle;
 }
 
-table.table th, table.table td {
+table.table th, table.table td, #searchresults td {
     border-bottom:1px solid #ddd;
     text-align:left;
     font-weight:normal;
@@ -194,4 +194,10 @@ table.table form button.action {
 }
 .note-content a {
     text-decoration: underline;
+}
+
+#searchresults {
+    margin-top: 0px;
+    min-height: 100%;
+    margin-bottom: 50px;
 }

@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php p(OCP\Util::linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <div id="app-content" class="content">
+  <div id="searchresults" class="hidden"></div>
   <h1>Manage database</h1>
   <p>
     In case something went seriously wrong during synchronization, you may reset your
