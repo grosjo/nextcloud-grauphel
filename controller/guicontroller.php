@@ -168,6 +168,7 @@ class GuiController extends Controller
      */
     public function tag($rawtag)
     {
+        $rawtag = $this->unescapeTagFromUrl($rawtag);
         $notes = $this->getNotes()->loadNotesOverview(null, $rawtag, true);
         usort(
             $notes,
@@ -288,7 +289,8 @@ class GuiController extends Controller
                     'name' => $name,
                     'id'   => $rawtag,
                     'href' => $this->urlGen->linkToRoute(
-                        'grauphel.gui.tag', array('rawtag' => $rawtag)
+                        'grauphel.gui.tag',
+                        array('rawtag' => $this->escapeTagForUrl($rawtag))
                     ),
                     'selected' => $rawtag == $selectedRawtag,
                 );
@@ -351,6 +353,16 @@ class GuiController extends Controller
             return '*' . substr($rawtag, 17) . '*';
         }
         return false;
+    }
+
+    protected function escapeTagForUrl($rawtag)
+    {
+        return str_replace('/', '%2F', $rawtag);
+    }
+
+    protected function unescapeTagFromUrl($rawtag)
+    {
+        return str_replace('%2F', '/', $rawtag);
     }
 }
 ?>
