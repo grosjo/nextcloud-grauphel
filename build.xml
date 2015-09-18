@@ -18,6 +18,7 @@
    <include name="**"/>
    <exclude name="dist/"/>
    <exclude name=".git"/>
+   <exclude name=".travis.yml"/>
    <exclude name="**/.gitignore"/>
    <exclude name="**/build.xml"/>
    <exclude name="**/README.html"/>
