@@ -397,15 +397,18 @@ class NoteStorage
     public function loadNotesOverview(
         $since = null, $rawtag = null, $includeDate = false
     ) {
-        $result = \OC_DB::executeAudited(
-            'SELECT `note_guid`, `note_title`, `note_last_sync_revision`, `note_tags`'
+        $sql = 'SELECT `note_guid`, `note_title`'
+            . ', `note_last_sync_revision`, `note_tags`'
             . ', `note_last_change_date`'
             . ' FROM `*PREFIX*grauphel_notes`'
-            . ' WHERE note_user = ?',
-            array($this->username)
-        );
+            . ' WHERE note_user = ?';
+        $sqlData = array($this->username);
 
-        $notes = array();
+        if ($since !== null) {
+            $sqlData[] = $since;
+            $sql .= ' AND note_last_sync_revision > ?';
+        }
+
         if ($rawtag == 'grauphel:special:all') {
             $rawtag = null;
         } else if ($rawtag == 'grauphel:special:untagged') {
@@ -413,13 +416,14 @@ class NoteStorage
         } else {
             $jsRawtag = json_encode($rawtag);
         }
+        if ($rawtag !== null) {
+            $sqlData[] = '%' . $jsRawtag . '%';
+            $sql .= ' AND note_tags LIKE ?';
+        }
+
+        $result = \OC_DB::executeAudited($sql, $sqlData);
+        $notes = array();
         while ($row = $result->fetchRow()) {
-            if ($since !== null && $row['note_last_sync_revision'] <= $since) {
-                continue;
-            }
-            if ($rawtag !== null && strpos($row['note_tags'], $jsRawtag) === false) {
-                continue;
-            }
             $note = array(
                 'guid' => $row['note_guid'],
                 'ref'  => array(
