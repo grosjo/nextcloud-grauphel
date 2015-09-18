@@ -21,7 +21,7 @@
   <admin>http://www.bogo/grauphel.htm#installation</admin>
  </documentation>
  <website>http://cweiske.de/grauphel.htm</website>
- <repository type="git">FIXME http://git.cweiske.de/grauphel.git</repository>
+ <repository type="git">git://git.cweiske.de/grauphel.git</repository>
  <bugs>https://github.com/cweiske/grauphel/issues</bugs>
 
  <category>productivity</category>
