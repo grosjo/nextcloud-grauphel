@@ -107,7 +107,7 @@ class Html extends Base
                 }
                 break;
             case XMLReader::END_ELEMENT:
-                array_shift($nesting, $reader->name);
+                array_shift($nesting);
                 if (isset(static::$tagMap[$reader->name])) {
                     $store .= '</' . static::$tagMap[$reader->name] . '>';
                 } else if (isset(static::$styleClassMap[$reader->name])) {
