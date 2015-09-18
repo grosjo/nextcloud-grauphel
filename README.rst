@@ -155,6 +155,18 @@ Development hints
   incremented by 1.
 
 
+Unit testing
+============
+- `ownCloud unit testing documentation`__
+- `grauphel on Travis CI`__
+
+  .. image:: https://travis-ci.org/cweiske/grauphel.svg
+     :target: https://travis-ci.org/cweiske/grauphel
+
+__ https://doc.owncloud.org/server/8.0/developer_manual/core/unit-testing.html
+__ https://travis-ci.org/cweiske/grauphel
+
+
 Releasing grauphel
 ==================
 To release a new version, do the following:

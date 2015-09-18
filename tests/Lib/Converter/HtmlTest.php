@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../lib/converter/base.php';
 require_once __DIR__ . '/../../../lib/converter/html.php';
 
 class Lib_Converter_HtmlTest extends PHPUnit_Framework_TestCase
@@ -7,7 +8,7 @@ class Lib_Converter_HtmlTest extends PHPUnit_Framework_TestCase
     {
         $input = file_get_contents(__DIR__ . '/../../data/formattest.tomboynotecontent');
 
-        $converter = new OCA\Grauphel\Lib\Converter\Html();
+        $converter = new OCA\Grauphel\Converter\Html();
         $output = $converter->convert($input);
         $this->assertEquals(
             file_get_contents(__DIR__ . '/../../data/formattest.html'),
@@ -19,7 +20,7 @@ class Lib_Converter_HtmlTest extends PHPUnit_Framework_TestCase
     {
         $input = file_get_contents(__DIR__ . '/../../data/xss.tomboynotecontent');
 
-        $converter = new OCA\Grauphel\Lib\Converter\Html();
+        $converter = new OCA\Grauphel\Converter\Html();
         $output = $converter->convert($input);
         $this->assertEquals(
             file_get_contents(__DIR__ . '/../../data/xss.html'),
