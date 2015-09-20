@@ -161,6 +161,11 @@ class OAuth
         $params = array();
         //$_SERVER['REDIRECT_HTTP_AUTHORIZATION'] = $_SERVER['HTTP_AUTHORIZATION'];
 
+        //copy http auth headers for apache+php-fcgid work around
+        if (isset($_SERVER['HTTP_XAUTHORIZATION']) && !isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['HTTP_XAUTHORIZATION'];
+        }
+
         if (isset($_SERVER['HTTP_AUTHORIZATION'])
             && $_SERVER['HTTP_AUTHORIZATION'] == ''
         ) {
