@@ -108,9 +108,9 @@ Manual installation
 #. Download the latest release from http://cweiske.de/grauphel.htm and extract it.
    For example::
 
-     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.0.tar.bz2
-     $ tar xjvf grauphel-0.6.0.tar.bz2
-     $ rm grauphel-0.6.0.tar.bz2
+     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.1.tar.bz2
+     $ tar xjvf grauphel-0.6.1.tar.bz2
+     $ rm grauphel-0.6.1.tar.bz2
 
    You do have a directory ``/var/www/owncloud/apps/grauphel`` now.
 #. Using your browser, login as administrator into ownCloud and click
