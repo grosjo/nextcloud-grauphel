@@ -11,7 +11,7 @@
       </replaceregexp>
     </filterchain>
   </loadfile>
-  <property name="zipfile"  value="${phing.project.name}-${version}.tar.bz2" />
+  <property name="zipfile"  value="${phing.project.name}-${version}.tar.gz" />
   <property name="distfile" value="dist/${zipfile}" />
 
   <fileset id="fs.zip" dir=".">
@@ -34,7 +34,7 @@
      </then>
     </if>
     <!--<delete file="${distfile}" failonerror="false"/>-->
-    <tar destfile="${distfile}" prefix="grauphel/" compression="bzip2">
+    <tar destfile="${distfile}" prefix="grauphel/" compression="gzip">
       <fileset refid="fs.zip"/>
     </tar>
   </target>
