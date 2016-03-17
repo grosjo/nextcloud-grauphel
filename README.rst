@@ -93,11 +93,12 @@ Installation
 
 App store installation
 ======================
-Installation via the app store does not work currently, see
-https://github.com/cweiske/grauphel/issues/26
-
-If one day it works, you can use the ownCloud "Apps" app, select
-"Productivity" and install grauphel with a single click.
+#. Log into owncloud as administrator
+#. Goto "Apps"
+#. Enable experimental apps in the settings
+#. Click "Productivity"
+#. Look for "grauphel - Tomboy sync server"
+#. Click "Activate"
 
 
 Manual installation
@@ -126,11 +127,15 @@ You have to install the PHP PECL oauth extension now.
 On Debian 7, do the following::
 
   $ apt-get install libpcre3-dev php-pear php5-dev
-  $ pecl install oauth
+  $ pecl install oauth-1.2.3
   $ echo 'extension=oauth.so' > /etc/php5/conf.d/oauth.ini
   $ /etc/init.d/apache2 restart
 
 Reload the ownCloud page in your browser now.
+
+.. note::
+   ``oauth-1.2.3`` is only needed on PHP 5.x
+   For PHP 7, simply use ``pecl install oauth``.
 
 
 ======
