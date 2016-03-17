@@ -39,4 +39,15 @@
     </tar>
   </target>
 
+ <target name="docs" description="render documentation">
+  <rst file="README.rst"/>
+ </target>
+
+ <target name="update-website" depends="docs">
+  <exec command="xmlstarlet sel -t -c '/_:html/_:body/_:div' README.html
+   | xmllint --format -
+   |grep -v '?xml version'
+   > ~/Dev/html/cweiske.de/www/grauphel.htm"/>
+ </target>
+
 </project>
