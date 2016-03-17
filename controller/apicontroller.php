@@ -15,6 +15,7 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
+use \OCP\IDBConnection;
 
 use \OCA\Grauphel\Lib\Client;
 use \OCA\Grauphel\Lib\NoteStorage;
@@ -42,10 +43,12 @@ class ApiController extends Controller
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
+
     public function __construct($appName, \OCP\IRequest $request, $user)
     {
         parent::__construct($appName, $request);
         $this->user  = $user;
+        $this->connection = \OC::$server->getDatabaseConnection();
         $this->deps  = Dependencies::get();
         $this->notes = new NoteStorage($this->deps->urlGen);
 
@@ -287,7 +290,7 @@ class ApiController extends Controller
         }
 
         //update
-        \OC_DB::beginTransaction();
+        $this->connection->beginTransaction();
         try {
             ++$syncdata->latestSyncRevision;
             foreach ($arPut['note-changes'] as $noteUpdate) {
@@ -306,9 +309,9 @@ class ApiController extends Controller
             }
 
             $this->notes->saveSyncData($syncdata);
-            \OC_DB::commit();
+            $this->connection->commit();
         } catch (\DatabaseException $e) {
-            \OC_DB::getConnection()->rollBack();
+            $this->connection->rollBack();
             throw $e;
         }
     }
