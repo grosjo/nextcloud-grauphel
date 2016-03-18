@@ -110,9 +110,9 @@ Manual installation
    and extract it.
    For example::
 
-     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.1.tar.bz2
-     $ tar xjvf grauphel-0.6.1.tar.bz2
-     $ rm grauphel-0.6.1.tar.bz2
+     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.2.tar.bz2
+     $ tar xjvf grauphel-0.6.2.tar.bz2
+     $ rm grauphel-0.6.2.tar.bz2
 
    You do have a directory ``/var/www/owncloud/apps/grauphel`` now.
 #. Using your browser, login as administrator into ownCloud and click
@@ -231,5 +231,8 @@ To release a new version, do the following:
    The file will be in ``dist/``
 #. Test the release on a server
 #. Tag the release in git
-#. Upload the release to http://cweiske.de/grauphel.htm
+#. Upload the release to http://cweiske.de/grauphel.htm with::
+
+     $ phing update-website
+
 #. Link the new release on https://apps.owncloud.com/content/show.php?content=166654
