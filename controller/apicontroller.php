@@ -287,7 +287,8 @@ class ApiController extends Controller
         }
 
         //update
-        \OC_DB::beginTransaction();
+        $db = \OC::$server->getDatabaseConnection();
+        $db->beginTransaction();
         try {
             ++$syncdata->latestSyncRevision;
             foreach ($arPut['note-changes'] as $noteUpdate) {
@@ -306,9 +307,9 @@ class ApiController extends Controller
             }
 
             $this->notes->saveSyncData($syncdata);
-            \OC_DB::commit();
+            $db->commit();
         } catch (\DatabaseException $e) {
-            \OC_DB::getConnection()->rollBack();
+            $db->rollBack();
             throw $e;
         }
     }

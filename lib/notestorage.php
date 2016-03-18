@@ -26,12 +26,18 @@ namespace OCA\Grauphel\Lib;
  */
 class NoteStorage
 {
+    /**
+     * @var \OCP\IDBConnection
+     */
+    protected $db;
+
     protected $urlGen;
     protected $username;
 
     public function __construct($urlGen)
     {
-        $this->urlGen   = $urlGen;
+        $this->urlGen = $urlGen;
+        $this->db     = \OC::$server->getDatabaseConnection();
     }
 
     public function setUsername($username)
@@ -54,14 +60,14 @@ class NoteStorage
 
     public function getTags()
     {
-        $result = \OC_DB::executeAudited(
+        $result = $this->db->executeQuery(
             'SELECT `note_tags` FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
             array($this->username)
         );
 
         $tags = array();
-        while ($row = $result->fetchRow()) {
+        while ($row = $result->fetch()) {
             $tags = array_merge($tags, json_decode($row['note_tags']));
         }
         return array_unique($tags);
@@ -131,11 +137,11 @@ class NoteStorage
      */
     public function loadSyncData()
     {
-        $row = \OC_DB::executeAudited(
+        $row = $this->db->executeQuery(
             'SELECT * FROM `*PREFIX*grauphel_syncdata`'
             . ' WHERE `syncdata_user` = ?',
             array($this->username)
-        )->fetchRow();
+        )->fetch();
 
         if ($row === false) {
             $syncdata = $this->getNewSyncData();
@@ -158,11 +164,11 @@ class NoteStorage
      */
     public function saveSyncData(SyncData $syncdata)
     {
-        $row = \OC_DB::executeAudited(
+        $row = $this->db->executeQuery(
             'SELECT * FROM `*PREFIX*grauphel_syncdata`'
             . ' WHERE `syncdata_user` = ?',
             array($this->username)
-        )->fetchRow();
+        )->fetch();
 
         if ($row === false) {
             //INSERT
@@ -186,7 +192,7 @@ class NoteStorage
             $params = array_values($data);
             $params[] = $this->username;
         }
-        \OC_DB::executeAudited($sql, $params);
+        $this->db->executeQuery($sql, $params);
     }
 
     /**
@@ -198,7 +204,7 @@ class NoteStorage
      */
     public function deleteSyncData()
     {
-        \OC_DB::executeAudited(
+        $this->db->executeQuery(
             'DELETE FROM `*PREFIX*grauphel_syncdata`'
             . ' WHERE `syncdata_user` = ?',
             array($this->username)
@@ -215,11 +221,11 @@ class NoteStorage
      */
     public function load($guid, $createNew = true)
     {
-        $row = \OC_DB::executeAudited(
+        $row = $this->db->executeQuery(
             'SELECT * FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
             array($this->username, $guid)
-        )->fetchRow();
+        )->fetch();
 
         if ($row === false) {
             if (!$createNew) {
@@ -258,11 +264,11 @@ class NoteStorage
      */
     public function loadGuidByTitle($title)
     {
-        $row = \OC_DB::executeAudited(
+        $row = $this->db->executeQuery(
             'SELECT note_guid FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_title` = ?',
             array($this->username, htmlspecialchars($title))
-        )->fetchRow();
+        )->fetch();
 
         if ($row === false) {
             return null;
@@ -301,7 +307,7 @@ class NoteStorage
             }
         }
 
-        $result = \OC_DB::executeAudited(
+        $result = $this->db->executeQuery(
             'SELECT `note_guid`, `note_title`'
             . ' FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?'
@@ -311,7 +317,7 @@ class NoteStorage
         );
 
         $notes = array();
-        while ($row = $result->fetchRow()) {
+        while ($row = $result->fetch()) {
             $notes[] = $row;
         }
         return $notes;
@@ -326,11 +332,11 @@ class NoteStorage
      */
     public function save($note)
     {
-        $row = \OC_DB::executeAudited(
+        $row = $this->db->executeQuery(
             'SELECT * FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
             array($this->username, $note->guid)
-        )->fetchRow();
+        )->fetch();
 
         $data = $this->rowFromNote($note);
         if ($row === false) {
@@ -349,7 +355,7 @@ class NoteStorage
             $params[] = $this->username;
             $params[] = $note->guid;
         }
-        \OC_DB::executeAudited($sql, $params);
+        $this->db->executeQuery($sql, $params);
     }
 
     /**
@@ -361,7 +367,7 @@ class NoteStorage
      */
     public function delete($guid)
     {
-        \OC_DB::executeAudited(
+        $this->db->executeQuery(
             'DELETE FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
             array($this->username, $guid)
@@ -375,7 +381,7 @@ class NoteStorage
      */
     public function deleteAll()
     {
-        \OC_DB::executeAudited(
+        $this->db->executeQuery(
             'DELETE FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ?',
             array($this->username)
@@ -421,9 +427,9 @@ class NoteStorage
             $sql .= ' AND note_tags LIKE ?';
         }
 
-        $result = \OC_DB::executeAudited($sql, $sqlData);
+        $result = $this->db->executeQuery($sql, $sqlData);
         $notes = array();
-        while ($row = $result->fetchRow()) {
+        while ($row = $result->fetch()) {
             $note = array(
                 'guid' => $row['note_guid'],
                 'ref'  => array(
@@ -466,14 +472,14 @@ class NoteStorage
      */
     public function loadNotesFull($since = null)
     {
-        $result = \OC_DB::executeAudited(
+        $result = $this->db->executeQuery(
             'SELECT * FROM `*PREFIX*grauphel_notes`'
             . ' WHERE note_user = ?',
             array($this->username)
         );
 
         $notes = array();
-        while ($row = $result->fetchRow()) {
+        while ($row = $result->fetch()) {
             if ($since !== null && $row['note_last_sync_revision'] <= $since) {
                 continue;
             }

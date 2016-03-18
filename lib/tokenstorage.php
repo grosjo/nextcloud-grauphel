@@ -14,7 +14,7 @@
 namespace OCA\Grauphel\Lib;
 
 /**
- * Token store
+ * OAuth token store
  *
  * @category  Tools
  * @package   Grauphel
@@ -27,6 +27,16 @@ namespace OCA\Grauphel\Lib;
 class TokenStorage
 {
     /**
+     * @var \OCP\IDBConnection
+     */
+    protected $db;
+
+    public function __construct($urlGen)
+    {
+        $this->db = \OC::$server->getDatabaseConnection();
+    }
+
+    /**
      * Delete token
      *
      * @param string $type     Token type: temp, access, verify
@@ -38,7 +48,7 @@ class TokenStorage
      */
     public function delete($type, $tokenKey)
     {
-        \OC_DB::executeAudited(
+        $this->db->executeQuery(
             'DELETE FROM `*PREFIX*grauphel_oauth_tokens`'
             . ' WHERE `token_key` = ? AND `token_type` = ?',
             array($tokenKey, $type)
@@ -54,7 +64,7 @@ class TokenStorage
      */
     public function store(Token $token)
     {
-        \OC_DB::executeAudited(
+        $this->db->executeQuery(
             'INSERT INTO `*PREFIX*grauphel_oauth_tokens`'
             . '(`token_user`, `token_type`, `token_key`, `token_secret`, `token_verifier`, `token_callback`, `token_client`, `token_lastuse`)'
             . ' VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
@@ -105,11 +115,11 @@ class TokenStorage
      */
     public function load($type, $tokenKey)
     {
-        $tokenRow = \OC_DB::executeAudited(
+        $tokenRow = $this->db->executeQuery(
             'SELECT * FROM `*PREFIX*grauphel_oauth_tokens`'
             . ' WHERE `token_key` = ? AND `token_type` = ?',
             array($tokenKey, $type)
-        )->fetchRow();
+        )->fetch();
 
         if ($tokenRow === false) {
             throw new OAuthException(
@@ -136,14 +146,14 @@ class TokenStorage
      */
     public function loadForUser($username, $type)
     {
-        $result = \OC_DB::executeAudited(
+        $result = $this->db->executeQuery(
             'SELECT * FROM `*PREFIX*grauphel_oauth_tokens`'
             . ' WHERE `token_user` = ? AND `token_type` = ?',
             array($username, $type)
         );
 
         $tokens = array();
-        while ($tokenRow = $result->fetchRow()) {
+        while ($tokenRow = $result->fetch()) {
             $tokens[] = $this->fromDb($tokenRow);
         }
 
@@ -159,7 +169,7 @@ class TokenStorage
      */
     public function updateLastUse($tokenKey)
     {
-        \OC_DB::executeAudited(
+        $this->db->executeQuery(
             'UPDATE `*PREFIX*grauphel_oauth_tokens`'
             . ' SET `token_lastuse` = ? WHERE `token_key` = ?',
             array(
