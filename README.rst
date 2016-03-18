@@ -142,7 +142,13 @@ Reload the ownCloud page in your browser now.
 ========
 Download
 ========
+The list of changes in each version can found in the `ChangeLog`__.
 
+__ http://git.cweiske.de/grauphel.git/blob/HEAD:/ChangeLog
+
+* `grauphel-0.6.2.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.2.tar.gz>`__,
+  36 kiB, 2016-03-18,
+  SHA256: ``94786f9ef167d9b71e036ed70aea594d29b2edac3f49431d5da568fec513e5ee``
 * `grauphel-0.6.1.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.1.tar.gz>`__,
   35 kiB, 2015-09-22,
   SHA256: ``f86cf7b47be857d8a87d413b6315c336e83e9c4beba2cb6ed0eaea8d2b3ea1c3``
