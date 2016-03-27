@@ -31,7 +31,7 @@ class TokenStorage
      */
     protected $db;
 
-    public function __construct($urlGen)
+    public function __construct()
     {
         $this->db = \OC::$server->getDatabaseConnection();
     }
