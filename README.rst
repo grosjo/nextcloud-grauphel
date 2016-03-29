@@ -91,6 +91,10 @@ __ http://pecl.php.net/package/oauth
 Installation
 ============
 
+.. note::
+   grauphel needs to be activated for all users.
+   It will not work with the "enable only for specific groups" setting.
+
 App store installation
 ======================
 #. Log into owncloud as administrator
