@@ -1,3 +1,8 @@
+2016-04-27  Christian Weiske  <cweiske@cweiske.de>
+
+	* Fix #40: Remove unneeded constructor parameter
+	* Version 0.6.3
+
 2016-03-18  Christian Weiske  <cweiske@cweiske.de>
 
 	* Fix #37: Fix fatal error with ownCloud 9
