@@ -76,7 +76,7 @@ class TokenStorage
                 (string) $token->verifier,
                 (string) $token->callback,
                 (string) $token->client,
-                (string) date('c'),
+                date('Y-m-d H:i:s'),
             )
         );
     }
@@ -173,7 +173,7 @@ class TokenStorage
             'UPDATE `*PREFIX*grauphel_oauth_tokens`'
             . ' SET `token_lastuse` = ? WHERE `token_key` = ?',
             array(
-                (string) date('c'),
+                date('Y-m-d H:i:s'),
                 $tokenKey,
             )
         );
