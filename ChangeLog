@@ -1,3 +1,8 @@
+2016-05-10  Christian Weiske  <cweiske@cweiske.de>
+
+	* Fix #41: Use correct SQL datetime format for tokens
+	* Version 0.6.4
+
 2016-04-27  Christian Weiske  <cweiske@cweiske.de>
 
 	* Fix #40: Remove unneeded constructor parameter
