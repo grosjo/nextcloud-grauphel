@@ -150,6 +150,9 @@ The list of changes in each version can found in the `ChangeLog`__.
 
 __ http://git.cweiske.de/grauphel.git/blob/HEAD:/ChangeLog
 
+* `grauphel-0.6.4.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.4.tar.gz>`__,
+  36 kiB, 2016-05-10,
+  SHA256: ``6de8ea450c5141cf11e272d20ac3b6a009d1537d083dab03d208819153c7fde5``
 * `grauphel-0.6.3.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.3.tar.gz>`__,
   36 kiB, 2016-04-27,
   SHA256: ``eb021af9d99a6d88831af361163af9163fce4ded5f5833caf9764b5f6cd3ff27``
