@@ -106,7 +106,9 @@ class ReStructuredText extends Base
                     $store .= static::$simpleMap[$reader->name];
                 } else if ($reader->name == 'list') {
                     --$listLevel;
-                    $listPrefix = str_repeat('  ', $listLevel);
+                    $listPrefix = str_repeat(
+                        '  ', $listLevel < 0 ? 0 : $listLevel
+                    );
                     if ($listLevel == -1) {
                         $store .= "\n";
                     }
