@@ -120,6 +120,11 @@ class NoteStorage
             $note->{'last-metadata-change-date'} = date('c');
         }
 
+        if (!isset($note->{'create-date'})) {
+            //no idea how to get the microseconds in there
+            $note->{'create-date'} = date('c');
+        }
+
         if (isset($noteUpdate->{'node-content'})
             && $note->{'note-content-version'} == 0
         ) {
