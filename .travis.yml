@@ -1,5 +1,10 @@
 language: php
 sudo: false
+addons:
+  apt:
+    packages:
+    - diff
+    - xsltproc
 php:
   - 7
   - 5.6
