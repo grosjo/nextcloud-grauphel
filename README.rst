@@ -146,48 +146,10 @@ Reload the ownCloud page in your browser now.
 ========
 Download
 ========
-The list of changes in each version can found in the `ChangeLog`__.
+.. LATESTRELEASE
 
-__ http://git.cweiske.de/grauphel.git/blob/HEAD:/ChangeLog
-
-* `grauphel-0.6.4.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.4.tar.gz>`__,
-  36 kiB, 2016-05-10,
-  SHA256: ``6de8ea450c5141cf11e272d20ac3b6a009d1537d083dab03d208819153c7fde5``
-* `grauphel-0.6.3.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.3.tar.gz>`__,
-  36 kiB, 2016-04-27,
-  SHA256: ``eb021af9d99a6d88831af361163af9163fce4ded5f5833caf9764b5f6cd3ff27``
-* `grauphel-0.6.2.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.2.tar.gz>`__,
-  36 kiB, 2016-03-18,
-  SHA256: ``94786f9ef167d9b71e036ed70aea594d29b2edac3f49431d5da568fec513e5ee``
-* `grauphel-0.6.1.tar.gz <http://cweiske.de/download/grauphel/grauphel-0.6.1.tar.gz>`__,
-  35 kiB, 2015-09-22,
-  SHA256: ``f86cf7b47be857d8a87d413b6315c336e83e9c4beba2cb6ed0eaea8d2b3ea1c3``
-
-  * `grauphel-0.6.1.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.6.1.tar.bz2>`__,
-    31 kiB, 2015-09-21,
-    SHA256: ``b755b32a453617536eb202cd9d29129df1b04311b633d971108c310a4b9b2e4b``
-* `grauphel-0.6.0.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.6.0.tar.bz2>`__,
-  31 kiB, 2015-09-18,
-  SHA256: ``42e66ed4db1f0c24ca25e46ac4be6e523352f431daaefb22140a2a2e621049b8``
-* `grauphel-0.5.1.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.5.1.tar.bz2>`__,
-  29 kiB, 2015-06-04,
-  SHA256: ``fdb6232fa0d09a72e8355e5e4610403717ffe5c7f7193af2b36d991f1eb76127``
-* `grauphel-0.5.0.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.5.0.tar.bz2>`__,
-  29 kiB, 2015-03-17,
-  SHA256: ``9bbd5426cd7cd36f603c49b0635f24cb9507cf857480edc1f72df0ea0107f7de``
-* `grauphel-0.4.0.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.4.0.tar.bz2>`__,
-  24 kiB, 2014-10-29,
-  SHA256: ``a625ed127af04af4c0a658fcac8156557ef8098eaeddb72281842ad0c0c00b71``
-* `grauphel-0.3.0.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.3.0.tar.bz2">`__,
-  17 kiB, 2014-10-14,
-  SHA256: ``c59ac4cab6d747a4fe89ebd59c92e7ec80f9e2fb3b1edf8904357bc161897ae8``
-* `grauphel-0.2.1.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.2.1.tar.bz2>`__,
-  13 kiB, 2014-10-03,
-  SHA256: ``b66db077fc3e117b2e143b5b177c1d9a8a86c43029936ea65300a4d822e9fdda``
-* `grauphel-0.2.0.tar.bz2 <http://cweiske.de/download/grauphel/grauphel-0.2.0.tar.bz2>`__,
-  13 kiB, 2014-09-27,
-  SHA256: ``abb1372e8b8525237bea1b686aa6ee2d390974f84bf2206d3aacc2c191978162``
-
+See `grauphel downloads page <http://cweiske.de/grauphel-download.htm>`_
+for all released versions.
 
 ======
 Author
@@ -249,6 +211,7 @@ To release a new version, do the following:
 #. Tag the release in git
 #. Upload the release to http://cweiske.de/grauphel.htm with::
 
-     $ phing update-website
+     $ cd ~/Dev/html/cweiske.de
+     $ ./scripts/update-grauphel.sh
 
 #. Link the new release on https://apps.owncloud.com/content/show.php?content=166654
