@@ -199,6 +199,14 @@ Releasing grauphel
 To release a new version, do the following:
 
 #. Increase version number in ``appinfo/version`` and ``appinfo/info.xml``.
+#. Validate ``appinfo/info.xml``::
+
+     $ xmllint --noout --schema tools/info.xsd appinfo/info.xml
+
+#. Validate ``appinfo/database.xml``::
+
+     $ xmllint --noout --schema tools/database.xsd appinfo/database.xml
+
 #. Fill the ``ChangeLog`` file with the changes since the last release,
    mention the new version number.
 #. Update ``README.rst`` and increase the version number
