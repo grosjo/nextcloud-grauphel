@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<database>
+<database xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/database.xsd">
  <!-- http://www.wiltonhotel.com/_ext/pear/docs/MDB2/docs/xml_schema_documentation.html -->
 	 <name>*dbname*</name>
 	 <create>true</create>
@@ -11,52 +12,52 @@
 			<field>
 				<name>token_id</name>
 				<type>integer</type>
-				<default>0</default>
+				<length>11</length>
 				<notnull>true</notnull>
     				<autoincrement>1</autoincrement>
-				<length>11</length>
+				<default>0</default>
 			</field>
 			<field>
 				<name>token_user</name>
 				<type>text</type>
-				<notnull>false</notnull>
 				<length>64</length>
+				<notnull>false</notnull>
 			</field>
 			<field>
 				<name>token_type</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>16</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>token_key</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>128</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>token_secret</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>128</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>token_verifier</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>128</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>token_callback</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>2048</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>token_client</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>256</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>token_lastuse</name>
@@ -72,56 +73,56 @@
 			<field>
 				<name>note_id</name>
 				<type>integer</type>
-				<default>0</default>
+				<length>11</length>
 				<notnull>true</notnull>
     				<autoincrement>1</autoincrement>
-				<length>11</length>
+				<default>0</default>
 			</field>
 			<field>
 				<name>note_user</name>
 				<type>text</type>
-				<notnull>false</notnull>
 				<length>64</length>
+				<notnull>false</notnull>
 			</field>
 
 			<field>
 				<name>note_guid</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>128</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>note_last_sync_revision</name>
 				<type>integer</type>
-				<default>0</default>
-				<notnull>true</notnull>
 				<length>11</length>
+				<notnull>true</notnull>
+				<default>0</default>
 			</field>
 
 			<field>
 				<name>note_create_date</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>33</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>note_last_change_date</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>33</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>note_last_metadata_change_date</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>33</length>
+				<notnull>true</notnull>
 			</field>
 
 			<field>
 				<name>note_title</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>1024</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>note_content</name>
@@ -131,28 +132,28 @@
 			<field>
 				<name>note_content_version</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>16</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>note_open_on_startup</name>
 				<type>integer</type>
-				<default>0</default>
-				<notnull>true</notnull>
 				<length>1</length>
+				<notnull>true</notnull>
+				<default>0</default>
 			</field>
 			<field>
 				<name>note_pinned</name>
 				<type>integer</type>
-				<default>0</default>
-				<notnull>true</notnull>
 				<length>1</length>
+				<notnull>true</notnull>
+				<default>0</default>
 			</field>
 			<field>
 				<name>note_tags</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>1024</length>
+				<notnull>true</notnull>
 			</field>
 		</declaration>
 	</table>
@@ -163,29 +164,29 @@
 			<field>
 				<name>syncdata_id</name>
 				<type>integer</type>
-				<default>0</default>
+				<length>11</length>
 				<notnull>true</notnull>
     				<autoincrement>1</autoincrement>
-				<length>11</length>
+				<default>0</default>
 			</field>
 			<field>
 				<name>syncdata_user</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>64</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>syncdata_current_sync_guid</name>
 				<type>text</type>
-				<notnull>true</notnull>
 				<length>64</length>
+				<notnull>true</notnull>
 			</field>
 			<field>
 				<name>syncdata_latest_sync_revision</name>
 				<type>integer</type>
-				<default>0</default>
-				<notnull>true</notnull>
 				<length>11</length>
+				<notnull>true</notnull>
+				<default>0</default>
 			</field>
 		</declaration>
 	</table>
