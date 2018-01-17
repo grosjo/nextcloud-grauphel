@@ -224,3 +224,7 @@ To release a new version, do the following:
 
 #. Upload the new release on
    https://apps.nextcloud.com/developer/apps/releases/new
+
+   Signature::
+
+     $ openssl dgst -sha512 -sign ~/.nextcloud/certificates/grauphel.key dist/grauphel-0.6.5.tar.gz | openssl base64
