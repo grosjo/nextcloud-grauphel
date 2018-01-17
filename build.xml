@@ -22,6 +22,8 @@
    <exclude name="**/.gitignore"/>
    <exclude name="**/build.xml"/>
    <exclude name="**/README.html"/>
+   <exclude name="**/LICENSE"/>
+   <exclude name="tools/*.xsd"/>
   </fileset>
 
   <target name="zip" description="Create zip file for release">

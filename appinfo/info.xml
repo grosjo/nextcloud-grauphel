@@ -14,10 +14,10 @@
  <author>Christian Weiske</author>
  <namespace>Grauphel</namespace>
  <documentation>
-  <admin>http://www.bogo/grauphel.htm#installation</admin>
+  <admin>https://cweiske.de/grauphel.htm#installation</admin>
  </documentation>
  <category>organization</category>
- <website>http://cweiske.de/grauphel.htm</website>
+ <website>https://cweiske.de/grauphel.htm</website>
  <bugs>https://github.com/cweiske/grauphel/issues</bugs>
  <repository type="git">https://git.cweiske.de/grauphel.git</repository>
  <dependencies>

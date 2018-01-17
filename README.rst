@@ -1,11 +1,11 @@
 *****************************
 grauphel - tomboy REST server
 *****************************
-ownCloud__ application implementing the `Tomboy`__ `REST API`__ for syncing notes.
+nextCloud__ application implementing the `Tomboy`__ `REST API`__ for syncing notes.
 
 Pretty stable.
 
-__ http://owncloud.org/
+__ https://nextcloud.com/
 __ https://wiki.gnome.org/Apps/Tomboy
 __ https://wiki.gnome.org/Apps/Tomboy/Synchronization/REST/1.0
 
@@ -62,7 +62,7 @@ Functionality
 
 Search
 ======
-You can use ownCloud's global search on the top right.
+You can use nextCloud's global search on the top right.
 
 During search, the note's titles, tags and content are searched.
 
@@ -97,7 +97,7 @@ Installation
 
 App store installation
 ======================
-#. Log into owncloud as administrator
+#. Log into nextcloud as administrator
 #. Goto "Apps"
 #. Enable experimental apps in the settings
 #. Click "Productivity"
@@ -109,17 +109,17 @@ Manual installation
 ===================
 
 #. SSH onto your web server
-#. Navigate to the owncloud ``apps`` directory, often in ``/var/www/owncloud/apps``
+#. Navigate to the nextcloud ``apps`` directory, often in ``/var/www/nextcloud/apps``
 #. Download the latest release from http://cweiske.de/grauphel.htm#download
    and extract it.
    For example::
 
-     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.4.tar.gz
-     $ tar xjvf grauphel-0.6.4.tar.gz
-     $ rm grauphel-0.6.4.tar.gz
+     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.5.tar.gz
+     $ tar xjvf grauphel-0.6.5.tar.gz
+     $ rm grauphel-0.6.5.tar.gz
 
-   You do have a directory ``/var/www/owncloud/apps/grauphel`` now.
-#. Using your browser, login as administrator into ownCloud and click
+   You do have a directory ``/var/www/nextcloud/apps/grauphel`` now.
+#. Using your browser, login as administrator into nextCloud and click
    the "Apps" icon in the main menu ("+" icon).
 #. Click on "Grauphel: Tomboy note server" and then on the "Enable" button.
 #. In the main menu, click the "Tomboy notes" icon.
@@ -136,7 +136,7 @@ On Debian 7, do the following::
   $ echo 'extension=oauth.so' > /etc/php5/conf.d/oauth.ini
   $ /etc/init.d/apache2 restart
 
-Reload the ownCloud page in your browser now.
+Reload the nextCloud page in your browser now.
 
 .. note::
    ``oauth-1.2.3`` is only needed on PHP 5.x
@@ -161,12 +161,12 @@ Christian Weiske, cweiske@cweiske.de, http://cweiske.de/
 Links
 =====
 - `Homepage`__
-- `grauphel on apps.owncloud.com`__
+- `grauphel on apps.nextcloud.com`__
 - `Source code repository`__
 - `Github source code mirror`__
 
 __ http://cweiske.de/grauphel.htm
-__ http://apps.owncloud.com/content/show.php?action=content&content=166654
+__ http://apps.nextcloud.com/apps/grauphel
 __ http://git.cweiske.de/grauphel.git/
 __ https://github.com/cweiske/grauphel
 
@@ -222,4 +222,5 @@ To release a new version, do the following:
      $ cd ~/Dev/html/cweiske.de
      $ ./scripts/update-grauphel.sh
 
-#. Link the new release on https://apps.owncloud.com/content/show.php?content=166654
+#. Upload the new release on
+   https://apps.nextcloud.com/developer/apps/releases/new
