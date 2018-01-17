@@ -1,29 +1,29 @@
 <?xml version="1.0"?>
-<info>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
  <id>grauphel</id>
  <name>Grauphel: Tomboy note server</name>
+ <summary>Tomboy REST API server to sync notes between devices</summary>
  <description>
   Tomboy REST API server to sync notes between devices.
 
   Tomboy, Conboy and Tomdroid clients are supported.
  </description>
- <version>0.6.4</version>
- <licence>AGPL3 or later</licence>
+ <version>0.6.5</version>
+ <licence>agpl</licence>
  <author>Christian Weiske</author>
-
- <requiremin>7</requiremin>
  <namespace>Grauphel</namespace>
- <dependencies>
-  <lib>OAuth</lib>
- </dependencies>
-
  <documentation>
   <admin>http://www.bogo/grauphel.htm#installation</admin>
  </documentation>
+ <category>organization</category>
  <website>http://cweiske.de/grauphel.htm</website>
- <repository type="git">git://git.cweiske.de/grauphel.git</repository>
  <bugs>https://github.com/cweiske/grauphel/issues</bugs>
-
- <category>productivity</category>
- <ocsid>166654</ocsid>
+ <repository type="git">https://git.cweiske.de/grauphel.git</repository>
+ <dependencies>
+  <lib>OAuth</lib>
+  <owncloud min-version="7"/>
+  <nextcloud min-version="10" max-version="12"/>
+ </dependencies>
+ <!-- <ocsid>166654</ocsid> -->
 </info>
