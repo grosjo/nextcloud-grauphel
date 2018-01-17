@@ -114,9 +114,9 @@ Manual installation
    and extract it.
    For example::
 
-     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.5.tar.gz
-     $ tar xjvf grauphel-0.6.5.tar.gz
-     $ rm grauphel-0.6.5.tar.gz
+     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.6.tar.gz
+     $ tar xjvf grauphel-0.6.6.tar.gz
+     $ rm grauphel-0.6.6.tar.gz
 
    You do have a directory ``/var/www/nextcloud/apps/grauphel`` now.
 #. Using your browser, login as administrator into nextCloud and click

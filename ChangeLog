@@ -1,5 +1,10 @@
 2018-01-17  Christian Weiske  <cweiske@cweiske.de>
 
+	* Fix admin doc link
+	* Version 0.6.6
+
+2018-01-17  Christian Weiske  <cweiske@cweiske.de>
+
 	* Make grauphel meta data compatible with Nextcloud 12
 	* Version 0.6.5
 
