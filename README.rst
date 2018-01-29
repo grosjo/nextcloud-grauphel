@@ -114,9 +114,9 @@ Manual installation
    and extract it.
    For example::
 
-     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.6.tar.gz
-     $ tar xjvf grauphel-0.6.6.tar.gz
-     $ rm grauphel-0.6.6.tar.gz
+     $ wget http://cweiske.de/download/grauphel/grauphel-0.6.7.tar.gz
+     $ tar xjvf grauphel-0.6.7.tar.gz
+     $ rm grauphel-0.6.7.tar.gz
 
    You do have a directory ``/var/www/nextcloud/apps/grauphel`` now.
 #. Using your browser, login as administrator into nextCloud and click
@@ -226,4 +226,4 @@ To release a new version, do the following:
 
    Signature::
 
-     $ openssl dgst -sha512 -sign ~/.nextcloud/certificates/grauphel.key dist/grauphel-0.6.5.tar.gz | openssl base64
+     $ openssl dgst -sha512 -sign ~/.nextcloud/certificates/grauphel.key dist/grauphel-0.6.7.tar.gz | openssl base64
