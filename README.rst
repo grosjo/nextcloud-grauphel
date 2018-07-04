@@ -129,10 +129,10 @@ It may be that grauphel now shows you an error message::
   PHP extension "oauth" is required
 
 You have to install the PHP PECL oauth extension now.
-On Debian 7 or higher, do the following::
+On Debian 9 or higher, do the following::
 
   $ apt install php-oauth
-  $ php5enmod oauth
+  $ phpenmod oauth
   $ /etc/init.d/apache2 restart
 
 Reload the nextCloud page in your browser now.
