@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../../lib/converter/base.php';
 require_once __DIR__ . '/../../../lib/converter/html.php';
 
-class Lib_Converter_HtmlTest extends PHPUnit_Framework_TestCase
+class Lib_Converter_HtmlTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvert()
     {

@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../../lib/search/queryparser.php';
 
 use OCA\Grauphel\Search\Queryparser;
 
-class Lib_Search_QueryParserTest extends PHPUnit_Framework_TestCase
+class Lib_Search_QueryParserTest extends \PHPUnit\Framework\TestCase
 {
     public function testParseSimple()
     {

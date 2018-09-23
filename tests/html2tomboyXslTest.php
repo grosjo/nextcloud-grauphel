@@ -1,5 +1,5 @@
 <?php
-class html2tomboyXslTest extends PHPUnit_Framework_TestCase
+class html2tomboyXslTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Use xsltproc and diff to check if the XSL file generates
@@ -7,6 +7,7 @@ class html2tomboyXslTest extends PHPUnit_Framework_TestCase
      */
     public function testFormat()
     {
+        chdir(__DIR__);
         exec(
             'xsltproc'
             . ' ../templates/html2tomboy.xsl'
