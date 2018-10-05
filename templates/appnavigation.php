@@ -11,10 +11,10 @@
     </div>
     <div id="app-settings-content" style="display: none;">
       <ul>
-        <li><a href="<?php p(OCP\Util::linkToRoute('grauphel.gui.index')); ?>">Info and stats</a></li>
+        <li><a href="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.gui.index')); ?>">Info and stats</a></li>
       <?php if (OCP\User::isLoggedIn()) { ?>
-        <li><a href="<?php p(OCP\Util::linkToRoute('grauphel.gui.tokens')); ?>">Manage access tokens</a></li>
-        <li><a href="<?php p(OCP\Util::linkToRoute('grauphel.gui.database')); ?>">Manage database</a></li>
+        <li><a href="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.gui.tokens')); ?>">Manage access tokens</a></li>
+        <li><a href="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.gui.database')); ?>">Manage database</a></li>
       <?php } ?>
       </ul>
     </div>
