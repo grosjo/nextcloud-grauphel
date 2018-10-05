@@ -1,9 +1,9 @@
-<link rel="stylesheet" href="<?php p(OCP\Util::linkTo('grauphel','grauphel.css')); ?>" type="text/css"/>
+<link rel="stylesheet" href="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','grauphel.css')); ?>" type="text/css"/>
 
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
 
-<script type="text/javascript" src="<?php p(OCP\Util::linkTo('grauphel','js/grauphel.js')); ?>"></script>
+<script type="text/javascript" src="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <div id="app-content" class="content">
   <div id="searchresults" class="hidden"></div>
@@ -31,7 +31,7 @@
   <p>
    To reset the database, enter your user name and click "reset database":
   </p>
-  <form method="POST" action="<?php p(OCP\Util::linkToRoute('grauphel.gui.databaseReset')); ?>">
+  <form method="POST" action="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.gui.databaseReset')); ?>">
     <input type="hidden" name="requesttoken" value="<?php p($_['requesttoken']) ?>"/>
     <p>
      <label>Username: <input type="text" name="username" value="" autocomplete="off" /></label>
