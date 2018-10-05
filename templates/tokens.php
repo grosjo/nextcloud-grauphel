@@ -28,7 +28,7 @@
        <td title="<?php p($token->client); ?>"><?php p($_['client']->getNiceName($token->client)); ?></td>
        <td>
         <?php p(\OCP\Util::formatDate($token->lastuse)); ?>
-        <form method="POST" action="<?php p(OCP\Util::linkToRoute('grauphel.token.delete', array('username' => $_['username'], 'tokenKey' => $token->tokenKey))); ?>">
+        <form method="POST" action="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.token.delete', array('username' => $_['username'], 'tokenKey' => $token->tokenKey))); ?>">
            <input type="hidden" name="delete" value="1" />
            <button type="submit" class="icon-delete delete action"
                    original-title="Delete"
