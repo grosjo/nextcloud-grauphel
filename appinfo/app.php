@@ -3,8 +3,8 @@
     array( 
         'id' => 'grauphel',
         'order' => 2342,
-        'href' => \OCP\Util::linkToRoute('grauphel.gui.index'),
-        'icon' => \OCP\Util::imagePath('grauphel', 'app.svg'),
+	    'href' => \OC::$server->getURLGenerator()->linkToRoute('grauphel.gui.index'),
+	    'icon' => \OC::$server->getURLGenerator()->imagePath('grauphel', 'app.svg'),
         'name' => 'Tomboy notes'
     )
 );
