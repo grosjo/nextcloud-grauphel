@@ -31,7 +31,7 @@
   <p>
    To reset the database, enter your user name and click "reset database":
   </p>
-  <form method="POST" action="<?php p(OCP\Util::linkToRoute('grauphel.gui.databaseReset')); ?>">
+  <form method="POST" action="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.gui.databaseReset')); ?>">
     <input type="hidden" name="requesttoken" value="<?php p($_['requesttoken']) ?>"/>
     <p>
      <label>Username: <input type="text" name="username" value="" autocomplete="off" /></label>
