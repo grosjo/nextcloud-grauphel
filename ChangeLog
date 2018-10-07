@@ -1,3 +1,10 @@
+2018-10-07  Christian Weiske  <cweiske@cweiske.de>
+
+	* Make grauphel compatible with Nextcloud 14
+	* Implement note sorting (by date and title)
+	* Fix #60: Correctly display tab-based indentation
+	* Version 0.7.0
+
 2018-01-29  Christian Weiske  <cweiske@cweiske.de>
 
 	* Fix #54: Nextcloud 13 compatibility

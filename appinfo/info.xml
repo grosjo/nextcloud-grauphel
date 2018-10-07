@@ -9,7 +9,7 @@
 
   Tomboy, Conboy and Tomdroid clients are supported.
  </description>
- <version>0.6.7</version>
+ <version>0.7.0</version>
  <licence>agpl</licence>
  <author>Christian Weiske</author>
  <namespace>Grauphel</namespace>
