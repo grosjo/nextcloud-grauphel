@@ -1,9 +1,8 @@
 <link rel="stylesheet" href="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','grauphel.css')); ?>" type="text/css"/>
+<script type="text/javascript" src="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
-
-<script type="text/javascript" src="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','js/grauphel.js')); ?>"></script>
 
 <div id="app-content" class="list">
   <div id="searchresults" class="hidden"></div>

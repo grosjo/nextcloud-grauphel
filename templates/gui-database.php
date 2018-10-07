@@ -3,8 +3,6 @@
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
 
-<script type="text/javascript" src="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','js/grauphel.js')); ?>"></script>
-
 <div id="app-content" class="content">
   <div id="searchresults" class="hidden"></div>
   <h1>Manage database</h1>
