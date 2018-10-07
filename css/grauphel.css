@@ -92,6 +92,18 @@
 }
 
 
+/* make the settings menu nicer */
+.app-grauphel #app-settings-content li a {
+    display: block;
+    line-height: 2rem;
+    min-height: 2rem;
+    padding-left: 1rem;
+}
+.app-grauphel #app-settings-content li a:hover {
+    opacity: 1;
+    box-shadow: inset 4px 0 var(--color-primary);
+}
+
 /* table style */
 
 table.table {
