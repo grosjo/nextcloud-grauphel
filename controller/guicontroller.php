@@ -146,6 +146,7 @@ class GuiController extends Controller
         }
 
         $this->addNavigation($res, $selectedRawtag);
+        $this->addGlobalVars($res);
         return $res;
     }
 
@@ -196,6 +197,7 @@ class GuiController extends Controller
                 'notes'  => $notes,
             )
         );
+        $this->addGlobalVars($res);
         $this->addNavigation($res, $rawtag);
 
         return $res;
@@ -220,6 +222,7 @@ class GuiController extends Controller
                 'username' => $this->user->getUid(),
             )
         );
+        $this->addGlobalVars($res);
         $this->addNavigation($res, null);
 
         return $res;
@@ -258,6 +261,19 @@ class GuiController extends Controller
         }
 
         return $this->database($reset);
+    }
+
+    /**
+     * Register some variables that templates will probably need.
+     *
+     * @return void
+     */
+    protected function addGlobalVars(TemplateResponse $res)
+    {
+        $params = $res->getParams();
+        $params['date']   = \OC::$server->getDateTimeFormatter();
+        $params['urlGen'] = \OC::$server->getURLGenerator();
+        $res->setParams($params);
     }
 
     protected function addNavigation(TemplateResponse $res, $selectedRawtag = null)

@@ -14,7 +14,7 @@
  <h1><?php echo ($_['note']->title); ?></h1>
  <p class="muted">
   Last modified:
-  <?php p(\OCP\Util::formatDate(strtotime($_['note']->{'last-change-date'}))); ?>
+  <?php p($_['date']->formatDate(strtotime($_['note']->{'last-change-date'}))); ?>
  </p>
  <div class="note-content">
   <?php echo $_['note-content']; ?>

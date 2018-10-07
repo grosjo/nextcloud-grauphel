@@ -39,7 +39,9 @@ class Provider extends \OCP\Search\Provider
     {
         $urlGen = \OC::$server->getURLGenerator();
         $notes  = new NoteStorage($urlGen);
-        $notes->setUsername(\OC_User::getUser());
+        $notes->setUsername(
+            \OC::$server->getUserSession()->getUser()->getUID()
+        );
 
         $qp = new QueryParser();
         $rows = $notes->search($qp->parse($query));
