@@ -171,12 +171,29 @@ class GuiController extends Controller
     {
         $rawtag = $this->unescapeTagFromUrl($rawtag);
         $notes = $this->getNotes()->loadNotesOverview(null, $rawtag, true);
-        usort(
-            $notes,
-            function($noteA, $noteB) {
-                return strcmp($noteA['title'], $noteB['title']);
-            }
-        );
+
+        if (!isset($_GET['sortby'])) {
+            $_GET['sortby'] = 'title';
+        }
+
+        switch ($_GET['sortby']) {
+        case 'title':
+            usort(
+                $notes,
+                function($noteA, $noteB) {
+                    return strcasecmp($noteA['title'], $noteB['title']);
+                }
+            );
+            break;
+        case 'date':
+            usort(
+                $notes,
+                function($noteA, $noteB) {
+                    return strcmp($noteB['last-change-date'], $noteA['last-change-date']);
+                }
+            );
+            break;
+        }
 
         foreach ($notes as &$note) {
             $diffInDays = intval(
@@ -195,6 +212,10 @@ class GuiController extends Controller
                 'tag'    => $this->getPrettyTagName($rawtag),
                 'rawtag' => $rawtag,
                 'notes'  => $notes,
+                'tagUrl' => $this->urlGen->linkToRoute(
+                    'grauphel.gui.tag',
+                    array('rawtag' => $this->escapeTagForUrl($rawtag))
+                ),
             )
         );
         $this->addGlobalVars($res);

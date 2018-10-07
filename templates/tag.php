@@ -10,8 +10,12 @@
   <table class="table" id="grauphel-notes">
    <thead>
     <tr>
-     <th id="headerTitle">Title</th>
-     <th>Modified</th>
+     <th id="headerTitle">
+      <a href="<?php p($tagUrl); ?>?sortby=title">Title</a>
+     </th>
+     <th>
+      <a href="<?php p($tagUrl); ?>?sortby=date">Modified</a>
+     </th>
     </tr>
    </thead>
    <tbody>
@@ -21,7 +25,8 @@
       <td>
        <a class="cellclick" href="<?php p($_['urlGen']->linkToRoute('grauphel.gui.note', array('guid' => $note['guid']))); ?>"><?php echo ($note['title']); ?></a>
       </td>
-      <td style="color: <?php echo p($note['dateColor']); ?>">
+      <td style="color: <?php echo p($note['dateColor']); ?>"
+          title="<?php p(date('Y-m-d H:i:s', strtotime($note['last-change-date']))); ?>">
        <?php p($_['date']->formatDate(strtotime($note['last-change-date']))); ?>
       </td>
      </tr>
