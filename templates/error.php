@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','grauphel.css')); ?>" type="text/css"/>
+<?php style('grauphel', 'grauphel'); ?>
 
 <div id="app-content" class="content">
   <div id="searchresults" class="hidden"></div>
