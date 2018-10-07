@@ -134,6 +134,15 @@ class Html extends Base
                 if ($nesting[0] != 'monospace') {
                     $text = nl2br($text);
                 }
+                $text = preg_replace_callback(
+                    "#^\t+#m",
+                    function ($matches) {
+                        return str_repeat(
+                            '&#160;', strlen($matches[0]) * 8
+                        );
+                    },
+                    $text
+                );
                 $store .= $text;
                 break;
             default:

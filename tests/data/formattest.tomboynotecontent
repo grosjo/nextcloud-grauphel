@@ -33,4 +33,15 @@ Links:
 </list-item><list-item dir="ltr"><link:url>http://cweiske.de/?foo#bar</link:url>
 </list-item><list-item dir="ltr"><link:url>/home/cweiske/fam.jpg</link:url></list-item></list>
 
+Tabs:
+a
+	b
+		c
+	d
+e
+
+Tabs in text:
+a	b	c
+ab	cd	ef
+
 Ende.
