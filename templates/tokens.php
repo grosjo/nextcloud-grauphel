@@ -1,5 +1,5 @@
 <?php style('grauphel', 'grauphel'); ?>
-<script type="text/javascript" src="<?php p(OC::$server->getURLGenerator()->linkTo('grauphel','js/grauphel.js')); ?>"></script>
+<?php script('grauphel', 'grauphel'); ?>
 
 <?php /** @var $l OC_L10N */ ?>
 <?php $_['appNavigation']->printPage(); ?>
