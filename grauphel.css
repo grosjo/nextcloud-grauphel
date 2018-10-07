@@ -23,6 +23,12 @@
     margin-bottom: 1ex;
     margin-top: 2ex;
 }
+.app-grauphel #app-content dt,
+.app-grauphel #app-content dd {
+    display: block;
+    padding: 0;
+    text-align: left;
+}
 .app-grauphel #app-content dt {
     font-weight: bold;
 }
