@@ -23,7 +23,7 @@
  <dependencies>
   <lib>OAuth</lib>
   <owncloud min-version="7"/>
-  <nextcloud min-version="13" max-version="15"/>
+  <nextcloud min-version="13" max-version="16"/>
  </dependencies>
  <!-- <ocsid>166654</ocsid> -->
 </info>
