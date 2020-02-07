@@ -35,7 +35,7 @@ TomDroid
 ========
 TomDroid__ is an Android application for phones and tablets.
 
-__ https://launchpad.net/tomdroid
+__ https://github.com/tomboy-notes/tomdroid
 
 
 #. Start the browser
