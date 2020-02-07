@@ -21,7 +21,7 @@
     <ul>
       <li><a class="lined" href="https://wiki.gnome.org/Apps/Tomboy">Tomboy</a> (Linux, Windows)</li>
       <li><a class="lined" href="http://conboy.garage.maemo.org/">Conboy</a> (Nokia N900 Maemo)</li>
-      <li><a class="lined" href="https://launchpad.net/tomdroid">Tomdroid</a> (Android)</li>
+      <li><a class="lined" href="https://github.com/tomboy-notes/tomdroid">Tomdroid</a> (Android)</li>
     </ul>
     <p>
       You may also explore the API yourself at
