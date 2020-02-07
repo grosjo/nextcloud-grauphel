@@ -40,7 +40,7 @@ Supported clients
 
 __ http://conboy.garage.maemo.org/
 __ https://wiki.gnome.org/Apps/Tomboy
-__ https://launchpad.net/tomdroid
+__ https://github.com/tomboy-notes/tomdroid
 
 
 Known working versions
