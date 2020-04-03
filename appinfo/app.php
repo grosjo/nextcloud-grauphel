@@ -14,4 +14,11 @@
 );
 
 \OCP\Util::addscript('grauphel', 'loader');
+
+if (\method_exists(\OC::$server, 'getContentSecurityPolicyManager')) {
+    $policy = new \OCP\AppFramework\Http\ContentSecurityPolicy();
+    $policy->addAllowedFormActionDomain('http://127.0.0.1:1965/'); //accept KDE akonadi tomboy resource
+    \OC::$server->getContentSecurityPolicyManager()->addDefaultPolicy($policy);
+}
+
 ?>
