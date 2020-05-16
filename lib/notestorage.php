@@ -95,6 +95,10 @@ class NoteStorage
             'pinned',
             'tags',
             'title',
+            'x', 'y',
+            'width', 'height',
+            'selection-bound-position',
+            'cursor-position',
         );
 
         $changed = array();
@@ -247,9 +251,17 @@ class NoteStorage
                 'note-content'         => null,
                 'note-content-version' => 0.3,
 
-                'open-on-startup' => false,
-                'pinned'          => false,
-                'tags'            => array(),
+                'open-on-startup'               => false,
+                'pinned'                        => false,
+                'tags'                          => array(),
+
+                'x'                             => 20,
+                'y'                             => 20,
+                'width'                         => -1,
+                'height'                        => -1,
+
+                'cursor-position'               => 0,
+                'selection-bound-position'      => 0,
             );
         }
 
@@ -513,36 +525,53 @@ class NoteStorage
             'last-change-date'          => $this->fixDate($row['note_last_change_date']),
             'last-metadata-change-date' => $this->fixDate($row['note_last_metadata_change_date']),
 
-            'title'                => $row['note_title'],
-            'note-content'         => $row['note_content'],
-            'note-content-version' => $row['note_content_version'],
+            'title'                     => $row['note_title'],
+            'note-content'              => $row['note_content'],
+            'note-content-version'      => $row['note_content_version'],
 
-            'open-on-startup' => (bool) $row['note_open_on_startup'],
-            'pinned'          => (bool) $row['note_pinned'],
-            'tags'            => json_decode($row['note_tags']),
+            'open-on-startup'           => (bool) $row['note_open_on_startup'],
+            'pinned'                    => (bool) $row['note_pinned'],
+            'tags'                      => json_decode($row['note_tags']),
+	    
+            'x'                         => (int) $row['note_x'],
+            'y'                         => (int) $row['note_y'],
 
-            'last-sync-revision' => (int) $row['note_last_sync_revision'],
+            'height'                    => (int) $row['note_height'],
+            'width'                     => (int) $row['note_width'],
+
+            'selection-bound-position'  => (int) $row['note_selection_bound_position'],
+            'cursor-position'           => (int) $row['note_cursor-position'], 
+
+            'last-sync-revision'        => (int) $row['note_last_sync_revision'],
         );
     }
 
     protected function rowFromNote($note)
     {
         return array(
-            'note_guid'  => $note->guid,
-            'note_title' => (string) $note->title,
+            'note_guid'                      => $note->guid,
+            'note_title'                     => (string) $note->title,
 
-            'note_content'         => (string) $note->{'note-content'},
-            'note_content_version' => (string) $note->{'note-content-version'},
+            'note_content'                   => (string) $note->{'note-content'},
+            'note_content_version'           => (string) $note->{'note-content-version'},
 
             'note_create_date'               => $note->{'create-date'},
             'note_last_change_date'          => $note->{'last-change-date'},
             'note_last_metadata_change_date' => $note->{'last-metadata-change-date'},
 
-            'note_open_on_startup' => (int) $note->{'open-on-startup'},
-            'note_pinned'          => (int) $note->pinned,
-            'note_tags'            => json_encode($note->tags),
+            'note_open_on_startup'           => (int) $note->{'open-on-startup'},
+            'note_pinned'                    => (int) $note->pinned,
+            'note_tags'                      => json_encode($note->tags),
+            'note_x'                         => (int) $note->{'x'},
+            'note_y'                         => (int) $note->{'y'},
 
-            'note_last_sync_revision' => $note->{'last-sync-revision'},
+            'note_height'                    => (int) $note->{'height'},
+            'note_width'                     => (int) $note->{'width'},
+
+            'note_selection_bound_position'  => (int) $note->{'selection-bound-position'},
+            'note_cursor_position'           => (int) $note->{'cursor-position'},
+
+            'note_last_sync_revision'        => $note->{'last-sync-revision'},
         );
     }
 }
