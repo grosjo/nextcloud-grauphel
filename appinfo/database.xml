@@ -155,6 +155,48 @@
 				<length>1024</length>
 				<notnull>true</notnull>
 			</field>
+			<field>
+				<name>note_x</name>
+				<type>integer</type>
+				<length>6</length>
+				<notnull>true</notnull>
+				<default>20</default>
+			</field>
+			<field>
+				<name>note_y</name>
+				<type>integer</type>
+				<length>6</length>
+				<notnull>true</notnull>
+				<default>20</default>
+			</field>
+			<field>
+				<name>note_width</name>
+				<type>integer</type>
+				<length>6</length>
+				<notnull>true</notnull>
+				<default>-1</default>
+			</field>
+			<field>
+				<name>note_height</name>
+				<type>integer</type>
+				<length>6</length>
+				<notnull>true</notnull>
+				<default>-1</default>
+			</field>
+			<field>
+				<name>note_selection_bound_position</name>
+				<type>integer</type>
+				<length>6</length>
+				<notnull>true</notnull>
+				<default>0</default>
+			</field>
+			<field>
+				<name>note_cursor_position</name>
+				<type>integer</type>
+				<length>6</length>
+				<notnull>true</notnull>
+				<default>0</default>
+			</field>
 		</declaration>
 	</table>
 

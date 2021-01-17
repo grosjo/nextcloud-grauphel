@@ -95,6 +95,9 @@ class NoteStorage
             'pinned',
             'tags',
             'title',
+            'x', 'y', 'width', 'height',
+            'selection-bound-position',
+            'cursor-position',
         );
 
         $changed = array();
@@ -250,6 +253,14 @@ class NoteStorage
                 'open-on-startup'           => false,
                 'pinned'                    => false,
                 'tags'                      => array(),
+
+                'x'                         => 20,
+                'y'                         => 20,
+                'width'                     => -1,
+                'height'                    => -1,
+
+                'cursor-position'           => 0,
+                'selection-bound-position'  => 0,
             );
         }
 
@@ -521,6 +532,14 @@ class NoteStorage
             'pinned'                    => (bool) $row['note_pinned'],
             'tags'                      => json_decode($row['note_tags']),
 
+            'x'                         => (int) $row['note_x'],
+            'y'                         => (int) $row['note_y'],
+            'height'                    => (int) $row['note_height'],
+            'width'                     => (int) $row['note_width'],
+
+            'selection-bound-position'  => (int) $row['note_selection_bound_position'],
+            'cursor-position'           => (int) $row['note_cursor_position'],
+
             'last-sync-revision'        => (int) $row['note_last_sync_revision'],
         );
     }
@@ -541,6 +560,14 @@ class NoteStorage
             'note_open_on_startup'           => (int) $note->{'open-on-startup'},
             'note_pinned'                    => (int) $note->pinned,
             'note_tags'                      => json_encode($note->tags),
+
+            'note_x'                         => (int) $note->{'x'},
+            'note_y'                         => (int) $note->{'y'},
+            'note_height'                    => (int) $note->{'height'},
+            'note_width'                     => (int) $note->{'width'},
+
+            'note_selection_bound_position'  => (int) $note->{'selection-bound-position'},
+            'note_cursor_position'           => (int) $note->{'cursor-position'},
 
             'note_last_sync_revision'        => $note->{'last-sync-revision'},
         );
