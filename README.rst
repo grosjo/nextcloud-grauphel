@@ -45,7 +45,7 @@ __ https://github.com/tomboy-notes/tomdroid
 
 Known working versions
 ======================
-grauphel 0.7.4 is known to work with:
+grauphel 0.7.5 is known to work with:
 
 * Tomboy 1.15.2, Linux
 * Tomboy 1.15.1, Windows
@@ -114,9 +114,9 @@ Manual installation
    and extract it.
    For example::
 
-     $ wget http://cweiske.de/download/grauphel/grauphel-0.7.4.tar.gz
-     $ tar xjvf grauphel-0.7.4.tar.gz
-     $ rm grauphel-0.7.4.tar.gz
+     $ wget http://cweiske.de/download/grauphel/grauphel-0.7.5.tar.gz
+     $ tar xjvf grauphel-0.7.5.tar.gz
+     $ rm grauphel-0.7.5.tar.gz
 
    You do have a directory ``/var/www/nextcloud/apps/grauphel`` now.
 #. Using your browser, login as administrator into nextCloud and click
@@ -226,4 +226,4 @@ To release a new version, do the following:
 
    Signature::
 
-     $ openssl dgst -sha512 -sign ~/.nextcloud/certificates/grauphel.key dist/grauphel-0.7.4.tar.gz | openssl base64
+     $ openssl dgst -sha512 -sign ~/.nextcloud/certificates/grauphel.key dist/grauphel-0.7.5.tar.gz | openssl base64

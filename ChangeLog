@@ -1,3 +1,10 @@
+2021-01-17  Christian Weiske  <cweiske@cweiske.de>
+
+	* Fix search with SQLite database
+	* Mark as compatible with Nextcloud 19 and 20
+	  (Search does not work with Nextcloud 20)
+	* Version 0.7.5
+
 2020-04-02  Christian Weiske  <cweiske@cweiske.de>
 
 	* Mark 0.7.0 as compatible with Nextcloud 18 by Joan Moreau
