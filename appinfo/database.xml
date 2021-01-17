@@ -158,7 +158,7 @@
 		</declaration>
 	</table>
 
-	 <table>
+	<table>
 		<name>*dbprefix*grauphel_syncdata</name>
 		<declaration>
 			<field>

@@ -237,19 +237,19 @@ class NoteStorage
                 return null;
             }
             return (object) array(
-                'guid' => $guid,
+                'guid'                      => $guid,
 
                 'create-date'               => null,
                 'last-change-date'          => null,
                 'last-metadata-change-date' => null,
 
-                'title'                => null,
-                'note-content'         => null,
-                'note-content-version' => 0.3,
+                'title'                     => null,
+                'note-content'              => null,
+                'note-content-version'      => 0.3,
 
-                'open-on-startup' => false,
-                'pinned'          => false,
-                'tags'            => array(),
+                'open-on-startup'           => false,
+                'pinned'                    => false,
+                'tags'                      => array(),
             );
         }
 
@@ -513,36 +513,36 @@ class NoteStorage
             'last-change-date'          => $this->fixDate($row['note_last_change_date']),
             'last-metadata-change-date' => $this->fixDate($row['note_last_metadata_change_date']),
 
-            'title'                => $row['note_title'],
-            'note-content'         => $row['note_content'],
-            'note-content-version' => $row['note_content_version'],
+            'title'                     => $row['note_title'],
+            'note-content'              => $row['note_content'],
+            'note-content-version'      => $row['note_content_version'],
 
-            'open-on-startup' => (bool) $row['note_open_on_startup'],
-            'pinned'          => (bool) $row['note_pinned'],
-            'tags'            => json_decode($row['note_tags']),
+            'open-on-startup'           => (bool) $row['note_open_on_startup'],
+            'pinned'                    => (bool) $row['note_pinned'],
+            'tags'                      => json_decode($row['note_tags']),
 
-            'last-sync-revision' => (int) $row['note_last_sync_revision'],
+            'last-sync-revision'        => (int) $row['note_last_sync_revision'],
         );
     }
 
     protected function rowFromNote($note)
     {
         return array(
-            'note_guid'  => $note->guid,
-            'note_title' => (string) $note->title,
+            'note_guid'                      => $note->guid,
+            'note_title'                     => (string) $note->title,
 
-            'note_content'         => (string) $note->{'note-content'},
-            'note_content_version' => (string) $note->{'note-content-version'},
+            'note_content'                   => (string) $note->{'note-content'},
+            'note_content_version'           => (string) $note->{'note-content-version'},
 
             'note_create_date'               => $note->{'create-date'},
             'note_last_change_date'          => $note->{'last-change-date'},
             'note_last_metadata_change_date' => $note->{'last-metadata-change-date'},
 
-            'note_open_on_startup' => (int) $note->{'open-on-startup'},
-            'note_pinned'          => (int) $note->pinned,
-            'note_tags'            => json_encode($note->tags),
+            'note_open_on_startup'           => (int) $note->{'open-on-startup'},
+            'note_pinned'                    => (int) $note->pinned,
+            'note_tags'                      => json_encode($note->tags),
 
-            'note_last_sync_revision' => $note->{'last-sync-revision'},
+            'note_last_sync_revision'        => $note->{'last-sync-revision'},
         );
     }
 }
