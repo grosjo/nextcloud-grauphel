@@ -16,6 +16,7 @@ namespace OCA\Grauphel\Controller;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCA\Grauphel\Lib\Client;
+use \OCA\Grauphel\Lib\Dependencies;
 use \OCA\Grauphel\Lib\TokenStorage;
 use \OCA\Grauphel\Lib\Response\ErrorResponse;
 
@@ -41,7 +42,8 @@ class NotesController extends Controller
     public function __construct($appName, \OCP\IRequest $request, $user)
     {
         parent::__construct($appName, $request);
-        $this->user   = $user;
+        $this->user = $user;
+        $this->deps = Dependencies::get();
 
         //default http header: we assume something is broken
         header('HTTP/1.0 500 Internal Server Error');
@@ -238,7 +240,7 @@ class NotesController extends Controller
     protected function getNotes()
     {
         $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->urlGen);
+        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->deps->urlGen);
         $notes->setUsername($username);
         return $notes;
     }

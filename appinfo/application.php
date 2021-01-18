@@ -59,6 +59,8 @@ class Application extends App
         $container->registerService(
             'NotesController',
             function($c) {
+                Dependencies::get()->urlGen
+                    = $c->query('ServerContainer')->getURLGenerator();
                 return new \OCA\Grauphel\Controller\NotesController(
                     $c->query('AppName'),
                     $c->query('Request'),
