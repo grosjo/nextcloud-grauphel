@@ -5,7 +5,7 @@ nextCloud__ application implementing the `Tomboy`__ `REST API`__ for syncing not
 
 Pretty stable.
 
-⚠ `I am looking for a new maintainer / funding <http://cweiske.de/tagebuch/grauphel-maintainer.htm>`_
+I have taken over the repository. Hopefully a new version by end of 2021
 
 __ https://nextcloud.com/
 __ https://wiki.gnome.org/Apps/Tomboy
