@@ -47,7 +47,7 @@ __ https://github.com/tomboy-notes/tomdroid
 
 Known working versions
 ======================
-grauphel 0.7.6 is known to work with:
+grauphel 1.0.0 is known to work with:
 
 * Tomboy 1.15.2, Linux
 * Tomboy 1.15.1, Windows
@@ -112,13 +112,13 @@ Manual installation
 
 #. SSH onto your web server
 #. Navigate to the nextcloud ``apps`` directory, often in ``/var/www/nextcloud/apps``
-#. Download the latest release from http://cweiske.de/grauphel.htm#download
+#. Download the latest release from https://github.com/grosjo/nextcloud-grauphel/releases/
    and extract it.
    For example::
 
-     $ wget http://cweiske.de/download/grauphel/grauphel-0.7.6.tar.gz
-     $ tar xjvf grauphel-0.7.6.tar.gz
-     $ rm grauphel-0.7.6.tar.gz
+     $ wget https://github.com/grosjo/fts-xapian/archive/refs/tags/1.0.0.tar.gz -O grauphel-1.0.0.tar.gz
+     $ tar xjvf grauphel-1.0.0.tar.gz
+     $ rm grauphel-1.0.0.tar.gz
 
    You do have a directory ``/var/www/nextcloud/apps/grauphel`` now.
 #. Using your browser, login as administrator into nextCloud and click
@@ -149,12 +149,14 @@ Download
 ========
 .. LATESTRELEASE
 
-See `grauphel downloads page <http://cweiske.de/grauphel-download.htm>`_
+See https://github.com/grosjo/nextcloud-grauphel/releases/
 for all released versions.
 
 ======
 Author
 ======
+Joan Moreau, jom@grosjo.net
+
 Christian Weiske, cweiske@cweiske.de, http://cweiske.de/
 
 
@@ -182,24 +184,6 @@ Development hints
 * ``latest-sync-revision`` sent from Tomboy during PUT sync is already
   incremented by 1.
 
-
-Unit testing
-============
-- `ownCloud unit testing documentation`__
-- `grauphel on Travis CI`__
-
-  .. image:: https://travis-ci.org/cweiske/grauphel.svg
-     :target: https://travis-ci.org/cweiske/grauphel
-
-__ https://doc.owncloud.org/server/8.0/developer_manual/core/unit-testing.html
-__ https://travis-ci.org/cweiske/grauphel
-
-
-Releasing grauphel
-==================
-To release a new version, do the following:
-
-#. Increase version number in ``appinfo/version`` and ``appinfo/info.xml``.
 #. Validate ``appinfo/info.xml``::
 
      $ xmllint --noout --schema tools/info.xsd appinfo/info.xml
@@ -216,16 +200,3 @@ To release a new version, do the following:
      $ phing
 
    The file will be in ``dist/``
-#. Test the release on a server
-#. Tag the release in git
-#. Upload the release to http://cweiske.de/grauphel.htm with::
-
-     $ cd ~/Dev/html/cweiske.de
-     $ ./scripts/update-grauphel.sh
-
-#. Upload the new release on
-   https://apps.nextcloud.com/developer/apps/releases/new
-
-   Signature::
-
-     $ openssl dgst -sha512 -sign ~/.nextcloud/certificates/grauphel.key dist/grauphel-0.7.6.tar.gz | openssl base64
