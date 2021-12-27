@@ -9,21 +9,20 @@
 
   Tomboy, Conboy and Tomdroid clients are supported.
  </description>
- <version>0.7.6</version>
+ <version>1.0.0</version>
  <licence>agpl</licence>
- <author>Christian Weiske</author>
+ <author>Joan Moreau</author>
  <namespace>Grauphel</namespace>
  <documentation>
-  <admin>https://cweiske.de/grauphel.htm#installation</admin>
+  <admin>https://github.com/grosjo/nextcloud-grauphel</admin>
  </documentation>
  <category>organization</category>
- <website>https://cweiske.de/grauphel.htm</website>
- <bugs>https://github.com/cweiske/grauphel/issues</bugs>
- <repository type="git">https://git.cweiske.de/grauphel.git</repository>
+ <website>https://github.com/grosjo/nextcloud-grauphel</website>
+ <bugs>https://github.com/grosjo/nextcloud-grauphel/issues</bugs>
+ <repository type="git">https://github.com/grosjo/nextcloud-grauphel.git</repository>
  <dependencies>
   <lib>OAuth</lib>
   <owncloud min-version="7"/>
-  <nextcloud min-version="13" max-version="20"/>
+  <nextcloud min-version="23" max-version="20"/>
  </dependencies>
- <!-- <ocsid>166654</ocsid> -->
 </info>

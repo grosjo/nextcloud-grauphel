@@ -1,3 +1,9 @@
+2021-12-27 Joan Moreau <jom@grosjo.net>
+
+	* Ownership takeover
+	* Compatibility Nextcloud 23
+	* Version 1.0.0
+
 2021-01-22  Christian Weiske  <cweiske@cweiske.de>
 
 	* Fix Javascript crash on Nextcloud 20
