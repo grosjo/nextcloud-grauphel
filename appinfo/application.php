@@ -2,8 +2,11 @@
 namespace OCA\Grauphel\AppInfo;
 use \OCP\AppFramework\App;
 use \OCA\Grauphel\Lib\Dependencies;
+use \OCP\AppFramework\Bootstrap\IBootContext;
+use \OCP\AppFramework\Bootstrap\IBootstrap;
+use \OCP\AppFramework\Bootstrap\IRegistrationContext;
 
-class Application extends App
+class Application extends App implements IBootstrap
 {
     public function __construct(array $urlParams=array())
     {
@@ -81,5 +84,11 @@ class Application extends App
             }
         );
     }
+
+    public function register(IRegistrationContext $context): void {
+        $context->registerSearchProvider(Provider::class);
+    }
+
+    public function boot(IBootContext $context): void {}
 }
 ?>
