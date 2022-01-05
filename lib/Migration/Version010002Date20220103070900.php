@@ -24,7 +24,7 @@ class Version010002Date20220103070900 extends SimpleMigrationStep
 			$table->addColumn('token_verifier', 'text', [ 'length' => 128, 'notnull' => true ]);
 			$table->addColumn('token_callback', 'text', [ 'length' => 2048, 'notnull' => true ]);
 			$table->addColumn('token_client', 'text', [ 'length' => 256, 'notnull' => true ]);
-			$table->addColumn('token_lastuse', 'timestamp', [ 'notnull' => true ]);
+			$table->addColumn('token_lastuse', 'datetime', [ 'notnull' => true ]);
 			$table->setPrimaryKey(['token_id']);
 		}
 

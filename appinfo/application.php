@@ -1,5 +1,7 @@
 <?php
+
 namespace OCA\Grauphel\AppInfo;
+
 use \OCP\AppFramework\App;
 use \OCA\Grauphel\Lib\Dependencies;
 use \OCP\AppFramework\Bootstrap\IBootContext;
@@ -12,9 +14,12 @@ class Application extends App implements IBootstrap
     {
         parent::__construct('grauphel', $urlParams);
 
-        $container = $this->getContainer();
+	\OCP\Util::addscript('grauphel', 'loader');
+    }
 
-        $container->registerService(
+    public function register(IRegistrationContext $context): void 
+    {
+        $context->registerService(
             'Session',
             function($c) {
                 return $c->query('ServerContainer')->getUserSession();
@@ -24,7 +29,7 @@ class Application extends App implements IBootstrap
         /**
          * Controllers
          */
-        $container->registerService(
+        $context->registerService(
             'ApiController',
             function($c) {
                 Dependencies::get()->urlGen
@@ -36,7 +41,7 @@ class Application extends App implements IBootstrap
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'OauthController',
             function($c) {
                 Dependencies::get()->urlGen
@@ -48,7 +53,7 @@ class Application extends App implements IBootstrap
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'GuiController',
             function($c) {
                 return new \OCA\Grauphel\Controller\GuiController(
@@ -59,7 +64,7 @@ class Application extends App implements IBootstrap
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'NotesController',
             function($c) {
                 Dependencies::get()->urlGen
@@ -71,7 +76,7 @@ class Application extends App implements IBootstrap
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'TokenController',
             function($c) {
                 Dependencies::get()->urlGen
@@ -83,10 +88,9 @@ class Application extends App implements IBootstrap
                 );
             }
         );
-    }
 
-    public function register(IRegistrationContext $context): void {
-        $context->registerSearchProvider(Provider::class);
+	
+        $context->registerSearchProvider('OCA\Grauphel\Search\Provider');
     }
 
     public function boot(IBootContext $context): void {}
