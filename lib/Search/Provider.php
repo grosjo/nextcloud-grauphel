@@ -41,18 +41,17 @@ class Provider implements IProvider
         return self::ORDER;
     }
 
-    public function search($query)
+    public function search(OCP\IUser $user, OCP\Search\ISearchQuery $query)
     {
         $notes  = new NoteStorage($this->urlGen);
-        $notes->setUsername(
-            \OC::$server->getUserSession()->getUser()->getUID()
-        );
-
-        $qp = new QueryParser();
+        $notes->setUsername( $user->getUID());
+        
+	$qp = new QueryParser();
         $rows = $notes->search($qp->parse($query));
 
         $results = array();
-        foreach ($rows as $row) {
+        foreach ($rows as $row) 
+	{
             $res = new Note();
             $res->id   = $row['note_guid'];
             $res->name = htmlspecialchars_decode($row['note_title']);
