@@ -15,6 +15,7 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http;
+use \OCP\AppFramework\Http\ContentSecurityPolicy;
 use \OCP\AppFramework\Http\RedirectResponse;
 use \OCP\AppFramework\Http\TemplateResponse;
 
@@ -139,6 +140,11 @@ class OauthController extends Controller
                 ),
             )
         );
+
+        $csp = new ContentSecurityPolicy();
+        $csp->addAllowedFormActionDomain('http://localhost:*');
+        $res->setContentSecurityPolicy($csp);
+
         return $res;
     }
 
