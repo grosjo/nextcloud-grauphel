@@ -20,6 +20,7 @@
  <dependencies>
   <lib>OAuth</lib>
   <nextcloud min-version="22" max-version="23"/>
+  <owncloud min-version="9" max-version="10"/>
  </dependencies>
     <navigations>
         <navigation>
