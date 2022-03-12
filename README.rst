@@ -14,9 +14,9 @@ __ https://wiki.gnome.org/Apps/Tomboy/Synchronization/REST/1.0
 
 .. contents::
 
-======
-Status
-======
+Please submit requests/bugs via the [GitHub issue tracker](https://github.com/grosjo/nextcloud-grauphel/issues).
+A Matrix Room exists also at : #nextcloud-grauphel:matrix.grosjo.net
+
 
 What works
 ==========
