@@ -3,7 +3,7 @@
 namespace OCA\Grauphel\AppInfo;
 
 use \OCP\AppFramework\App;
-use \OCA\Grauphel\Lib\Dependencies;
+use \OCA\Grauphel\Tools\Dependencies;
 use \OCP\AppFramework\Bootstrap\IBootContext;
 use \OCP\AppFramework\Bootstrap\IBootstrap;
 use \OCP\AppFramework\Bootstrap\IRegistrationContext;

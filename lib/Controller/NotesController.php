@@ -15,10 +15,10 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\TemplateResponse;
-use \OCA\Grauphel\Lib\Client;
-use \OCA\Grauphel\Lib\Dependencies;
-use \OCA\Grauphel\Lib\TokenStorage;
-use \OCA\Grauphel\Lib\Response\ErrorResponse;
+use \OCA\Grauphel\Auth\Client;
+use \OCA\Grauphel\Tools\Dependencies;
+use \OCA\Grauphel\Storage\TokenStorage;
+use \OCA\Grauphel\Response\ErrorResponse;
 
 /**
  * Owncloud frontend: Notes

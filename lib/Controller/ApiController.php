@@ -16,12 +16,12 @@ namespace OCA\Grauphel\Controller;
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
 
-use \OCA\Grauphel\Lib\Client;
-use \OCA\Grauphel\Lib\NoteStorage;
-use \OCA\Grauphel\Lib\OAuth;
-use \OCA\Grauphel\Lib\OAuthException;
-use \OCA\Grauphel\Lib\Dependencies;
-use \OCA\Grauphel\Lib\Response\ErrorResponse;
+use \OCA\Grauphel\Auth\Client;
+use \OCA\Grauphel\Storage\NoteStorage;
+use \OCA\Grauphel\Auth\OAuth;
+use \OCA\Grauphel\Auth\OAuthException;
+use \OCA\Grauphel\Tools\Dependencies;
+use \OCA\Grauphel\Response\ErrorResponse;
 
 /**
  * Tomboy's REST API

@@ -19,14 +19,14 @@ use \OCP\AppFramework\Http\ContentSecurityPolicy;
 use \OCP\AppFramework\Http\RedirectResponse;
 use \OCP\AppFramework\Http\TemplateResponse;
 
-use \OCA\Grauphel\Lib\Client;
-use \OCA\Grauphel\Lib\Token;
-use \OCA\Grauphel\Lib\OAuth;
-use \OCA\Grauphel\Lib\Dependencies;
-use \OCA\Grauphel\Lib\Response\ErrorResponse;
-use \OCA\Grauphel\Lib\Response\FormResponse;
-use \OCA\Grauphel\Lib\OAuthException;
-use \OCA\Grauphel\Lib\UrlHelper;
+use \OCA\Grauphel\Auth\Client;
+use \OCA\Grauphel\Auth\Token;
+use \OCA\Grauphel\Auth\OAuth;
+use \OCA\Grauphel\Tools\Dependencies;
+use \OCA\Grauphel\Response\ErrorResponse;
+use \OCA\Grauphel\Response\FormResponse;
+use \OCA\Grauphel\Auth\OAuthException;
+use \OCA\Grauphel\Tools\UrlHelper;
 
 /**
  * OAuth handling

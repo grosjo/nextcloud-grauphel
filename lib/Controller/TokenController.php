@@ -15,10 +15,10 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\RedirectResponse;
-use \OCA\Grauphel\Lib\Dependencies;
-use \OCA\Grauphel\Lib\OAuthException;
-use \OCA\Grauphel\Lib\Response\ErrorResponse;
-use \OCA\Grauphel\Lib\TokenStorage;
+use \OCA\Grauphel\Tools\Dependencies;
+use \OCA\Grauphel\Auth\OAuthException;
+use \OCA\Grauphel\Response\ErrorResponse;
+use \OCA\Grauphel\Storage\TokenStorage;
 
 /**
  * OAuth token management
