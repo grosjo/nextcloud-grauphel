@@ -11,7 +11,7 @@
  * @license   http://www.gnu.org/licenses/agpl.html GNU AGPL v3
  * @link      http://cweiske.de/grauphel.htm
  */
-namespace OCA\Grauphel\Lib;
+namespace OCA\Grauphel\Storage;
 
 /**
  * Flat file storage for notes
@@ -310,8 +310,8 @@ class NoteStorage
             $keywordGroups['NOT'] = array();
         }
 
-        $sqlTplAnd = ' AND (note_title ILIKE ? OR note_tags ILIKE ? OR note_content ILIKE ?)';
-        $sqlTplNot = ' AND NOT (note_title ILIKE ? OR note_tags ILIKE ? OR note_content ILIKE ?)';
+        $sqlTplAnd = ' AND (`note_title` ILIKE ? OR `note_tags` ILIKE ? OR `note_content` ILIKE ?)';
+        $sqlTplNot = ' AND NOT (`note_title` ILIKE ? OR `note_tags` ILIKE ? OR `note_content` ILIKE ?)';
         $arData = array(
             $this->username
         );

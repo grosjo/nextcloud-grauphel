@@ -1,17 +1,25 @@
 <?php
-namespace OCA\Grauphel\AppInfo;
-use \OCP\AppFramework\App;
-use \OCA\Grauphel\Lib\Dependencies;
 
-class Application extends App
+namespace OCA\Grauphel\AppInfo;
+
+use \OCP\AppFramework\App;
+use \OCA\Grauphel\Tools\Dependencies;
+use \OCP\AppFramework\Bootstrap\IBootContext;
+use \OCP\AppFramework\Bootstrap\IBootstrap;
+use \OCP\AppFramework\Bootstrap\IRegistrationContext;
+
+class Application extends App implements IBootstrap
 {
     public function __construct(array $urlParams=array())
     {
         parent::__construct('grauphel', $urlParams);
 
-        $container = $this->getContainer();
+	\OCP\Util::addscript('grauphel', 'loader');
+    }
 
-        $container->registerService(
+    public function register(IRegistrationContext $context): void 
+    {
+        $context->registerService(
             'Session',
             function($c) {
                 return $c->query('ServerContainer')->getUserSession();
@@ -21,7 +29,7 @@ class Application extends App
         /**
          * Controllers
          */
-        $container->registerService(
+        $context->registerService(
             'ApiController',
             function($c) {
                 Dependencies::get()->urlGen
@@ -33,7 +41,7 @@ class Application extends App
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'OauthController',
             function($c) {
                 Dependencies::get()->urlGen
@@ -45,7 +53,7 @@ class Application extends App
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'GuiController',
             function($c) {
                 return new \OCA\Grauphel\Controller\GuiController(
@@ -56,9 +64,11 @@ class Application extends App
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'NotesController',
             function($c) {
+                Dependencies::get()->urlGen
+                    = $c->query('ServerContainer')->getURLGenerator();
                 return new \OCA\Grauphel\Controller\NotesController(
                     $c->query('AppName'),
                     $c->query('Request'),
@@ -66,7 +76,7 @@ class Application extends App
                 );
             }
         );
-        $container->registerService(
+        $context->registerService(
             'TokenController',
             function($c) {
                 Dependencies::get()->urlGen
@@ -78,6 +88,11 @@ class Application extends App
                 );
             }
         );
+
+	
+        $context->registerSearchProvider('OCA\Grauphel\Search\Provider');
     }
+
+    public function boot(IBootContext $context): void {}
 }
 ?>

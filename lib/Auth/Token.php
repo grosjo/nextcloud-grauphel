@@ -11,7 +11,7 @@
  * @license   http://www.gnu.org/licenses/agpl.html GNU AGPL v3
  * @link      http://cweiske.de/grauphel.htm
  */
-namespace OCA\Grauphel\Lib;
+namespace OCA\Grauphel\Auth;
 
 /**
  * OAuth token with some additional data

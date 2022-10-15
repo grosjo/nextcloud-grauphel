@@ -15,9 +15,6 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\TemplateResponse;
-use \OCA\Grauphel\Lib\Client;
-use \OCA\Grauphel\Lib\TokenStorage;
-use \OCA\Grauphel\Lib\Response\ErrorResponse;
 
 /**
  * Owncloud frontend
@@ -96,7 +93,7 @@ class GuiController extends Controller
 
         $note = $this->getNotes()->load($guid, false);
         if ($note === null) {
-            $res = new ErrorResponse('Note does not exist');
+            $res = new \OCA\Grauphel\Response\ErrorResponse('Note does not exist');
             $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
             return $res;
         }
@@ -232,14 +229,14 @@ class GuiController extends Controller
      */
     public function tokens()
     {
-        $tokens = new TokenStorage();
+        $tokens = new \OCA\Grauphel\Storage\TokenStorage();
         $res = new TemplateResponse('grauphel', 'tokens');
         $res->setParams(
             array(
                 'tokens' => $tokens->loadForUser(
                     $this->user->getUid(), 'access'
                 ),
-                'client' => new Client(),
+                'client' => new \OCA\Grauphel\Auth\Client(),
                 'username' => $this->user->getUid(),
             )
         );
@@ -344,7 +341,7 @@ class GuiController extends Controller
 
         $username = $this->user->getUid();
         $notes  = $this->getNotes();
-        $tokens = new \OCA\Grauphel\Lib\TokenStorage();
+        $tokens = new \OCA\Grauphel\Storage\TokenStorage();
 
         $nav = new \OCP\Template('grauphel', 'indexStats', '');
         $nav->assign('notes', count($notes->loadNotesOverview()));
@@ -377,7 +374,7 @@ class GuiController extends Controller
     protected function getNotes()
     {
         $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->urlGen);
+        $notes  = new \OCA\Grauphel\Storage\NoteStorage($this->urlGen);
         $notes->setUsername($username);
         return $notes;
     }

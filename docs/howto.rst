@@ -4,7 +4,7 @@ HowTo setup clients with grauphel
 The Tomboy notes server grauphel__ works with several clients.
 Here are the instructions to configure the clients.
 
-__ http://cweiske.de/grauphel.htm
+__ https://github.com/grosjo/nextcloud-grauphel/
 
 
 ======
