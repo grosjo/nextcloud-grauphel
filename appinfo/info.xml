@@ -9,7 +9,7 @@
 
   Tomboy, Conboy and Tomdroid clients are supported.
  </description>
- <version>1.0.12</version>
+ <version>1.0.14</version>
  <licence>agpl</licence>
  <author>Joan Moreau</author>
  <namespace>Grauphel</namespace>
@@ -19,7 +19,7 @@
  <repository type="git">https://github.com/grosjo/nextcloud-grauphel.git</repository>
  <dependencies>
   <lib>OAuth</lib>
-  <nextcloud min-version="23" max-version="24"/>
+  <nextcloud min-version="23" max-version="25"/>
  </dependencies>
     <navigations>
         <navigation>
