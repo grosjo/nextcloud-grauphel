@@ -1,5 +1,5 @@
 <?php
-namespace OCA\Grauphel\Lib\Response;
+namespace OCA\Grauphel\Response;
 
 class ErrorResponse extends \OCP\AppFramework\Http\Response
 {
