@@ -1,7 +1,9 @@
 <?php
 namespace OCA\Grauphel\AppInfo;
 
-$application = new Application();
+//$application = new Application();
+$application = \OC::$server->query(Application::class);
+
 $application->registerRoutes(
     $this,
     array(
