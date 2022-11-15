@@ -14,6 +14,7 @@
 namespace OCA\Grauphel\Storage;
 
 use \OCA\Grauphel\Auth\Token;
+use \OCA\Grauphel\Auth\OAuthException;
 
 /**
  * OAuth token store

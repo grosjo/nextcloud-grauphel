@@ -14,7 +14,7 @@ class FormResponse extends \OCP\AppFramework\Http\Response
 
     public function render()
     {
-        return http_build_query($this->data, null, '&');
+        return http_build_query($this->data, "", '&');
     }
 }
 ?>

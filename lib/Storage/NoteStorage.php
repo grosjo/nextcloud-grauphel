@@ -540,7 +540,7 @@ class NoteStorage
             'width'                     => (int) $row['note_width'],
 
             'selection-bound-position'  => (int) $row['note_selection_bound_position'],
-            'cursor-position'           => (int) $row['note_cursor-position'], 
+            'cursor-position'           => (int) $row['note_cursor_position'], 
 
             'last-sync-revision'        => (int) $row['note_last_sync_revision'],
         );
