@@ -7,7 +7,7 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version010002Date20220103070900 extends SimpleMigrationStep 
+class Version010017Date20221115203900 extends SimpleMigrationStep 
 {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper 
 	{
