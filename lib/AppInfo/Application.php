@@ -10,6 +10,8 @@ use \OCP\AppFramework\Bootstrap\IRegistrationContext;
 
 class Application extends App implements IBootstrap
 {
+    public const APP_ID = 'grauphel';
+
     public function __construct(array $urlParams=array())
     {
         parent::__construct('grauphel', $urlParams);

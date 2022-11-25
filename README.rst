@@ -5,7 +5,7 @@ nextCloud__ application implementing the `Tomboy`__ `REST API`__ for syncing not
 
 Pretty stable.
 
-I have taken over the repository. Hopefully a new version by end of 2021
+I have taken over the repository.
 
 __ https://nextcloud.com/
 __ https://wiki.gnome.org/Apps/Tomboy
