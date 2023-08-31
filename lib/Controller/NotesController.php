@@ -240,7 +240,7 @@ class NotesController extends Controller
     protected function getNotes()
     {
         $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->deps->urlGen);
+        $notes  = new \OCA\Grauphel\Storage\NoteStorage($this->deps->urlGen);
         $notes->setUsername($username);
         return $notes;
     }
