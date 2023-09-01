@@ -168,7 +168,7 @@ class ReStructuredText extends Base
      */
     protected function fixLinkUrl($linkUrl)
     {
-        if ($linkUrl{0} == '/') {
+        if ($linkUrl[0] == '/') {
             //Unix file path
             $linkUrl = 'file://' . $linkUrl;
         }
