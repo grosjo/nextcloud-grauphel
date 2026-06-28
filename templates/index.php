@@ -1,7 +1,7 @@
 <?php style('grauphel', 'grauphel'); ?>
 
 <?php /** @var $l OC_L10N */ ?>
-<?php $_['appNavigation']->printPage(); ?>
+<?php echo $_['appNavigation']; ?>
 
 <div id="app-content" class="content">
   <div id="searchresults" class="hidden"></div>
@@ -29,7 +29,7 @@
     </p>
   </div>
 
-  <?php isset($_['stats']) && $_['stats']->printPage(); ?>
+  <?php if (isset($_['stats'])) { echo $_['stats']; } ?>
 
   <hr style="height: 1px; border: none; background-color: grey"/>
   <p style="text-align: center">

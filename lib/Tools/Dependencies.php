@@ -48,6 +48,16 @@ class Dependencies
      */
     public $urlGen;
 
+    /**
+     * @var \OCP\IDBConnection
+     */
+    public $db;
+
+    /**
+     * @var \OCA\Grauphel\Storage\TokenStorage
+     */
+    public $tokens;
+
     protected static $instance;
 
     public static function get()
@@ -56,22 +66,20 @@ class Dependencies
             return self::$instance;
         }
         $deps = new self();
-        /*
-        $deps->notes = new Note_Storage_Flatfile();
-        $deps->notes->setDataDir($dataDir);
-        $deps->notes->setDeps($deps);
-
-        $deps->urlGen = new UrlGen_Pretty();
-        $deps->urlGen->setDeps($deps);
-        /*
-        $deps->frontend = new Frontend_Default();
-        $deps->frontend->setDeps($deps);
-        */
-
-        $deps->tokens = new TokenStorage();
 
         self::$instance = $deps;
         return self::$instance;
+    }
+
+    public static function init(\OCP\IDBConnection $db, \OCP\IURLGenerator $urlGen)
+    {
+        $deps = self::get();
+        $deps->db = $db;
+        $deps->urlGen = $urlGen;
+        if ($deps->tokens === null) {
+            $deps->tokens = new TokenStorage($db);
+        }
+        return $deps;
     }
 }
 ?>

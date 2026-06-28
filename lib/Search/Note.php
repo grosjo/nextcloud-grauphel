@@ -13,6 +13,8 @@
  */
 namespace OCA\Grauphel\Search;
 
+use OCP\Search\SearchResultEntry;
+
 /**
  * Note search result
  *
@@ -24,9 +26,7 @@ namespace OCA\Grauphel\Search;
  * @version   Release: @package_version@
  * @link      http://cweiske.de/grauphel.htm
  */
-class Note extends \OCP\Search\Result
-{
-	/**
+class Note extends SearchResultEntry
 	 * Type name; translated in templates
 	 *
 	 * @var string

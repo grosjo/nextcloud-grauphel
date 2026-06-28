@@ -1,7 +1,7 @@
 <?php style('grauphel', 'grauphel'); ?>
 
 <?php /** @var $l OC_L10N */ ?>
-<?php $_['appNavigation']->printPage(); ?>
+<?php echo $_['appNavigation']; ?>
 
 <div id="app-content" class="content">
  <div id="searchresults" class="hidden"></div>

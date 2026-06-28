@@ -19,8 +19,8 @@
  <repository type="git">https://github.com/grosjo/nextcloud-grauphel.git</repository>
  <dependencies>
   <lib>OAuth</lib>
-  <nextcloud min-version="25" max-version="26"/>
-  <owncloud min-version="9" max-version="10"/>
+  <nextcloud min-version="30"/>
+  <php min-version="8.1"/>
  </dependencies>
     <navigations>
         <navigation>

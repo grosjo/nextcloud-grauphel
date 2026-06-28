@@ -34,10 +34,10 @@ class NoteStorage
     protected $urlGen;
     protected $username;
 
-    public function __construct($urlGen)
+    public function __construct($urlGen, \OCP\IDBConnection $db)
     {
         $this->urlGen = $urlGen;
-        $this->db     = \OC::$server->getDatabaseConnection();
+        $this->db     = $db;
     }
 
     public function setUsername($username)

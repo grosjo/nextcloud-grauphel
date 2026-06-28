@@ -104,23 +104,45 @@ OC.grauphel = {
     }
 };
 
-$(document).ready(function() {
-    $('#grauphel-tokens .delete').click(
-        function (event) {
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('#grauphel-tokens .delete');
+
+    deleteButtons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
             event.preventDefault();
 
-            var undoTask = {
+            const form = event.currentTarget.closest('form');
+            const undoTask = {
                 'method': 'DELETE',
-                'url': $(this).parent('form').attr('action'),
-                'elementId': $(this).data('token')
+                'url': form ? form.action : '',
+                'elementId': event.currentTarget.dataset.token
             };
-            OC.grauphel.simpleUndo(undoTask);
-            return false;
-        }
-    );
 
-    //in case a user deletes tokens and leaves the page within the 5 seconds
-    window.onbeforeunload = function(e) {
-        OC.grauphel.executeAllTasks();
-    };
+            // Execute the custom app logic
+            if (typeof OC.grauphel !== 'undefined') {
+                OC.grauphel.simpleUndo(undoTask);
+            }
+        });
+    });
+
+    // In case a user deletes tokens and leaves the page within the 5 seconds
+    window.addEventListener('beforeunload', function(e) {
+        if (typeof OC.grauphel !== 'undefined') {
+            OC.grauphel.executeAllTasks();
+        }
+    });
+});
+
+/* Nextcloud deprecated templated UI's in favor of Vue. But until we can port
+ * to it, we work-around it and re-implement the settings-button section. */
+document.addEventListener('DOMContentLoaded', () => {
+	const button = document.querySelector('.settings-button');
+	const appSettings = document.querySelector('#app-settings');
+
+	if (button && appSettings) {
+		button.addEventListener('click', () => {
+			// Toggle the 'open' class on the PARENT div, as required by core app.scss
+			appSettings.classList.toggle('open');
+		});
+	}
 });

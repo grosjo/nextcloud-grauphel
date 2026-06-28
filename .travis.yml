@@ -6,9 +6,9 @@ addons:
     - diffutils
     - xsltproc
 php:
-  - 7.2
-  - 7.3
-  - 7.4
+  - 8.2
+  - 8.3
+  - 8.4
 script:
   - cd tests
   - phpunit .

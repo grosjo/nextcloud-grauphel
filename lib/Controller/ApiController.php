@@ -37,20 +37,23 @@ use \OCA\Grauphel\Response\ErrorResponse;
 class ApiController extends Controller
 {
     /**
+     * @var \OCP\IDBConnection
+     */
+    protected $db;
+
+    /**
      * constructor of the controller
      *
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
-    public function __construct($appName, \OCP\IRequest $request, $user)
+    public function __construct($appName, \OCP\IRequest $request, $user, \OCP\IDBConnection $db)
     {
         parent::__construct($appName, $request);
         $this->user  = $user;
+        $this->db = $db;
         $this->deps  = Dependencies::get();
-        $this->notes = new NoteStorage($this->deps->urlGen);
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
+        $this->notes = new NoteStorage($this->deps->urlGen, $this->db);
     }
 
     /**
@@ -85,7 +88,7 @@ class ApiController extends Controller
             return new ErrorResponse($e->getMessage());
         } catch (\OAuthException $e) {
             if ($e->getCode() != OAUTH_PARAMETER_ABSENT) {
-                $oauth->error($e);
+                return new ErrorResponse($e->getMessage());
             }
             if ($this->user !== null) {
                 $username = $this->user->getUID();
@@ -147,7 +150,7 @@ class ApiController extends Controller
      */
     public function user($username)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
             $this->deps->urlGen->getAbsoluteURL(
                 $this->deps->urlGen->linkToRoute(
@@ -155,6 +158,9 @@ class ApiController extends Controller
                 )
             )
         );
+        if ($res instanceof \OCP\AppFramework\Http\Response) {
+            return $res;
+        }
         $syncdata = $this->notes->loadSyncData();
 
         $data = array(
@@ -186,7 +192,7 @@ class ApiController extends Controller
      */
     public function notes($username)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
             $this->deps->urlGen->getAbsoluteURL(
                 $this->deps->urlGen->linkToRoute(
@@ -194,6 +200,9 @@ class ApiController extends Controller
                 )
             )
         );
+        if ($res instanceof \OCP\AppFramework\Http\Response) {
+            return $res;
+        }
         $syncdata = $this->notes->loadSyncData();
         return $this->fetchNotes($syncdata);
     }
@@ -207,7 +216,7 @@ class ApiController extends Controller
      */
     public function notesSave($username)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
             $this->deps->urlGen->getAbsoluteURL(
                 $this->deps->urlGen->linkToRoute(
@@ -215,6 +224,9 @@ class ApiController extends Controller
                 )
             )
         );
+        if ($res instanceof \OCP\AppFramework\Http\Response) {
+            return $res;
+        }
         $syncdata = $this->notes->loadSyncData();
 
         $res = $this->handleNoteSave($username, $syncdata);
@@ -228,11 +240,12 @@ class ApiController extends Controller
     protected function fetchNotes($syncdata)
     {
         $since = null;
-        if (isset($_GET['since'])) {
-            $since = (int) $_GET['since'];
+        $sinceParam = $this->request->getParam('since');
+        if ($sinceParam !== null) {
+            $since = (int) $sinceParam;
         }
 
-        if (isset($_GET['include_notes']) && $_GET['include_notes']) {
+        if ($this->request->getParam('include_notes')) {
             $notes = $this->notes->loadNotesFull($since);
         } else {
             $notes = $this->notes->loadNotesOverview($since);
@@ -254,7 +267,7 @@ class ApiController extends Controller
 
     protected function handleNoteSave($username, $syncdata)
     {
-        if ($_SERVER['REQUEST_METHOD'] != 'PUT') {
+        if ($this->request->getMethod() !== 'PUT') {
             return;
         }
 
@@ -287,8 +300,7 @@ class ApiController extends Controller
         }
 
         //update
-        $db = \OC::$server->getDatabaseConnection();
-        $db->beginTransaction();
+        $this->db->beginTransaction();
         try {
             ++$syncdata->latestSyncRevision;
             foreach ($arPut['note-changes'] as $noteUpdate) {
@@ -307,9 +319,9 @@ class ApiController extends Controller
             }
 
             $this->notes->saveSyncData($syncdata);
-            $db->commit();
+            $this->db->commit();
         } catch (\DatabaseException $e) {
-            $db->rollBack();
+            $this->db->rollBack();
             throw $e;
         }
     }
@@ -323,7 +335,7 @@ class ApiController extends Controller
      */
     public function note($username, $guid)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
             $this->deps->urlGen->getAbsoluteURL(
                 $this->deps->urlGen->linkToRoute(
@@ -332,13 +344,15 @@ class ApiController extends Controller
                 )
             )
         );
+        if ($res instanceof \OCP\AppFramework\Http\Response) {
+            return $res;
+        }
 
         $note = $this->notes->load($guid, false);
         if ($note === null) {
-            header('HTTP/1.0 404 Not Found');
-            header('Content-type: text/plain');
-            echo "Note does not exist\n";
-            exit(1);
+            $res = new ErrorResponse('Note does not exist');
+            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            return $res;
         }
 
         return new JSONResponse($note);
@@ -360,7 +374,11 @@ class ApiController extends Controller
 
         $oauth = new OAuth();
         $oauth->setDeps($this->deps);
-        $oauth->verifyOAuthUser($username, $curUrl);
+        try {
+            $oauth->verifyOAuthUser($username, $curUrl);
+        } catch (OAuthException | \OAuthException $e) {
+            return new ErrorResponse($e->getMessage());
+        }
 
         $this->notes->setUsername($username);
         return true;

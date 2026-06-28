@@ -54,9 +54,6 @@ class OauthController extends Controller
         parent::__construct($appName, $request);
         $this->user = $user;
         $this->deps = Dependencies::get();
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
     }
 
     /**
@@ -101,7 +98,7 @@ class OauthController extends Controller
         } catch (OAuthException $e) {
             return new ErrorResponse($e->getMessage());
         } catch (\OAuthException $e) {
-            $oauth->error($e);
+            return new ErrorResponse($e->getMessage());
         }
     }
 
@@ -122,9 +119,8 @@ class OauthController extends Controller
         }
 
         $clientTitle = 'unknown';
-        $clientAgent = '';
-        if (isset($_GET['client'])) {
-            $clientAgent = $_GET['client'];
+        $clientAgent = (string) $this->request->getParam('client', '');
+        if ($clientAgent !== '') {
             $cl = new Client();
             $clientTitle = $cl->getNiceName($clientAgent);
         }
@@ -138,6 +134,7 @@ class OauthController extends Controller
                 'formaction'  => $this->deps->urlGen->linkToRoute(
                     'grauphel.oauth.confirm'
                 ),
+                'requesttoken' => '',
             )
         );
 
@@ -166,7 +163,7 @@ class OauthController extends Controller
             return new ErrorResponse($e->getMessage());
         }
 
-        $authState = isset($_POST['auth']) && $_POST['auth'] == 'ok';
+        $authState = $this->request->getParam('auth') === 'ok';
         if ($authState === false) {
             //user declined
 
@@ -184,10 +181,7 @@ class OauthController extends Controller
             return $res;
         }
 
-        $clientAgent = '';
-        if (isset($_POST['client'])) {
-            $clientAgent = $_POST['client'];
-        }
+        $clientAgent = (string) $this->request->getParam('client', '');
 
         //the user is logged in and authorized
         $provider = OAuth::getProvider();
@@ -218,17 +212,16 @@ class OauthController extends Controller
 
     protected function verifyRequestToken()
     {
-        if (!isset($_REQUEST['oauth_token'])) {
+        $reqToken = $this->request->getParam('oauth_token');
+        if (!is_string($reqToken) || $reqToken === '') {
             return new ErrorResponse('oauth_token missing');
         }
 
         $oauth = new OAuth();
         $oauth->setDeps($this->deps);
-        if (!$oauth->validateToken($_REQUEST['oauth_token'])) {
+        if (!$oauth->validateToken($reqToken)) {
             return new ErrorResponse('Invalid token string');
         }
-
-        $reqToken = $_REQUEST['oauth_token'];
 
         try {
             $token = $this->deps->tokens->load('temp', $reqToken);
@@ -281,7 +274,7 @@ class OauthController extends Controller
         } catch (OAuthException $e) {
             return new ErrorResponse($e->getMessage());
         } catch (\OAuthException $e) {
-            $oauth->error($e);
+            return new ErrorResponse($e->getMessage());
         }
     }
 }

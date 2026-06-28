@@ -44,9 +44,6 @@ class TokenController extends Controller
         parent::__construct($appName, $request);
         $this->user = $user;
         $this->deps = Dependencies::get();
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
     }
 
 
@@ -96,7 +93,7 @@ class TokenController extends Controller
      */
     public function deletePost($username, $tokenKey)
     {
-        if (isset($_POST['delete']) && $_POST['delete'] == 1) {
+        if ($this->request->getParam('delete') == 1) {
             $this->delete($username, $tokenKey);
         }
 

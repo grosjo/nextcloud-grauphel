@@ -30,19 +30,28 @@ use \OCP\AppFramework\Http\TemplateResponse;
 class GuiController extends Controller
 {
     /**
+     * @var \OCP\IDateTimeFormatter
+     */
+    protected $dateFormatter;
+
+    /**
+     * @var \OCP\IDBConnection
+     */
+    protected $db;
+
+    /**
      * constructor of the controller
      *
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
-    public function __construct($appName, \OCP\IRequest $request, $user, $urlGen)
+    public function __construct($appName, \OCP\IRequest $request, $user, $urlGen, \OCP\IDateTimeFormatter $dateFormatter, \OCP\IDBConnection $db)
     {
         parent::__construct($appName, $request);
         $this->user   = $user;
         $this->urlGen = $urlGen;
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
+        $this->dateFormatter = $dateFormatter;
+        $this->db = $db;
     }
 
     /**
@@ -144,6 +153,7 @@ class GuiController extends Controller
 
         $this->addNavigation($res, $selectedRawtag);
         $this->addGlobalVars($res);
+
         return $res;
     }
 
@@ -169,11 +179,12 @@ class GuiController extends Controller
         $rawtag = $this->unescapeTagFromUrl($rawtag);
         $notes = $this->getNotes()->loadNotesOverview(null, $rawtag, true);
 
-        if (!isset($_GET['sortby'])) {
-            $_GET['sortby'] = 'title';
+        $sortby = $this->request->getParam('sortby');
+        if ($sortby === null || $sortby === '') {
+            $sortby = 'title';
         }
 
-        switch ($_GET['sortby']) {
+        switch ($sortby) {
         case 'title':
             usort(
                 $notes,
@@ -229,7 +240,7 @@ class GuiController extends Controller
      */
     public function tokens()
     {
-        $tokens = new \OCA\Grauphel\Storage\TokenStorage();
+        $tokens = new \OCA\Grauphel\Storage\TokenStorage($this->db);
         $res = new TemplateResponse('grauphel', 'tokens');
         $res->setParams(
             array(
@@ -255,7 +266,13 @@ class GuiController extends Controller
     public function database($reset = null)
     {
         $res = new TemplateResponse('grauphel', 'gui-database');
-        $res->setParams(array('reset' => $reset));
+        $res->setParams(
+            array(
+                'reset' => $reset,
+                'requesttoken' => '',
+            )
+        );
+        $this->addGlobalVars($res);
         $this->addNavigation($res, null);
         $this->addStats($res);
 
@@ -271,7 +288,8 @@ class GuiController extends Controller
     public function databaseReset()
     {
         $reset = false;
-        if ($_POST['username'] != '' && $_POST['username'] == $this->user->getUid()) {
+        $username = $this->request->getParam('username');
+        if (is_string($username) && $username !== '' && $username === $this->user->getUid()) {
             $notes = $this->getNotes();
             $notes->deleteAll();
             $notes->deleteSyncData();
@@ -289,8 +307,8 @@ class GuiController extends Controller
     protected function addGlobalVars(TemplateResponse $res)
     {
         $params = $res->getParams();
-        $params['date']   = \OC::$server->getDateTimeFormatter();
-        $params['urlGen'] = \OC::$server->getURLGenerator();
+        $params['date']   = $this->dateFormatter;
+        $params['urlGen'] = $this->urlGen;
         $res->setParams($params);
     }
 
@@ -299,10 +317,10 @@ class GuiController extends Controller
         $nav = new \OCP\Template('grauphel', 'appnavigation', '');
         $nav->assign('apiroot', $this->getApiRootUrl());
         $nav->assign('tags', array());
-
-        $params = $res->getParams();
-        $params['appNavigation'] = $nav;
-        $res->setParams($params);
+        $nav->assign('tags_count', 0);
+        $nav->assign('notes_count', 0);
+        $nav->assign('urlGen', $this->urlGen);
+        $nav->assign('isLoggedIn', $this->user !== null);
 
         if ($this->user === null) {
             return;
@@ -331,6 +349,13 @@ class GuiController extends Controller
             }
         }
         $nav->assign('tags', $tags);
+        $nav->assign('notes_count', count($this->getNotes()->loadNotesOverview()));
+        $nav->assign('tags_count', count($tags));
+
+        $params = $res->getParams();
+        $params['appNavigation'] = $nav->fetchPage();
+        $res->setParams($params);
+
     }
 
     protected function addStats(TemplateResponse $res)
@@ -341,15 +366,16 @@ class GuiController extends Controller
 
         $username = $this->user->getUid();
         $notes  = $this->getNotes();
-        $tokens = new \OCA\Grauphel\Storage\TokenStorage();
+        $tokens = new \OCA\Grauphel\Storage\TokenStorage($this->db);
 
         $nav = new \OCP\Template('grauphel', 'indexStats', '');
         $nav->assign('notes', count($notes->loadNotesOverview()));
         $nav->assign('syncrev', $notes->loadSyncData()->latestSyncRevision);
         $nav->assign('tokens', count($tokens->loadForUser($username, 'access')));
+        $nav->assign('urlGen', $this->urlGen);
 
         $params = $res->getParams();
-        $params['stats'] = $nav;
+        $params['stats'] = $nav->fetchPage();
         $res->setParams($params);
     }
 
@@ -374,7 +400,7 @@ class GuiController extends Controller
     protected function getNotes()
     {
         $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Storage\NoteStorage($this->urlGen);
+        $notes  = new \OCA\Grauphel\Storage\NoteStorage($this->urlGen, $this->db);
         $notes->setUsername($username);
         return $notes;
     }

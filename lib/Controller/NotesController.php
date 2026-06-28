@@ -44,9 +44,6 @@ class NotesController extends Controller
         parent::__construct($appName, $request);
         $this->user = $user;
         $this->deps = Dependencies::get();
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
     }
 
     /**
@@ -240,7 +237,7 @@ class NotesController extends Controller
     protected function getNotes()
     {
         $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->deps->urlGen);
+        $notes  = new \OCA\Grauphel\Storage\NoteStorage($this->deps->urlGen, $this->deps->db);
         $notes->setUsername($username);
         return $notes;
     }

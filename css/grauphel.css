@@ -37,7 +37,7 @@
 }
 .app-grauphel #app-content pre {
     margin: 1em;
-    background-color: #DDD;
+    background-color: var(--color-background-selection);
     padding: 1ex;
     font-family: monospace;
 }
@@ -70,13 +70,13 @@
     float: right;
 }
 .app-grauphel #app-content .actions a {
-    color: #555;
+    color: var(--color-primary-element-light-text);
     padding: 14px 10px;
     position: relative;
     top: 7px;
     min-width: 25px;
     padding: 5px;
-    background-color: rgba(240,240,240,.9);
+    background-color: var(--color-primary-element-light);
 }
 
 .app-grauphel .oauth-authorize {
@@ -91,21 +91,34 @@
     text-align: center;
 }
 
-
-/* make the settings menu nicer */
-.app-grauphel #app-settings-content li a {
-    display: block;
-    line-height: 2rem;
-    min-height: 2rem;
-    padding-left: 1rem;
+/* Navigation list */
+.app-grauphel #app-navigation {
+	display: flex;
+	justify-content: center;
 }
-.app-grauphel #app-settings-content li a:hover {
-    opacity: 1;
-    box-shadow: inset 4px 0 var(--color-primary);
+.app-navigation-header {
+	background-color: var(--color-background-dark);
+	text-align: center;
+	font-size: larger;
+}
+.app-navigation-list {
+	height: 100%;
+}
+.app-navigation-entry {
+    border-radius: 0.25rem;
+}
+.app-navigation-entry:hover {
+	background-color: var(--color-primary-element-light-hover);
+}
+.app-navigation-entry a {
+	display: block;
+	width: 100%;
+}
+.selected {
+	background-color: var(--color-primary-light);
 }
 
 /* table style */
-
 table.table {
     position: relative;
     width: 100%;
@@ -116,7 +129,7 @@ table.table {
 	min-width: 688px; /* 768 (mobile break) - 80 (nav width) */
 }
 
-table.table tbody tr { background-color:#fff; height:51px; }
+table.table tbody tr { background-color: var(--color-background-dark); height:51px; }
 
 /* fit app list view heights */
 /*
@@ -124,26 +137,26 @@ table.table tbody tr { background-color:#fff; height:51px; }
 	min-height: 100%;
 }*/
 
-table.table tbody tr { background-color:#fff; height:40px; }
+table.table tbody tr { background-color: var(--color-background-dark); height:40px; }
 table.table tbody tr:hover, tbody tr:active {
-	background-color: rgb(240,240,240);
+	background-color: var(--color-background-hover);
 }
 table.table tbody tr.selected {
-	background-color: rgb(230,230,230);
+	background-color: var(--color-background-selected);
 }
 table.table tbody tr.searchresult {
-	background-color: rgb(240,240,240);
+	background-color: var(--color-background-selection);
 }
-table.table tbody a { color:#000; }
+table.table tbody a { color: var(--color-text); }
 
 table.table tr.mouseOver td {
-	background-color: #eee;
+	background-color: var(--color-background-hover);
 }
 table.table th, table th a {
-	color: #999;
+	color: var(--color-background-plain-text);
 }
 table.table thead th {
-    background-color: white;
+    background-color: var(--color-background-darker);
     padding: 15px;
     height: 50px;
     box-sizing: border-box;
@@ -151,13 +164,13 @@ table.table thead th {
 }
 
 table.table th, table.table td, #searchresults td {
-    border-bottom:1px solid #ddd;
+    border-bottom:1px solid var(--color-border-dark);
     text-align:left;
     font-weight:normal;
 }
 table.table td {
     padding: 0 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border);
     font-style: normal;
     background-position: 8px center;
     background-repeat: no-repeat;

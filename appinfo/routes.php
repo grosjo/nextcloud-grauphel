@@ -1,123 +1,155 @@
 <?php
-namespace OCA\Grauphel\AppInfo;
 
-//$application = new Application();
-$application = \OC::$server->query(Application::class);
+return [
+    'routes' => [
+        [
+            'name' => 'oauth#accessToken',
+            'url' => '/oauth/access_token',
+            'verb' => 'POST',
+            'controller' => 'Oauth',
+            'action' => 'accessToken',
+        ],
+        [
+            'name' => 'oauth#authorize',
+            'url' => '/oauth/authorize',
+            'verb' => 'GET',
+            'controller' => 'Oauth',
+            'action' => 'authorize',
+        ],
+        [
+            'name' => 'oauth#confirm',
+            'url' => '/oauth/confirm',
+            'verb' => 'POST',
+            'controller' => 'Oauth',
+            'action' => 'confirm',
+        ],
+        [
+            'name' => 'oauth#requestToken',
+            'url' => '/oauth/request_token',
+            'verb' => 'POST',
+            'controller' => 'Oauth',
+            'action' => 'requestToken',
+        ],
 
-$application->registerRoutes(
-    $this,
-    array(
-        'routes' => array(
-            array(
-                'url'  => '/oauth/access_token',
-                'name' => 'oauth#accessToken',
-                'verb' => 'POST',
-            ),
-            array(
-                'url'  => '/oauth/authorize',
-                'name' => 'oauth#authorize',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/oauth/confirm',
-                'name' => 'oauth#confirm',
-                'verb' => 'POST',
-            ),
-            array(
-                'url'  => '/oauth/request_token',
-                'name' => 'oauth#requestToken',
-                'verb' => 'POST',
-            ),
+        [
+            'name' => 'api#index',
+            'url' => '/api/1.0',
+            'verb' => 'GET',
+            'controller' => 'Api',
+            'action' => 'index',
+        ],
+        [
+            'name' => 'api#indexSlash',
+            'url' => '/api/1.0/',
+            'verb' => 'GET',
+            'controller' => 'Api',
+            'action' => 'indexSlash',
+        ],
+        [
+            'name' => 'api#user',
+            'url' => '/api/1.0/{username}',
+            'verb' => 'GET',
+            'controller' => 'Api',
+            'action' => 'user',
+        ],
+        [
+            'name' => 'api#notes',
+            'url' => '/api/1.0/{username}/notes',
+            'verb' => 'GET',
+            'controller' => 'Api',
+            'action' => 'notes',
+        ],
+        [
+            'name' => 'api#notesSave',
+            'url' => '/api/1.0/{username}/notes',
+            'verb' => 'PUT',
+            'controller' => 'Api',
+            'action' => 'notesSave',
+        ],
+        [
+            'name' => 'api#note',
+            'url' => '/api/1.0/{username}/note/{guid}',
+            'verb' => 'GET',
+            'controller' => 'Api',
+            'action' => 'note',
+        ],
 
-            array(
-                'url'  => '/api/1.0',
-                'name' => 'api#index',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/api/1.0/',
-                'name' => 'api#indexSlash',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/api/1.0/{username}',
-                'name' => 'api#user',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/api/1.0/{username}/notes',
-                'name' => 'api#notes',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/api/1.0/{username}/notes',
-                'name' => 'api#notesSave',
-                'verb' => 'PUT',
-            ),
-            array(
-                'url'  => '/api/1.0/{username}/note/{guid}',
-                'name' => 'api#note',
-                'verb' => 'GET',
-            ),
-
-            array(
-                'url'  => '/',
-                'name' => 'gui#index',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/tag/{rawtag}',
-                'name' => 'gui#tag',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/note/{guid}.html',
-                'name' => 'notes#html',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/note/{guid}.txt',
-                'name' => 'notes#text',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/note/{guid}.xml',
-                'name' => 'notes#xml',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/note/{guid}',
-                'name' => 'gui#note',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/tokens',
-                'name' => 'gui#tokens',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/database',
-                'name' => 'gui#database',
-                'verb' => 'GET',
-            ),
-            array(
-                'url'  => '/database',
-                'name' => 'gui#databaseReset',
-                'verb' => 'POST',
-            ),
-
-            array(
-                'url'  => '/tokens/{username}/{tokenKey}',
-                'name' => 'token#delete',
-                'verb' => 'DELETE',
-            ),
-            array(
-                'url'  => '/tokens/{username}/{tokenKey}',
-                'name' => 'token#deletePost',
-                'verb' => 'POST',
-            ),
-        )
-    )
-);
-
-?>
+        [
+            'name' => 'gui#index',
+            'url' => '/',
+            'verb' => 'GET',
+            'controller' => 'Gui',
+            'action' => 'index',
+        ],
+        [
+            'name' => 'gui#tag',
+            'url' => '/tag/{rawtag}',
+            'verb' => 'GET',
+            'controller' => 'Gui',
+            'action' => 'tag',
+        ],
+        [
+            'name' => 'notes#html',
+            'url' => '/note/{guid}.html',
+            'verb' => 'GET',
+            'controller' => 'Notes',
+            'action' => 'html',
+        ],
+        [
+            'name' => 'notes#text',
+            'url' => '/note/{guid}.txt',
+            'verb' => 'GET',
+            'controller' => 'Notes',
+            'action' => 'text',
+        ],
+        [
+            'name' => 'notes#xml',
+            'url' => '/note/{guid}.xml',
+            'verb' => 'GET',
+            'controller' => 'Notes',
+            'action' => 'xml',
+        ],
+        [
+            'name' => 'gui#note',
+            'url' => '/note/{guid}',
+            'verb' => 'GET',
+            'controller' => 'Gui',
+            'action' => 'note',
+        ],
+        [
+            'name' => 'gui#tokens',
+            'url' => '/tokens',
+            'verb' => 'GET',
+            'controller' => 'Gui',
+            'action' => 'tokens',
+        ],
+        [
+            'name' => 'gui#database',
+            'url' => '/database',
+            'verb' => 'GET',
+            'controller' => 'Gui',
+            'action' => 'database',
+        ],
+        [
+            'name' => 'gui#databaseReset',
+            'url' => '/database',
+            'verb' => 'POST',
+            'controller' => 'Gui',
+            'action' => 'databaseReset',
+        ],
+        [
+            'name' => 'token#delete',
+            'url' => '/tokens/{username}/{tokenKey}',
+            'verb' => 'DELETE',
+            'controller' => 'Token',
+            'action' => 'delete',
+        ],
+        [
+            'name' => 'token#deletePost',
+            'url' => '/tokens/{username}/{tokenKey}',
+            'verb' => 'POST',
+            'controller' => 'Token',
+            'action' => 'deletePost',
+        ],
+    ],
+];
