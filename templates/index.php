@@ -1,14 +1,13 @@
 <?php style('grauphel', 'grauphel'); ?>
 
 <?php /** @var $l OC_L10N */ ?>
-<?php $_['appNavigation']->printPage(); ?>
+<?php print_unescaped($_['appNavigation']); ?>
 
 <div id="app-content" class="content">
-  <div id="searchresults" class="hidden"></div>
   <div>
     <h1>grauphel - Tomboy notes server</h1>
     <p>
-      <a class="lined" href="http://apps.owncloud.com/content/show.php?action=content&amp;content=166654">Grauphel</a>
+      <a class="lined" href="https://apps.nextcloud.com/apps/grauphel">Grauphel</a>
       is a server to store and synchronize notes from Tomboy and compatible clients.
     </p>
     <p>
@@ -29,7 +28,7 @@
     </p>
   </div>
 
-  <?php isset($_['stats']) && $_['stats']->printPage(); ?>
+  <?php if (isset($_['stats'])) { print_unescaped($_['stats']); } ?>
 
   <hr style="height: 1px; border: none; background-color: grey"/>
   <p style="text-align: center">

@@ -17,4 +17,3 @@ class ErrorResponse extends \OCP\AppFramework\Http\Response
         return $this->error . "\n";
     }
 }
-?>

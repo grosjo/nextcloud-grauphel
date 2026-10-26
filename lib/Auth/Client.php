@@ -26,10 +26,13 @@ namespace OCA\Grauphel\Auth;
  */
 class Client
 {
-    public function getClient()
+    /**
+     * @param string $header Value of the X-Tomboy-Client HTTP header
+     */
+    public function getClient($header)
     {
-        if (isset($_SERVER['HTTP_X_TOMBOY_CLIENT'])) {
-            $client = $_SERVER['HTTP_X_TOMBOY_CLIENT'];
+        if ($header != '') {
+            $client = $header;
             $doublepos = strpos($client, ', org.tomdroid');
             if ($doublepos !== false) {
                 //https://bugs.launchpad.net/tomdroid/+bug/1375436
@@ -52,4 +55,3 @@ class Client
     }
 
 }
-?>

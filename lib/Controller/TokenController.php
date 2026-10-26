@@ -14,8 +14,12 @@
 namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http;
+use \OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use \OCP\AppFramework\Http\RedirectResponse;
-use \OCA\Grauphel\Tools\Dependencies;
+use \OCP\IRequest;
+use \OCP\IURLGenerator;
+use \OCP\IUserSession;
 use \OCA\Grauphel\Auth\OAuthException;
 use \OCA\Grauphel\Response\ErrorResponse;
 use \OCA\Grauphel\Storage\TokenStorage;
@@ -33,80 +37,77 @@ use \OCA\Grauphel\Storage\TokenStorage;
  */
 class TokenController extends Controller
 {
+    protected $user;
+    protected IURLGenerator $urlGen;
+    protected TokenStorage $tokens;
+
     /**
      * constructor of the controller
      *
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
-    public function __construct($appName, \OCP\IRequest $request, $user)
-    {
+    public function __construct(
+        $appName, IRequest $request, IUserSession $userSession,
+        IURLGenerator $urlGen, TokenStorage $tokens
+    ) {
         parent::__construct($appName, $request);
-        $this->user = $user;
-        $this->deps = Dependencies::get();
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
+        $this->user   = $userSession->getUser();
+        $this->urlGen = $urlGen;
+        $this->tokens = $tokens;
     }
-
 
     /**
      * Delete an access token
      * DELETE /tokens/$username/$tokenKey
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
     public function delete($username, $tokenKey)
     {
-        if (false && ($this->user === null || $this->user->getUid() != $username)) {
+        if ($this->user === null || $this->user->getUID() != $username) {
             $res = new ErrorResponse('You may only delete your own tokens.');
-            $res->setStatus(\OCP\AppFramework\Http::STATUS_FORBIDDEN);
+            $res->setStatus(Http::STATUS_FORBIDDEN);
             return $res;
         }
 
-        $deps = Dependencies::get();
         try {
-            $token = $deps->tokens->load('access', $tokenKey);
+            $token = $this->tokens->load('access', $tokenKey);
         } catch (OAuthException $e) {
             $res = new ErrorResponse('Token not found.');
-            $res->setStatus(\OCP\AppFramework\Http::STATUS_NOT_FOUND);
+            $res->setStatus(Http::STATUS_NOT_FOUND);
             return $res;
         }
 
         if ($username != $token->user) {
             $res = new ErrorResponse('You may only delete your own tokens.');
-            $res->setStatus(\OCP\AppFramework\Http::STATUS_FORBIDDEN);
+            $res->setStatus(Http::STATUS_FORBIDDEN);
             return $res;
         }
 
-        $deps->tokens->delete('access', $tokenKey);
+        $this->tokens->delete('access', $tokenKey);
 
-        $res = new \OCP\AppFramework\Http\Response();
-        $res->setStatus(\OCP\AppFramework\Http::STATUS_NO_CONTENT);
+        $res = new Http\Response();
+        $res->setStatus(Http::STATUS_NO_CONTENT);
         return $res;
     }
 
     /**
      * Delete an access token via POST
      * POST /tokens/$username/$tokenKey
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
     public function deletePost($username, $tokenKey)
     {
-        if (isset($_POST['delete']) && $_POST['delete'] == 1) {
+        if ($this->request->getParam('delete') == 1) {
             $this->delete($username, $tokenKey);
         }
 
         $res = new RedirectResponse(
-            $this->deps->urlGen->getAbsoluteURL(
-                $this->deps->urlGen->linkToRoute('grauphel.gui.tokens')
+            $this->urlGen->getAbsoluteURL(
+                $this->urlGen->linkToRoute('grauphel.gui.tokens')
             )
         );
-        $res->setStatus(\OCP\AppFramework\Http::STATUS_FOUND);
+        $res->setStatus(Http::STATUS_FOUND);
         return $res;
     }
 }
-?>

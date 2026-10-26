@@ -27,4 +27,3 @@ namespace OCA\Grauphel\Converter;
 class Exception extends \Exception
 {
 }
-?>

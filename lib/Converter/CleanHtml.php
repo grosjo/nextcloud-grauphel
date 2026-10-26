@@ -70,4 +70,3 @@ class CleanHtml extends Html
         return $html;
     }
 }
-?>

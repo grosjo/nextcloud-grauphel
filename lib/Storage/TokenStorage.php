@@ -34,9 +34,9 @@ class TokenStorage
      */
     protected $db;
 
-    public function __construct()
+    public function __construct(\OCP\IDBConnection $db)
     {
-        $this->db = \OC::$server->getDatabaseConnection();
+        $this->db = $db;
     }
 
     /**
@@ -51,7 +51,7 @@ class TokenStorage
      */
     public function delete($type, $tokenKey)
     {
-        $this->db->executeQuery(
+        $this->db->executeStatement(
             'DELETE FROM `*PREFIX*grauphel_oauth_tokens`'
             . ' WHERE `token_key` = ? AND `token_type` = ?',
             array($tokenKey, $type)
@@ -67,7 +67,7 @@ class TokenStorage
      */
     public function store(Token $token)
     {
-        $this->db->executeQuery(
+        $this->db->executeStatement(
             'INSERT INTO `*PREFIX*grauphel_oauth_tokens`'
             . '(`token_user`, `token_type`, `token_key`, `token_secret`, `token_verifier`, `token_callback`, `token_client`, `token_lastuse`)'
             . ' VALUES(?, ?, ?, ?, ?, ?, ?, ?)',
@@ -90,7 +90,7 @@ class TokenStorage
      * @param string $type     Token type: temp, access, verify
      * @param string $tokenKey Random token string to load
      *
-     * @return OAuth_Token Stored token
+     * @return Token Stored token
      *
      * @throws OAuthException When token does not exist
      */
@@ -112,7 +112,7 @@ class TokenStorage
      * @param string $type     Token type: temp, access, verify
      * @param string $tokenKey Random token string to load
      *
-     * @return OAuth_Token Stored token
+     * @return Token Stored token
      *
      * @throws OAuthException When token does not exist or it is invalid
      */
@@ -127,13 +127,13 @@ class TokenStorage
         if ($tokenRow === false) {
             throw new OAuthException(
                 'Unknown token: ' . $type . ' / ' . $tokenKey,
-                OAUTH_TOKEN_REJECTED
+                OAuthException::TOKEN_REJECTED
             );
         }
 
         $token = $this->fromDb($tokenRow);
         if ($token->tokenKey != $tokenKey) {
-            throw new OAuthException('Invalid token', OAUTH_TOKEN_REJECTED);
+            throw new OAuthException('Invalid token', OAuthException::TOKEN_REJECTED);
         }
 
         return $token;
@@ -172,7 +172,7 @@ class TokenStorage
      */
     public function updateLastUse($tokenKey)
     {
-        $this->db->executeQuery(
+        $this->db->executeStatement(
             'UPDATE `*PREFIX*grauphel_oauth_tokens`'
             . ' SET `token_lastuse` = ? WHERE `token_key` = ?',
             array(
@@ -185,7 +185,7 @@ class TokenStorage
     protected function fromDb($tokenRow)
     {
         $token = new Token();
-        $token->type     = $tokenRow['token_user'];
+        $token->type     = $tokenRow['token_type'];
         $token->tokenKey = $tokenRow['token_key'];
         $token->secret   = $tokenRow['token_secret'];
         $token->user     = $tokenRow['token_user'];
@@ -196,4 +196,3 @@ class TokenStorage
         return $token;
     }
 }
-?>

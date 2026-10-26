@@ -14,13 +14,20 @@
 namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http;
+use \OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use \OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use \OCP\AppFramework\Http\Attribute\PublicPage;
 use \OCP\AppFramework\Http\JSONResponse;
+use \OCP\IDBConnection;
+use \OCP\IRequest;
+use \OCP\IURLGenerator;
+use \OCP\IUserSession;
 
 use \OCA\Grauphel\Auth\Client;
 use \OCA\Grauphel\Storage\NoteStorage;
 use \OCA\Grauphel\Auth\OAuth;
 use \OCA\Grauphel\Auth\OAuthException;
-use \OCA\Grauphel\Tools\Dependencies;
 use \OCA\Grauphel\Response\ErrorResponse;
 
 /**
@@ -36,56 +43,53 @@ use \OCA\Grauphel\Response\ErrorResponse;
  */
 class ApiController extends Controller
 {
+    protected $user;
+    protected IURLGenerator $urlGen;
+    protected IDBConnection $db;
+    protected NoteStorage $notes;
+    protected OAuth $oauth;
+
     /**
      * constructor of the controller
      *
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
-    public function __construct($appName, \OCP\IRequest $request, $user)
-    {
+    public function __construct(
+        $appName, IRequest $request, IUserSession $userSession,
+        IURLGenerator $urlGen, IDBConnection $db,
+        NoteStorage $notes, OAuth $oauth
+    ) {
         parent::__construct($appName, $request);
-        $this->user  = $user;
-        $this->deps  = Dependencies::get();
-        $this->notes = new NoteStorage($this->deps->urlGen);
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
+        $this->user   = $userSession->getUser();
+        $this->urlGen = $urlGen;
+        $this->db     = $db;
+        $this->notes  = $notes;
+        $this->oauth  = $oauth;
     }
 
     /**
      * /api/1.0
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function index($route = 'grauphel.api.index')
     {
-        $deps = Dependencies::get();
         $authenticated = false;
-        $oauth = new OAuth();
-        $oauth->setDeps($deps);
-        $urlGen = $deps->urlGen;
+        $urlGen = $this->urlGen;
 
         try {
-            $provider = OAuth::getProvider();
-            $oauth->registerHandler($provider)
-                ->registerAccessTokenHandler($provider);
-            $provider->checkOAuthRequest(
+            $token = $this->oauth->checkApiRequest(
                 $urlGen->getAbsoluteURL(
                     $urlGen->linkToRoute($route)
                 )
             );
             $authenticated = true;
-            $token = $deps->tokens->load('access', $provider->token);
             $username = $token->user;
-
         } catch (OAuthException $e) {
-            return new ErrorResponse($e->getMessage());
-        } catch (\OAuthException $e) {
-            if ($e->getCode() != OAUTH_PARAMETER_ABSENT) {
-                $oauth->error($e);
+            if ($e->problem != OAuthException::PARAMETER_ABSENT) {
+                return $this->oauth->errorResponse($e);
             }
             if ($this->user !== null) {
                 $username = $this->user->getUID();
@@ -107,7 +111,7 @@ class ApiController extends Controller
         );
 
         $cl = new Client();
-        $client = $cl->getClient();
+        $client = $cl->getClient($this->request->getHeader('X-Tomboy-Client'));
         if ($client !== false) {
             $data['oauth_authorize_url'] .= '?client=' . urlencode($client);
         }
@@ -128,11 +132,10 @@ class ApiController extends Controller
 
     /**
      * /api/1.0/
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function indexSlash()
     {
         return $this->index('grauphel.api.indexSlash');
@@ -140,21 +143,23 @@ class ApiController extends Controller
 
     /**
      * GET /api/1.0/$user
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function user($username)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
-            $this->deps->urlGen->getAbsoluteURL(
-                $this->deps->urlGen->linkToRoute(
+            $this->urlGen->getAbsoluteURL(
+                $this->urlGen->linkToRoute(
                     'grauphel.api.user', array('username' => $username)
                 )
             )
         );
+        if ($res !== null) {
+            return $res;
+        }
         $syncdata = $this->notes->loadSyncData();
 
         $data = array(
@@ -162,13 +167,13 @@ class ApiController extends Controller
             'first-name' => null,
             'last-name'  => null,
             'notes-ref'  => array(
-                'api-ref' => $this->deps->urlGen->getAbsoluteURL(
-                    $this->deps->urlGen->linkToRoute(
+                'api-ref' => $this->urlGen->getAbsoluteURL(
+                    $this->urlGen->linkToRoute(
                         'grauphel.api.notes', array('username' => $username)
                     )
                 ),
-                'href'    => $this->deps->urlGen->getAbsoluteURL(
-                    $this->deps->urlGen->linkToRoute('grauphel.gui.index')
+                'href'    => $this->urlGen->getAbsoluteURL(
+                    $this->urlGen->linkToRoute('grauphel.gui.index')
                 ),
             ),
             'latest-sync-revision' => $syncdata->latestSyncRevision,
@@ -179,42 +184,46 @@ class ApiController extends Controller
 
     /**
      * GET /api/1.0/$user/notes
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function notes($username)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
-            $this->deps->urlGen->getAbsoluteURL(
-                $this->deps->urlGen->linkToRoute(
+            $this->urlGen->getAbsoluteURL(
+                $this->urlGen->linkToRoute(
                     'grauphel.api.notes', array('username' => $username)
                 )
             )
         );
+        if ($res !== null) {
+            return $res;
+        }
         $syncdata = $this->notes->loadSyncData();
         return $this->fetchNotes($syncdata);
     }
 
     /**
      * PUT /api/1.0/$user/notes
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function notesSave($username)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
-            $this->deps->urlGen->getAbsoluteURL(
-                $this->deps->urlGen->linkToRoute(
+            $this->urlGen->getAbsoluteURL(
+                $this->urlGen->linkToRoute(
                     'grauphel.api.notesSave', array('username' => $username)
                 )
             )
         );
+        if ($res !== null) {
+            return $res;
+        }
         $syncdata = $this->notes->loadSyncData();
 
         $res = $this->handleNoteSave($username, $syncdata);
@@ -227,12 +236,12 @@ class ApiController extends Controller
 
     protected function fetchNotes($syncdata)
     {
-        $since = null;
-        if (isset($_GET['since'])) {
-            $since = (int) $_GET['since'];
+        $since = $this->request->getParam('since');
+        if ($since !== null) {
+            $since = (int) $since;
         }
 
-        if (isset($_GET['include_notes']) && $_GET['include_notes']) {
+        if ($this->request->getParam('include_notes')) {
             $notes = $this->notes->loadNotesFull($since);
         } else {
             $notes = $this->notes->loadNotesOverview($since);
@@ -254,7 +263,7 @@ class ApiController extends Controller
 
     protected function handleNoteSave($username, $syncdata)
     {
-        if ($_SERVER['REQUEST_METHOD'] != 'PUT') {
+        if ($this->request->getMethod() != 'PUT') {
             return;
         }
 
@@ -287,8 +296,7 @@ class ApiController extends Controller
         }
 
         //update
-        $db = \OC::$server->getDatabaseConnection();
-        $db->beginTransaction();
+        $this->db->beginTransaction();
         try {
             ++$syncdata->latestSyncRevision;
             foreach ($arPut['note-changes'] as $noteUpdate) {
@@ -307,38 +315,39 @@ class ApiController extends Controller
             }
 
             $this->notes->saveSyncData($syncdata);
-            $db->commit();
-        } catch (\DatabaseException $e) {
-            $db->rollBack();
+            $this->db->commit();
+        } catch (\Exception $e) {
+            $this->db->rollBack();
             throw $e;
         }
     }
 
     /**
      * GET /api/1.0/$user/notes/$noteguid
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function note($username, $guid)
     {
-        $this->verifyUser(
+        $res = $this->verifyUser(
             $username,
-            $this->deps->urlGen->getAbsoluteURL(
-                $this->deps->urlGen->linkToRoute(
+            $this->urlGen->getAbsoluteURL(
+                $this->urlGen->linkToRoute(
                     'grauphel.api.note',
                     array('username' => $username, 'guid' => $guid)
                 )
             )
         );
+        if ($res !== null) {
+            return $res;
+        }
 
         $note = $this->notes->load($guid, false);
         if ($note === null) {
-            header('HTTP/1.0 404 Not Found');
-            header('Content-type: text/plain');
-            echo "Note does not exist\n";
-            exit(1);
+            $res = new ErrorResponse('Note does not exist');
+            $res->setStatus(Http::STATUS_NOT_FOUND);
+            return $res;
         }
 
         return new JSONResponse($note);
@@ -348,22 +357,29 @@ class ApiController extends Controller
      * Checks if the given user is authorized (by oauth token or normal login)
      *
      * @param string $username Username to verify
+     * @param string $curUrl   Absolute URL of the current API endpoint
      *
-     * @return boolean True if all is fine, Response in case of an error
+     * @return Http\Response|null NULL if all is fine, Response in case of an error
      */
     protected function verifyUser($username, $curUrl)
     {
-        if ($this->user !== null && $this->user->getUid() == $username) {
+        if ($this->user !== null && $this->user->getUID() == $username) {
             $this->notes->setUsername($username);
-            return true;
+            return null;
         }
 
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        $oauth->verifyOAuthUser($username, $curUrl);
+        try {
+            $token = $this->oauth->checkApiRequest($curUrl);
+        } catch (OAuthException $e) {
+            return $this->oauth->errorResponse($e);
+        }
+        if ($token->user != $username) {
+            $res = new ErrorResponse('Invalid user');
+            $res->setStatus(Http::STATUS_FORBIDDEN);
+            return $res;
+        }
 
         $this->notes->setUsername($username);
-        return true;
+        return null;
     }
 }
-?>

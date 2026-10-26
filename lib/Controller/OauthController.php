@@ -15,17 +15,23 @@ namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http;
+use \OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use \OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use \OCP\AppFramework\Http\Attribute\PublicPage;
 use \OCP\AppFramework\Http\ContentSecurityPolicy;
 use \OCP\AppFramework\Http\RedirectResponse;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCP\IRequest;
+use \OCP\IURLGenerator;
+use \OCP\IUserSession;
 
 use \OCA\Grauphel\Auth\Client;
 use \OCA\Grauphel\Auth\Token;
 use \OCA\Grauphel\Auth\OAuth;
-use \OCA\Grauphel\Tools\Dependencies;
 use \OCA\Grauphel\Response\ErrorResponse;
 use \OCA\Grauphel\Response\FormResponse;
 use \OCA\Grauphel\Auth\OAuthException;
+use \OCA\Grauphel\Storage\TokenStorage;
 use \OCA\Grauphel\Tools\UrlHelper;
 
 /**
@@ -42,6 +48,9 @@ use \OCA\Grauphel\Tools\UrlHelper;
 class OauthController extends Controller
 {
     protected $user;
+    protected IURLGenerator $urlGen;
+    protected TokenStorage $tokens;
+    protected OAuth $oauth;
 
     /**
      * constructor of the controller
@@ -49,48 +58,40 @@ class OauthController extends Controller
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
-    public function __construct($appName, \OCP\IRequest $request, $user)
-    {
+    public function __construct(
+        $appName, IRequest $request, IUserSession $userSession,
+        IURLGenerator $urlGen, TokenStorage $tokens, OAuth $oauth
+    ) {
         parent::__construct($appName, $request);
-        $this->user = $user;
-        $this->deps = Dependencies::get();
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
+        $this->user   = $userSession->getUser();
+        $this->urlGen = $urlGen;
+        $this->tokens = $tokens;
+        $this->oauth  = $oauth;
     }
 
     /**
      * Handle out an access token after verifying the verification token
      * OAuth step 3 of 3
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function accessToken()
     {
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        $urlGen = $this->deps->urlGen;
-
         try {
-            $provider = OAuth::getProvider();
-            $oauth->registerHandler($provider)
-                ->registerVerificationTokenHandler($provider);
-            $provider->checkOAuthRequest(
-                $urlGen->getAbsoluteURL(
-                    $urlGen->linkToRoute('grauphel.oauth.accessToken')
+            $token = $this->oauth->checkAccessTokenRequest(
+                $this->urlGen->getAbsoluteURL(
+                    $this->urlGen->linkToRoute('grauphel.oauth.accessToken')
                 )
             );
-
-            $token = $this->deps->tokens->loadAndDelete('verify', $provider->token);
+            $this->tokens->delete('verify', $token->tokenKey);
 
             $newToken = new Token('access');
-            $newToken->tokenKey = 'a' . bin2hex($provider->generateToken(8));
-            $newToken->secret   = 's' . bin2hex($provider->generateToken(8));
+            $newToken->tokenKey = $this->oauth->generateToken('a');
+            $newToken->secret   = $this->oauth->generateToken('s');
             $newToken->user     = $token->user;
             $newToken->client   = $token->client;
-            $this->deps->tokens->store($newToken);
+            $this->tokens->store($newToken);
 
             return new FormResponse(
                 array(
@@ -99,9 +100,7 @@ class OauthController extends Controller
                 )
             );
         } catch (OAuthException $e) {
-            return new ErrorResponse($e->getMessage());
-        } catch (\OAuthException $e) {
-            $oauth->error($e);
+            return $this->oauth->errorResponse($e);
         }
     }
 
@@ -110,10 +109,9 @@ class OauthController extends Controller
      * OAuth step 2 of 3
      *
      * Page is not public and thus requires owncloud login
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function authorize()
     {
         $token = $this->verifyRequestToken();
@@ -122,9 +120,8 @@ class OauthController extends Controller
         }
 
         $clientTitle = 'unknown';
-        $clientAgent = '';
-        if (isset($_GET['client'])) {
-            $clientAgent = $_GET['client'];
+        $clientAgent = (string) $this->request->getParam('client', '');
+        if ($clientAgent != '') {
             $cl = new Client();
             $clientTitle = $cl->getNiceName($clientAgent);
         }
@@ -135,14 +132,19 @@ class OauthController extends Controller
                 'oauth_token' => $token->tokenKey,
                 'clientTitle' => $clientTitle,
                 'clientAgent' => $clientAgent,
-                'formaction'  => $this->deps->urlGen->linkToRoute(
+                'formaction'  => $this->urlGen->linkToRoute(
                     'grauphel.oauth.confirm'
                 ),
             )
         );
 
+        //browsers apply form-action to the redirect after confirm, too
         $csp = new ContentSecurityPolicy();
         $csp->addAllowedFormActionDomain('http://localhost:*');
+        $callbackSource = UrlHelper::getCspSource($token->callback);
+        if ($callbackSource !== null) {
+            $csp->addAllowedFormActionDomain($callbackSource);
+        }
         $res->setContentSecurityPolicy($csp);
 
         return $res;
@@ -151,22 +153,22 @@ class OauthController extends Controller
     /**
      * User confirms or declines the authorization request
      * OAuth step 2.5 of 3
-     *
-     * @NoAdminRequired
      */
+    #[NoAdminRequired]
     public function confirm()
     {
         $token = $this->verifyRequestToken();
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
+        if (!$token instanceof Token) {
+            return $token;
+        }
 
         try {
-            $token = $this->deps->tokens->loadAndDelete('temp', $token->tokenKey);
+            $token = $this->tokens->loadAndDelete('temp', $token->tokenKey);
         } catch (OAuthException $e) {
             return new ErrorResponse($e->getMessage());
         }
 
-        $authState = isset($_POST['auth']) && $_POST['auth'] == 'ok';
+        $authState = $this->request->getParam('auth') == 'ok';
         if ($authState === false) {
             //user declined
 
@@ -184,22 +186,15 @@ class OauthController extends Controller
             return $res;
         }
 
-        $clientAgent = '';
-        if (isset($_POST['client'])) {
-            $clientAgent = $_POST['client'];
-        }
-
         //the user is logged in and authorized
-        $provider = OAuth::getProvider();
-
         $newToken = new Token('verify');
         $newToken->tokenKey = $token->tokenKey;
         $newToken->secret   = $token->secret;
-        $newToken->verifier = 'v' . bin2hex($provider->generateToken(8));
+        $newToken->verifier = $this->oauth->generateToken('v');
         $newToken->user     = $this->user->getUID();
-        $newToken->client   = $clientAgent;
+        $newToken->client   = (string) $this->request->getParam('client', '');
 
-        $this->deps->tokens->store($newToken);
+        $this->tokens->store($newToken);
 
         //redirect
         //FIXME: if no callback is given, show the token to the user
@@ -218,20 +213,17 @@ class OauthController extends Controller
 
     protected function verifyRequestToken()
     {
-        if (!isset($_REQUEST['oauth_token'])) {
+        $reqToken = $this->request->getParam('oauth_token');
+        if ($reqToken === null) {
             return new ErrorResponse('oauth_token missing');
         }
 
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        if (!$oauth->validateToken($_REQUEST['oauth_token'])) {
+        if (!$this->oauth->validateToken($reqToken)) {
             return new ErrorResponse('Invalid token string');
         }
 
-        $reqToken = $_REQUEST['oauth_token'];
-
         try {
-            $token = $this->deps->tokens->load('temp', $reqToken);
+            $token = $this->tokens->load('temp', $reqToken);
         } catch (OAuthException $e) {
             return new ErrorResponse($e->getMessage());
         }
@@ -242,34 +234,26 @@ class OauthController extends Controller
     /**
      * Create and return a request token.
      * OAuth step 1 of 3
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function requestToken()
     {
-        $oauth = new OAuth();
-        $oauth->setDeps($this->deps);
-        $urlGen = $this->deps->urlGen;
-
         try {
-            $provider = OAuth::getProvider();
-            $oauth->registerHandler($provider);
-            $provider->isRequestTokenEndpoint(true);
-            $provider->checkOAuthRequest(
-                $urlGen->getAbsoluteURL(
-                    $urlGen->linkToRoute('grauphel.oauth.requestToken')
+            $callback = $this->oauth->checkRequestTokenRequest(
+                $this->urlGen->getAbsoluteURL(
+                    $this->urlGen->linkToRoute('grauphel.oauth.requestToken')
                 )
             );
 
             //store token + callback URI for later
             $token = new Token('temp');
-            $token->tokenKey = 'r' . bin2hex($provider->generateToken(8));
-            $token->secret   = 's' . bin2hex($provider->generateToken(8));
-            $token->callback = $provider->callback;
+            $token->tokenKey = $this->oauth->generateToken('r');
+            $token->secret   = $this->oauth->generateToken('s');
+            $token->callback = $callback;
 
-            $this->deps->tokens->store($token);
+            $this->tokens->store($token);
 
             return new FormResponse(
                 array(
@@ -279,10 +263,7 @@ class OauthController extends Controller
                 )
             );
         } catch (OAuthException $e) {
-            return new ErrorResponse($e->getMessage());
-        } catch (\OAuthException $e) {
-            $oauth->error($e);
+            return $this->oauth->errorResponse($e);
         }
     }
 }
-?>

@@ -14,7 +14,14 @@
 namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use \OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use \OCP\AppFramework\Http\Attribute\PublicPage;
 use \OCP\AppFramework\Http\TemplateResponse;
+use \OCP\IDateTimeFormatter;
+use \OCP\IURLGenerator;
+use \OCA\Grauphel\Storage\NoteStorage;
+use \OCA\Grauphel\Storage\TokenStorage;
 
 /**
  * Owncloud frontend
@@ -35,40 +42,36 @@ class GuiController extends Controller
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
-    public function __construct($appName, \OCP\IRequest $request, $user, $urlGen)
-    {
-        parent::__construct($appName, $request);
-        $this->user   = $user;
-        $this->urlGen = $urlGen;
+    protected $user;
+    protected IURLGenerator $urlGen;
+    protected IDateTimeFormatter $dateFormatter;
+    protected NoteStorage $notes;
+    protected TokenStorage $tokens;
 
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
+    public function __construct(
+        $appName, \OCP\IRequest $request,
+        \OCP\IUserSession $userSession, IURLGenerator $urlGen,
+        IDateTimeFormatter $dateFormatter,
+        NoteStorage $notes, TokenStorage $tokens
+    ) {
+        parent::__construct($appName, $request);
+        $this->user            = $userSession->getUser();
+        $this->urlGen          = $urlGen;
+        $this->dateFormatter   = $dateFormatter;
+        $this->notes           = $notes;
+        $this->tokens          = $tokens;
     }
 
     /**
      * Main page /
      *
      * Tomdroid wants this to be a public page. Sync fails otherwise.
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     * @PublicPage
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
+    #[PublicPage]
     public function index()
     {
-        try {
-            $this->checkDeps();
-        } catch (\Exception $e) {
-            $res = new TemplateResponse('grauphel', 'error');
-            $res->setParams(
-                array(
-                    'message' => $e->getMessage(),
-                    'code' => $e->getCode(),
-                )
-            );
-            return $res;
-        }
-
         $res = new TemplateResponse('grauphel', 'index');
         $res->setParams(
             array(
@@ -83,10 +86,9 @@ class GuiController extends Controller
 
     /**
      * Show contents of a note
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function note($guid)
     {
         $res = new TemplateResponse('grauphel', 'gui-note');
@@ -108,8 +110,8 @@ class GuiController extends Controller
                 . '<p>There was an error converting the note to HTML:</p>'
                 . '<blockquote><tt>' . htmlspecialchars($e->getMessage()) . '</tt></blockquote>'
                 . '<p>Please open a bug report at'
-                . ' <a class="lined" href="http://github.com/cweiske/grauphel/issues">'
-                . 'github.com/cweiske/grauphel/issues</a>'
+                . ' <a class="lined" href="https://github.com/grosjo/nextcloud-grauphel/issues">'
+                . 'github.com/grosjo/nextcloud-grauphel/issues</a>'
                 . ' and attach the XML version of the note.'
                 . '</div>';
         }
@@ -124,7 +126,7 @@ class GuiController extends Controller
                     ),
                     'json' => $this->urlGen->linkToRoute(
                         'grauphel.api.note', array(
-                            'guid' => $guid, 'username' => $this->user->getUid()
+                            'guid' => $guid, 'username' => $this->user->getUID()
                         )
                     ),
                     'text' => $this->urlGen->linkToRoute(
@@ -160,20 +162,15 @@ class GuiController extends Controller
 
     /**
      * Show all notes of a tag
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function tag($rawtag)
     {
         $rawtag = $this->unescapeTagFromUrl($rawtag);
         $notes = $this->getNotes()->loadNotesOverview(null, $rawtag, true);
 
-        if (!isset($_GET['sortby'])) {
-            $_GET['sortby'] = 'title';
-        }
-
-        switch ($_GET['sortby']) {
+        switch ($this->request->getParam('sortby', 'title')) {
         case 'title':
             usort(
                 $notes,
@@ -223,21 +220,19 @@ class GuiController extends Controller
 
     /**
      * Show access tokens
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function tokens()
     {
-        $tokens = new \OCA\Grauphel\Storage\TokenStorage();
         $res = new TemplateResponse('grauphel', 'tokens');
         $res->setParams(
             array(
-                'tokens' => $tokens->loadForUser(
-                    $this->user->getUid(), 'access'
+                'tokens' => $this->tokens->loadForUser(
+                    $this->user->getUID(), 'access'
                 ),
                 'client' => new \OCA\Grauphel\Auth\Client(),
-                'username' => $this->user->getUid(),
+                'username' => $this->user->getUID(),
             )
         );
         $this->addGlobalVars($res);
@@ -248,14 +243,14 @@ class GuiController extends Controller
 
     /**
      * Allow the user to clear his database
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function database($reset = null)
     {
         $res = new TemplateResponse('grauphel', 'gui-database');
         $res->setParams(array('reset' => $reset));
+        $this->addGlobalVars($res);
         $this->addNavigation($res, null);
         $this->addStats($res);
 
@@ -265,13 +260,13 @@ class GuiController extends Controller
     /**
      * Resets the database by deleting all notes and deleting the user's
      * sync data.
-     *
-     * @NoAdminRequired
      */
+    #[NoAdminRequired]
     public function databaseReset()
     {
         $reset = false;
-        if ($_POST['username'] != '' && $_POST['username'] == $this->user->getUid()) {
+        $username = (string) $this->request->getParam('username', '');
+        if ($username != '' && $username == $this->user->getUID()) {
             $notes = $this->getNotes();
             $notes->deleteAll();
             $notes->deleteSyncData();
@@ -289,48 +284,49 @@ class GuiController extends Controller
     protected function addGlobalVars(TemplateResponse $res)
     {
         $params = $res->getParams();
-        $params['date']   = \OC::$server->getDateTimeFormatter();
-        $params['urlGen'] = \OC::$server->getURLGenerator();
+        $params['date']   = $this->dateFormatter;
+        $params['urlGen'] = $this->urlGen;
         $res->setParams($params);
     }
 
     protected function addNavigation(TemplateResponse $res, $selectedRawtag = null)
     {
-        $nav = new \OCP\Template('grauphel', 'appnavigation', '');
-        $nav->assign('apiroot', $this->getApiRootUrl());
-        $nav->assign('tags', array());
-
-        $params = $res->getParams();
-        $params['appNavigation'] = $nav;
-        $res->setParams($params);
-
-        if ($this->user === null) {
-            return;
-        }
-
-        $rawtags = $this->getNotes()->getTags();
-        sort($rawtags);
-        array_unshift(
-            $rawtags,
-            'grauphel:special:all', 'grauphel:special:untagged'
-        );
-
         $tags = array();
-        foreach ($rawtags as $rawtag) {
-            $name = $this->getPrettyTagName($rawtag);
-            if ($name !== false) {
-                $tags[] = array(
-                    'name' => $name,
-                    'id'   => $rawtag,
-                    'href' => $this->urlGen->linkToRoute(
-                        'grauphel.gui.tag',
-                        array('rawtag' => $this->escapeTagForUrl($rawtag))
-                    ),
-                    'selected' => $rawtag == $selectedRawtag,
-                );
+        if ($this->user !== null) {
+            $rawtags = $this->getNotes()->getTags();
+            sort($rawtags);
+            array_unshift(
+                $rawtags,
+                'grauphel:special:all', 'grauphel:special:untagged'
+            );
+
+            foreach ($rawtags as $rawtag) {
+                $name = $this->getPrettyTagName($rawtag);
+                if ($name !== false) {
+                    $tags[] = array(
+                        'name' => $name,
+                        'id'   => $rawtag,
+                        'href' => $this->urlGen->linkToRoute(
+                            'grauphel.gui.tag',
+                            array('rawtag' => $this->escapeTagForUrl($rawtag))
+                        ),
+                        'selected' => $rawtag == $selectedRawtag,
+                    );
+                }
             }
         }
-        $nav->assign('tags', $tags);
+
+        $params = $res->getParams();
+        $params['appNavigation'] = $this->renderPart(
+            'appnavigation',
+            array(
+                'apiroot'  => $this->getApiRootUrl(),
+                'tags'     => $tags,
+                'urlGen'   => $this->urlGen,
+                'loggedIn' => $this->user !== null,
+            )
+        );
+        $res->setParams($params);
     }
 
     protected function addStats(TemplateResponse $res)
@@ -339,25 +335,35 @@ class GuiController extends Controller
             return;
         }
 
-        $username = $this->user->getUid();
+        $username = $this->user->getUID();
         $notes  = $this->getNotes();
-        $tokens = new \OCA\Grauphel\Storage\TokenStorage();
-
-        $nav = new \OCP\Template('grauphel', 'indexStats', '');
-        $nav->assign('notes', count($notes->loadNotesOverview()));
-        $nav->assign('syncrev', $notes->loadSyncData()->latestSyncRevision);
-        $nav->assign('tokens', count($tokens->loadForUser($username, 'access')));
-
         $params = $res->getParams();
-        $params['stats'] = $nav;
+        $params['stats'] = $this->renderPart(
+            'indexStats',
+            array(
+                'urlGen'  => $this->urlGen,
+                'notes'   => count($notes->loadNotesOverview()),
+                'syncrev' => $notes->loadSyncData()->latestSyncRevision,
+                'tokens'  => count($this->tokens->loadForUser($username, 'access')),
+            )
+        );
         $res->setParams($params);
     }
 
-    protected function checkDeps()
+    /**
+     * Render a partial template into a HTML string
+     *
+     * @param string $name   Template name
+     * @param array  $params Template variables
+     *
+     * @return string HTML
+     */
+    protected function renderPart($name, $params)
     {
-        if (!class_exists('OAuthProvider')) {
-            throw new \Exception('PHP extension "oauth" is required', 1001);
-        }
+        $part = new TemplateResponse(
+            'grauphel', $name, $params, TemplateResponse::RENDER_AS_BLANK
+        );
+        return $part->render();
     }
 
     protected function getApiRootUrl()
@@ -373,10 +379,8 @@ class GuiController extends Controller
 
     protected function getNotes()
     {
-        $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Storage\NoteStorage($this->urlGen);
-        $notes->setUsername($username);
-        return $notes;
+        $this->notes->setUsername($this->user->getUID());
+        return $this->notes;
     }
 
     protected function getPrettyTagName($rawtag)
@@ -399,4 +403,3 @@ class GuiController extends Controller
         return str_replace('%2F', '/', $rawtag);
     }
 }
-?>

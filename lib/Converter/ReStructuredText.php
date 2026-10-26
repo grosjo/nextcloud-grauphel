@@ -168,7 +168,7 @@ class ReStructuredText extends Base
      */
     protected function fixLinkUrl($linkUrl)
     {
-        if ($linkUrl{0} == '/') {
+        if (substr($linkUrl, 0, 1) == '/') {
             //Unix file path
             $linkUrl = 'file://' . $linkUrl;
         }
@@ -187,4 +187,3 @@ class ReStructuredText extends Base
         return $linkUrl . '.htm';
     }
 }
-?>

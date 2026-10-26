@@ -37,5 +37,37 @@ class UrlHelper
         $sep = (strpos($url, '?') !== false) ? '&' : '?';
         return $url . $sep . implode('&', $parts);
     }
+
+    /**
+     * Get the CSP source expression that matches the given URL:
+     * "scheme://host:port" for http(s), "scheme:" for app schemes
+     * like tomdroid://sync
+     *
+     * @param string $url Full URL
+     *
+     * @return string|null NULL when the URL has no usable scheme
+     */
+    public static function getCspSource($url)
+    {
+        $parts = parse_url($url);
+        if ($parts === false || !isset($parts['scheme'])
+            || !preg_match('#^[a-z][a-z0-9+.-]*$#i', $parts['scheme'])
+        ) {
+            return null;
+        }
+        $scheme = strtolower($parts['scheme']);
+        if (in_array($scheme, array('javascript', 'data', 'vbscript', 'blob', 'filesystem'))) {
+            return null;
+        }
+        if ($scheme != 'http' && $scheme != 'https') {
+            return $scheme . ':';
+        }
+        if (!isset($parts['host'])
+            || !preg_match('#^[a-z0-9.-]+$#i', $parts['host'])
+        ) {
+            return null;
+        }
+        return $scheme . '://' . $parts['host']
+            . (isset($parts['port']) ? ':' . $parts['port'] : '');
+    }
 }
-?>

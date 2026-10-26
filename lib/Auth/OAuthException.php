@@ -26,5 +26,26 @@ namespace OCA\Grauphel\Auth;
  */
 class OAuthException extends \Exception
 {
+    /**
+     * Problem names from the OAuth problem reporting extension
+     *
+     * @link https://wiki.oauth.net/w/page/12238543/ProblemReporting
+     */
+    public const PARAMETER_ABSENT          = 'parameter_absent';
+    public const SIGNATURE_INVALID         = 'signature_invalid';
+    public const SIGNATURE_METHOD_REJECTED = 'signature_method_rejected';
+    public const TOKEN_REJECTED            = 'token_rejected';
+    public const VERIFIER_INVALID          = 'verifier_invalid';
+    public const VERSION_REJECTED          = 'version_rejected';
+
+    /**
+     * @var string One of the problem constants
+     */
+    public $problem;
+
+    public function __construct($message, $problem = self::TOKEN_REJECTED)
+    {
+        parent::__construct($message);
+        $this->problem = $problem;
+    }
 }
-?>

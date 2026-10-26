@@ -88,4 +88,3 @@ class Token
         $this->type = $type;
     }
 }
-?>

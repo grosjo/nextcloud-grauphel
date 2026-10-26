@@ -40,4 +40,3 @@ class TextResponse extends \OCP\AppFramework\Http\Response
         return $this->text;
     }
 }
-?>

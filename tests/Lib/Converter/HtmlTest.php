@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../../lib/converter/base.php';
-require_once __DIR__ . '/../../../lib/converter/html.php';
+require_once __DIR__ . '/../../../lib/Converter/Base.php';
+require_once __DIR__ . '/../../../lib/Converter/Html.php';
 
 class Lib_Converter_HtmlTest extends \PHPUnit\Framework\TestCase
 {

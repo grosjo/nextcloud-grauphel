@@ -2,10 +2,10 @@
 <?php script('grauphel', 'grauphel'); ?>
 
 <?php /** @var $l OC_L10N */ ?>
-<?php $_['appNavigation']->printPage(); ?>
+<?php print_unescaped($_['appNavigation']); ?>
 
 <div id="app-content" class="list">
-  <div id="searchresults" class="hidden"></div>
+  <div id="grauphel-notification" role="status" hidden></div>
   <h1>Manage access tokens</h1>
   <p>
     Here you see which applications have access to the notes.
@@ -27,12 +27,13 @@
        <td title="<?php p($token->client); ?>"><?php p($_['client']->getNiceName($token->client)); ?></td>
        <td>
         <?php p($_['date']->formatDate($token->lastuse)); ?>
-        <form method="POST" action="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.token.delete', array('username' => $_['username'], 'tokenKey' => $token->tokenKey))); ?>">
+        <form method="POST" action="<?php p($_['urlGen']->linkToRoute('grauphel.token.delete', array('username' => $_['username'], 'tokenKey' => $token->tokenKey))); ?>">
            <input type="hidden" name="delete" value="1" />
+           <input type="hidden" name="requesttoken" value="<?php p($_['requesttoken']); ?>" />
            <button type="submit" class="icon-delete delete action"
-                   original-title="Delete"
+                   title="Delete"
                    data-token="token-<?php p($token->tokenKey); ?>"
-           />
+           ></button>
         </form>
        </td>
       </tr>

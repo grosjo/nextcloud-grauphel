@@ -1,3 +1,7 @@
 README.html
 /dist/
 /docs/*.html
+/.claude/
+/build/
+/vendor/
+/tests/.phpunit.cache/

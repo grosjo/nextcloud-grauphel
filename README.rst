@@ -81,12 +81,13 @@ Search syntax:
 
 
 ============
-Dependencies
+Requirements
 ============
-* PHP
-* PHP `oauth extension`__
+* Nextcloud 30 to 34
+* PHP 8.1 or later (Nextcloud 34 needs PHP 8.2 or later)
 
-__ http://pecl.php.net/package/oauth
+Since version 1.1.0 the PHP PECL ``oauth`` extension is no longer needed;
+grauphel implements OAuth 1.0a itself.
 
 
 ============
@@ -99,49 +100,41 @@ Installation
 
 App store installation
 ======================
-#. Log into nextcloud as administrator
-#. Goto "Apps"
-#. Enable experimental apps in the settings
-#. Click "Productivity"
-#. Look for "grauphel - Tomboy sync server"
-#. Click "Activate"
+#. Log into Nextcloud as administrator
+#. Go to "Apps"
+#. Click "Organization"
+#. Look for "Grauphel: Tomboy note server"
+#. Click "Download and enable"
 
 
 Manual installation
 ===================
 
-#. SSH onto your web server
-#. Navigate to the nextcloud ``apps`` directory, often in ``/var/www/nextcloud/apps``
-#. Download the latest release from https://github.com/grosjo/nextcloud-grauphel/releases/
-   and extract it.
-   For example::
+#. Download the latest release archive from
+   https://github.com/grosjo/nextcloud-grauphel/releases/
+#. Extract it into the ``apps`` (or ``custom_apps``) directory of your
+   Nextcloud, for example::
 
-     $ wget https://github.com/grosjo/fts-xapian/archive/refs/tags/1.0.0.tar.gz -O grauphel-1.0.0.tar.gz
-     $ tar xjvf grauphel-1.0.0.tar.gz
-     $ rm grauphel-1.0.0.tar.gz
+     $ cd /var/www/nextcloud/apps
+     $ tar xzf ~/grauphel-1.1.0.tar.gz
 
-   You do have a directory ``/var/www/nextcloud/apps/grauphel`` now.
-#. Using your browser, login as administrator into nextCloud and click
-   the "Apps" icon in the main menu ("+" icon).
-#. Click on "Grauphel: Tomboy note server" and then on the "Enable" button.
+   You have a directory ``/var/www/nextcloud/apps/grauphel`` now.
+#. Enable the app in the web interface ("Apps" > "Disabled apps")
+   or on the command line::
+
+     $ sudo -u www-data php occ app:enable grauphel
+
 #. In the main menu, click the "Tomboy notes" icon.
 
-It may be that grauphel now shows you an error message::
 
-  PHP extension "oauth" is required
-
-You have to install the PHP PECL oauth extension now.
-On Debian 9 or higher, do the following::
-
-  $ apt install php-oauth
-  $ phpenmod oauth
-  $ /etc/init.d/apache2 restart
-
-Reload the nextCloud page in your browser now.
-
-.. note::
-   ``oauth-1.2.3`` is only needed on PHP 5.x
-   For PHP 7 simply use ``pecl install oauth``.
+Upgrading from 1.0.x
+====================
+Notes, sync state and access tokens are kept; clients do not need to be
+authorized again.
+The upgrade adds database indexes, which may take a moment on large
+installations.
+The PECL ``oauth`` extension can be removed afterwards if no other
+application needs it.
 
 
 ========
@@ -179,24 +172,46 @@ Development hints
 =================
 * JSON coming from Tomboy: Title is html-escaped already
   (e.g. ``>`` is ``&gt;``).
-  We store it that way in the database, so there is no need to escape the
-  output.
+  We store it that way in the database and decode it before output.
 * ``latest-sync-revision`` sent from Tomboy during PUT sync is already
   incremented by 1.
 
-#. Validate ``appinfo/info.xml``::
 
-     $ xmllint --noout --schema tools/info.xsd appinfo/info.xml
+Tests
+=====
+Install the development dependencies and run the checks::
 
-#. Validate ``appinfo/database.xml``::
+  $ composer install
+  $ make lint psalm test
 
-     $ xmllint --noout --schema tools/database.xsd appinfo/database.xml
+``make test`` needs ``xsltproc``.
 
-#. Fill the ``ChangeLog`` file with the changes since the last release,
-   mention the new version number.
-#. Update ``README.rst`` and increase the version number
-#. Create the grauphel release file with::
+The integration test runs the complete OAuth flow and a sync against a
+running Nextcloud with two users.
+It needs the PECL ``oauth`` extension *for the test client only*::
 
-     $ phing
+  $ php -d extension=oauth.so tests/integration/oauth-sync.php \
+      http://localhost:8080/index.php/apps/grauphel \
+      admin:password bob:password
 
-   The file will be in ``dist/``
+GitHub Actions run all of these, the integration test against
+Nextcloud 30 to 34 with SQLite, MariaDB and PostgreSQL.
+
+
+Releasing
+=========
+#. Add the changes to ``news/CHANGELOG.md``.
+#. Increase ``<version>`` in ``appinfo/info.xml``.
+   Database changes need a new class in ``lib/Migration/``;
+   it only runs when the version number increases.
+#. Create the release archive::
+
+     $ make appstore
+
+   The file is ``build/artifacts/grauphel-VERSION.tar.gz``.
+   If ``~/.nextcloud/certificates/grauphel.key`` and ``.crt`` exist and the
+   app lies inside a Nextcloud server checkout, the code gets signed, too.
+#. Tag the release in git and attach the archive to a GitHub release.
+#. Upload to the App Store: create the signature with ``make sign``
+   and paste it together with the download URL of the archive at
+   https://apps.nextcloud.com/developer/apps/releases/new

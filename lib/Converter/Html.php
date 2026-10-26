@@ -185,4 +185,3 @@ class Html extends Base
         return $linkUrl . '.htm';
     }
 }
-?>

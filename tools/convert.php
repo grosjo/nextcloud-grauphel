@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
-require 'lib/converter/base.php';
-require 'lib/converter/restructuredtext.php';
+require __DIR__ . '/../lib/Converter/Base.php';
+require __DIR__ . '/../lib/Converter/ReStructuredText.php';
 
 if ($argc != 2) {
     echo "Tomboy note file name missing\n";

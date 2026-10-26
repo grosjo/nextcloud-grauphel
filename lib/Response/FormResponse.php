@@ -17,4 +17,3 @@ class FormResponse extends \OCP\AppFramework\Http\Response
         return http_build_query($this->data, "", '&');
     }
 }
-?>

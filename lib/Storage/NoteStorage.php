@@ -34,10 +34,11 @@ class NoteStorage
     protected $urlGen;
     protected $username;
 
-    public function __construct($urlGen)
-    {
+    public function __construct(
+        \OCP\IDBConnection $db, \OCP\IURLGenerator $urlGen
+    ) {
         $this->urlGen = $urlGen;
-        $this->db     = \OC::$server->getDatabaseConnection();
+        $this->db     = $db;
     }
 
     public function setUsername($username)
@@ -201,7 +202,7 @@ class NoteStorage
             $params = array_values($data);
             $params[] = $this->username;
         }
-        $this->db->executeQuery($sql, $params);
+        $this->db->executeStatement($sql, $params);
     }
 
     /**
@@ -213,7 +214,7 @@ class NoteStorage
      */
     public function deleteSyncData()
     {
-        $this->db->executeQuery(
+        $this->db->executeStatement(
             'DELETE FROM `*PREFIX*grauphel_syncdata`'
             . ' WHERE `syncdata_user` = ?',
             array($this->username)
@@ -226,7 +227,7 @@ class NoteStorage
      * @param string  $guid      Note identifier
      * @param boolean $createNew Create a new note if it does not exist
      *
-     * @return object Note object, NULL if !$createNew and note does not exist
+     * @return object|null Note object, NULL if !$createNew and note does not exist
      */
     public function load($guid, $createNew = true)
     {
@@ -277,7 +278,7 @@ class NoteStorage
      *
      * @param string $title Note title.
      *
-     * @return string GUID, NULL if note could not be found
+     * @return string|null GUID, NULL if note could not be found
      */
     public function loadGuidByTitle($title)
     {
@@ -372,7 +373,7 @@ class NoteStorage
             $params[] = $this->username;
             $params[] = $note->guid;
         }
-        $this->db->executeQuery($sql, $params);
+        $this->db->executeStatement($sql, $params);
     }
 
     /**
@@ -384,7 +385,7 @@ class NoteStorage
      */
     public function delete($guid)
     {
-        $this->db->executeQuery(
+        $this->db->executeStatement(
             'DELETE FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ? AND `note_guid` = ?',
             array($this->username, $guid)
@@ -398,7 +399,7 @@ class NoteStorage
      */
     public function deleteAll()
     {
-        $this->db->executeQuery(
+        $this->db->executeStatement(
             'DELETE FROM `*PREFIX*grauphel_notes`'
             . ' WHERE `note_user` = ?',
             array($this->username)
@@ -575,4 +576,3 @@ class NoteStorage
         );
     }
 }
-?>

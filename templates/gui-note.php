@@ -1,17 +1,16 @@
 <?php style('grauphel', 'grauphel'); ?>
 
 <?php /** @var $l OC_L10N */ ?>
-<?php $_['appNavigation']->printPage(); ?>
+<?php print_unescaped($_['appNavigation']); ?>
 
 <div id="app-content" class="content">
- <div id="searchresults" class="hidden"></div>
  <div class="actions">
   <a class="button" href="<?php echo p($_['links']['html']); ?>">HTML</a>
   <a class="button" href="<?php echo p($_['links']['text']); ?>">Text</a>
   <a class="button" href="<?php echo p($_['links']['json']); ?>">JSON</a>
   <a class="button" href="<?php echo p($_['links']['xml']); ?>">XML</a>
  </div>
- <h1><?php echo ($_['note']->title); ?></h1>
+ <h1><?php p(htmlspecialchars_decode($_['note']->title, ENT_QUOTES | ENT_HTML5)); ?></h1>
  <p class="muted">
   Last modified:
   <?php p($_['date']->formatDate(strtotime($_['note']->{'last-change-date'}))); ?>

@@ -1,0 +1,71 @@
+name: Lint and static analysis
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3', '8.4', '8.5']
+    name: php -l (PHP ${{ matrix.php }})
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: none
+      - run: find lib appinfo templates tests -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  app-checks:
+    runs-on: ubuntu-latest
+    name: info.xml, JS, PECL guard
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate appinfo/info.xml
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq libxml2-utils
+          curl -sSfLo /tmp/info.xsd https://apps.nextcloud.com/schema/apps/info.xsd
+          xmllint --noout --schema /tmp/info.xsd appinfo/info.xml
+      - name: JS syntax
+        run: node --check js/grauphel.js
+      - name: The app must not depend on the PECL oauth extension
+        run: |
+          if grep -rnE 'OAuthProvider|\bOAUTH_[A-Z_]+' lib; then
+            echo "::error::lib/ uses the PECL oauth extension"
+            exit 1
+          fi
+
+  psalm:
+    runs-on: ubuntu-latest
+    name: Psalm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+      - run: composer install --no-interaction --no-progress
+      - run: composer psalm -- --no-progress --output-format=github
+
+  unit:
+    runs-on: ubuntu-latest
+    name: PHPUnit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq xsltproc
+      - run: composer install --no-interaction --no-progress
+      - run: composer test:unit

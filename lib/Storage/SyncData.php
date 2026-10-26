@@ -59,4 +59,3 @@ class SyncData
         $this->currentSyncGuid    = uniqid($username . '-', true);
     }
 }
-?>

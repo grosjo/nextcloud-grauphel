@@ -15,7 +15,7 @@ Tomboy__ is a desktop application for note taking.
 __ https://wiki.gnome.org/Apps/Tomboy
 
 #. Start the browser
-#. Log into ownCloud and open the "Tomboy notes" app
+#. Log into Nextcloud and open the "Tomboy notes" app
 #. Select and copy the "sync server URL" that is shown
 #. Start Tomboy
 #. Open the preferences, tab "Synchronization"
@@ -39,7 +39,7 @@ __ https://launchpad.net/tomdroid
 
 
 #. Start the browser
-#. Log into ownCloud and open the "Tomboy notes" app
+#. Log into Nextcloud and open the "Tomboy notes" app
 #. Select and copy the "sync server URL" that is shown
 #. Start Tomdroid
 #. Open the menu -> "Settings"

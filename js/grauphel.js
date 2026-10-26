@@ -4,10 +4,10 @@
  * Single action:
  * 1. User clicks "delete"
  * 2. Notification appears for 5 seconds
- * 3. Token row is faded out
+ * 3. Token row is hidden
  * 4a User clicks on notification:
  *    - Action is cancelled
- *    - Token row is faded in
+ *    - Token row is shown again
  * 4b User does not click on notification:
  *    - Action gets executed 5 seconds after the delete click
  *    - Token row gets removed
@@ -23,104 +23,103 @@
  *    - Action 1 gets executed 5 seconds after the first click
  *    - Action 2 gets executed 5 seconds after the second click
  */
-OC.grauphel = {
+var grauphel = {
+    timeout: 5,
+
+    //pending undo tasks, keyed by timer id
+    tasks: {},
+
+    guiTimer: null,
+
+    notifier: function() {
+        return document.getElementById('grauphel-notification');
+    },
+
     simpleUndo: function(undoTask) {
-        var notifier = $('#notification');
-        var timeout = 5;
-        notifier.off('click');
-        notifier.text('Token has been deleted. Click to undo.');
-        notifier.fadeIn();
+        var notifier = grauphel.notifier();
+        notifier.textContent = 'Token has been deleted. Click to undo.';
+        notifier.onclick = function() {
+            for (var id in grauphel.tasks) {
+                clearTimeout(parseInt(id));
+                grauphel.restore(grauphel.tasks[id]);
+                delete grauphel.tasks[id];
+            }
+        };
+        notifier.hidden = false;
 
-        $('#' + undoTask.elementId).fadeOut();
+        document.getElementById(undoTask.elementId).hidden = true;
 
-        OC.grauphel.startGuiTimer(timeout, notifier);
+        grauphel.startGuiTimer();
         var timer = setTimeout(
             function() {
-                var dataid = timer.toString();
-                OC.grauphel.executeTask(notifier.data(dataid), true);
-                notifier.removeData(dataid);
+                grauphel.executeTask(grauphel.tasks[timer], false);
+                delete grauphel.tasks[timer];
             },
-            timeout * 1000
+            grauphel.timeout * 1000
         );
-        var dataid = timer.toString();
-        notifier.data(dataid, undoTask);
+        grauphel.tasks[timer] = undoTask;
+    },
 
-        notifier.on('click', function() {
-            for (var id in notifier.data()) {
-                clearTimeout(parseInt(id));
-                notifier.off('click');
-                OC.grauphel.restore(notifier.data(id));
-                notifier.removeData(id);
+    executeTask: function(task, keepalive) {
+        fetch(task.url, {
+            method: task.method,
+            headers: {requesttoken: document.head.dataset.requesttoken},
+            keepalive: keepalive
+        }).then(function() {
+            var row = document.getElementById(task.elementId);
+            if (row) {
+                row.remove();
             }
         });
     },
 
-    executeTask: function(task, async) {
-        //console.log("execute task: ", task);
-        jQuery.ajax({
-            url:   task.url,
-            type:  task.method,
-            async: async
-        });
-    },
-
     restore: function(undoTask) {
-        $('#' + undoTask.elementId).fadeIn();
+        document.getElementById(undoTask.elementId).hidden = false;
 
-        var notifier = $('#notification');
-        var timeout = 5;
-        notifier.off('click');
-        notifier.text('Token has been restored.');
-
-        OC.grauphel.startGuiTimer(timeout, notifier);
-        notifier.on('click', function() {
-            clearTimeout(OC.grauphel.guiTimer);
-            notifier.fadeOut();
-        });
+        var notifier = grauphel.notifier();
+        notifier.textContent = 'Token has been restored.';
+        notifier.onclick = function() {
+            clearTimeout(grauphel.guiTimer);
+            notifier.hidden = true;
+        };
+        grauphel.startGuiTimer();
     },
 
     executeAllTasks: function() {
-        var notifier = $('#notification');
-        for (var id in notifier.data()) {
+        for (var id in grauphel.tasks) {
             clearTimeout(parseInt(id));
-            OC.grauphel.executeTask(notifier.data(id), false);
-            notifier.removeData(id);
+            grauphel.executeTask(grauphel.tasks[id], true);
+            delete grauphel.tasks[id];
         }
     },
 
-    guiTimer: null,
-
-    startGuiTimer: function(timeout, notifier) {
-        if (OC.grauphel.guiTimer !== null) {
-            clearTimeout(OC.grauphel.guiTimer);
+    startGuiTimer: function() {
+        if (grauphel.guiTimer !== null) {
+            clearTimeout(grauphel.guiTimer);
         }
-        OC.grauphel.guiTimer = setTimeout(
+        grauphel.guiTimer = setTimeout(
             function() {
-                notifier.fadeOut();
-                notifier.off('click');
+                var notifier = grauphel.notifier();
+                notifier.hidden = true;
+                notifier.onclick = null;
             },
-            timeout * 1000
+            grauphel.timeout * 1000
         );
     }
 };
 
-$(document).ready(function() {
-    $('#grauphel-tokens .delete').click(
-        function (event) {
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#grauphel-tokens .delete').forEach(function(button) {
+        button.addEventListener('click', function(event) {
             event.preventDefault();
-
-            var undoTask = {
+            grauphel.simpleUndo({
                 'method': 'DELETE',
-                'url': $(this).parent('form').attr('action'),
-                'elementId': $(this).data('token')
-            };
-            OC.grauphel.simpleUndo(undoTask);
-            return false;
-        }
-    );
+                'url': button.closest('form').getAttribute('action'),
+                'elementId': button.dataset.token
+            });
+        });
+    });
 
     //in case a user deletes tokens and leaves the page within the 5 seconds
-    window.onbeforeunload = function(e) {
-        OC.grauphel.executeAllTasks();
-    };
+    window.addEventListener('pagehide', grauphel.executeAllTasks);
 });

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../lib/search/queryparser.php';
+require_once __DIR__ . '/../../../lib/Search/QueryParser.php';
 
 use OCA\Grauphel\Search\Queryparser;
 

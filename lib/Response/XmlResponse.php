@@ -40,4 +40,3 @@ class XmlResponse extends \OCP\AppFramework\Http\Response
         return $this->xml;
     }
 }
-?>

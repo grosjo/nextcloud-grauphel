@@ -1,0 +1,97 @@
+name: Integration
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  schedule:
+    # weekly, to notice breakage by new Nextcloud releases
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  oauth-sync:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        server: ['stable30', 'stable31', 'stable32', 'stable33', 'stable34']
+        database: ['sqlite', 'mysql', 'pgsql']
+    name: ${{ matrix.server }} / ${{ matrix.database }}
+
+    services:
+      mysql:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: rootpassword
+        ports: ['3306:3306']
+        options: --health-cmd="healthcheck.sh --connect" --health-interval=5s --health-retries=10
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: rootpassword
+          POSTGRES_DB: nextcloud
+        ports: ['5432:5432']
+        options: --health-cmd=pg_isready --health-interval=5s --health-retries=10
+
+    steps:
+      - name: Checkout Nextcloud server
+        uses: actions/checkout@v4
+        with:
+          repository: nextcloud/server
+          ref: ${{ matrix.server }}
+          submodules: true
+          path: server
+
+      - name: Checkout app
+        uses: actions/checkout@v4
+        with:
+          path: server/apps/grauphel
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: none
+          # oauth is only used by the test client, see the "guard" job in lint.yml
+          extensions: ctype, curl, dom, fileinfo, gd, intl, mbstring, openssl, pdo_mysql, pdo_pgsql, pdo_sqlite, posix, sqlite3, xml, zip, oauth
+
+      - name: Install Nextcloud
+        working-directory: server
+        run: |
+          case "${{ matrix.database }}" in
+            sqlite) DBARGS="--database=sqlite" ;;
+            mysql)  DBARGS="--database=mysql --database-host=127.0.0.1 --database-port=3306 --database-user=root --database-pass=rootpassword" ;;
+            pgsql)  DBARGS="--database=pgsql --database-host=127.0.0.1 --database-port=5432 --database-user=postgres --database-pass=rootpassword" ;;
+          esac
+          php occ maintenance:install --verbose $DBARGS --database-name=nextcloud \
+            --admin-user=admin --admin-pass=admin-test-pw
+          php occ config:system:set trusted_domains 1 --value=localhost:8080
+          php occ config:system:set loglevel --value=2 --type=integer
+          php occ app:enable --force grauphel
+          OC_PASS=bob-test-pw php occ user:add --password-from-env bob
+
+      - name: Run integration test
+        working-directory: server
+        run: |
+          php -S localhost:8080 >/tmp/php-server.log 2>&1 &
+          for i in $(seq 1 30); do curl -s -o /dev/null http://localhost:8080/status.php && break; sleep 1; done
+          php apps/grauphel/tests/integration/oauth-sync.php \
+            http://localhost:8080/index.php/apps/grauphel \
+            admin:admin-test-pw bob:bob-test-pw
+
+      - name: Fail on errors in the Nextcloud log
+        working-directory: server
+        run: |
+          if [ -f data/nextcloud.log ] && grep -E '"level":[34]' data/nextcloud.log; then
+            exit 1
+          fi
+
+      - name: Show logs
+        if: failure()
+        working-directory: server
+        run: |
+          cat data/nextcloud.log || true
+          cat /tmp/php-server.log || true

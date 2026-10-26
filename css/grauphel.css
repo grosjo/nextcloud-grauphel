@@ -37,7 +37,7 @@
 }
 .app-grauphel #app-content pre {
     margin: 1em;
-    background-color: #DDD;
+    background-color: var(--color-background-dark);
     padding: 1ex;
     font-family: monospace;
 }
@@ -57,26 +57,26 @@
 }
 
 .app-grauphel #app-content .error {
-    color: red;
+    color: var(--color-error);
 }
 .app-grauphel #app-content .success {
-    color: green;
+    color: var(--color-success);
 }
 .app-grauphel #app-content .error a {
-    color: red !important;
+    color: var(--color-error) !important;
 }
 
 .app-grauphel #app-content .actions {
     float: right;
 }
 .app-grauphel #app-content .actions a {
-    color: #555;
+    color: var(--color-main-text);
     padding: 14px 10px;
     position: relative;
     top: 7px;
     min-width: 25px;
     padding: 5px;
-    background-color: rgba(240,240,240,.9);
+    background-color: var(--color-background-dark);
 }
 
 .app-grauphel .oauth-authorize {
@@ -116,7 +116,6 @@ table.table {
 	min-width: 688px; /* 768 (mobile break) - 80 (nav width) */
 }
 
-table.table tbody tr { background-color:#fff; height:51px; }
 
 /* fit app list view heights */
 /*
@@ -124,26 +123,26 @@ table.table tbody tr { background-color:#fff; height:51px; }
 	min-height: 100%;
 }*/
 
-table.table tbody tr { background-color:#fff; height:40px; }
+table.table tbody tr { background-color: var(--color-main-background); height:40px; }
 table.table tbody tr:hover, tbody tr:active {
-	background-color: rgb(240,240,240);
+	background-color: var(--color-background-hover);
 }
 table.table tbody tr.selected {
-	background-color: rgb(230,230,230);
+	background-color: var(--color-primary-element-light);
 }
 table.table tbody tr.searchresult {
-	background-color: rgb(240,240,240);
+	background-color: var(--color-background-hover);
 }
-table.table tbody a { color:#000; }
+table.table tbody a { color: var(--color-main-text); }
 
 table.table tr.mouseOver td {
-	background-color: #eee;
+	background-color: var(--color-background-hover);
 }
 table.table th, table th a {
-	color: #999;
+	color: var(--color-text-maxcontrast);
 }
 table.table thead th {
-    background-color: white;
+    background-color: var(--color-main-background);
     padding: 15px;
     height: 50px;
     box-sizing: border-box;
@@ -151,13 +150,13 @@ table.table thead th {
 }
 
 table.table th, table.table td, #searchresults td {
-    border-bottom:1px solid #ddd;
+    border-bottom: 1px solid var(--color-border);
     text-align:left;
     font-weight:normal;
 }
 table.table td {
     padding: 0 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border);
     font-style: normal;
     background-position: 8px center;
     background-repeat: no-repeat;
@@ -188,7 +187,7 @@ table.table form button.action {
 }
 
 .muted {
-    color: #999;
+    color: var(--color-text-maxcontrast);
 }
 
 .note-content {
@@ -199,7 +198,8 @@ table.table form button.action {
     text-decoration: line-through;
 }
 .note-content .highlight {
-    background-color: yellow;
+    background-color: var(--color-warning);
+    color: var(--color-main-text);
 }
 .note-content .small {
     font-size: 80%;
@@ -214,8 +214,16 @@ table.table form button.action {
     text-decoration: underline;
 }
 
-#searchresults {
-    margin-top: 0px;
-    min-height: 100%;
-    margin-bottom: 50px;
+#grauphel-notification {
+    position: fixed;
+    top: calc(var(--header-height, 50px) + 1ex);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 1ex 2ex;
+    cursor: pointer;
+    color: var(--color-main-text);
+    background-color: var(--color-main-background);
+    border-radius: var(--border-radius-large);
+    box-shadow: 0 0 6px var(--color-box-shadow);
 }
